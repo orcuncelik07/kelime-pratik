@@ -1,0 +1,3099 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oxford 5000 · Kelime Tekrarı</title>
+<style>
+:root{
+  --ink:#1f2a24;
+  --paper:#f6f2e7;
+  --card:#fffdf8;
+  --moss:#3d5a45;
+  --moss-dark:#2a3f31;
+  --clay:#b5562f;
+  --gold:#c99a3d;
+  --line:#d8cfb8;
+  --wrong:#a13d2f;
+  --right:#3d6b45;
+  font-size:16px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--paper);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(197,164,90,.10), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(61,90,69,.10), transparent 45%);
+  font-family: "Iowan Old Style","Georgia","Times New Roman",serif;
+  color:var(--ink);
+  display:flex;
+  justify-content:center;
+  padding:28px 16px 60px;
+}
+.wrap{width:100%;max-width:640px;}
+.masthead{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  border-bottom:2px solid var(--ink);
+  padding-bottom:10px;
+  margin-bottom:22px;
+}
+.masthead h1{
+  font-family:"Iowan Old Style","Georgia",serif;
+  font-weight:700;
+  font-size:1.5rem;
+  letter-spacing:.01em;
+  margin:0;
+}
+.masthead .tag{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.68rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--moss-dark);
+  opacity:.75;
+}
+/* Setup screen */
+.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:2px;
+  padding:26px 24px;
+  box-shadow:0 1px 0 var(--line);
+}
+.section-label{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.66rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--clay);
+  margin:0 0 12px;
+}
+.level-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+  margin-bottom:22px;
+}
+.level-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  border:1.5px solid var(--ink);
+  background:transparent;
+  padding:14px 6px;
+  border-radius:2px;
+  cursor:pointer;
+  text-align:center;
+  transition:all .12s ease;
+}
+.level-btn .lvl-name{display:block;font-size:1rem;font-weight:700;letter-spacing:.02em;}
+.level-btn .lvl-count{display:block;font-size:.68rem;color:var(--moss-dark);opacity:.7;margin-top:2px;}
+.level-btn.active{background:var(--moss);border-color:var(--moss);color:#fff;}
+.level-btn.active .lvl-count{color:#e7e2d2;opacity:.9;}
+.start-btn{
+  width:100%;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-weight:700;
+  letter-spacing:.04em;
+  font-size:.9rem;
+  text-transform:uppercase;
+  background:var(--clay);
+  color:#fffaf2;
+  border:none;
+  padding:16px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:background .12s ease;
+}
+.start-btn:hover{background:#9c4726;}
+.start-btn:disabled{background:#c9bfa8;cursor:not-allowed;}
+.hint{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.76rem;
+  color:var(--moss-dark);
+  opacity:.75;
+  margin-top:14px;
+  line-height:1.5;
+}
+/* Stats bar */
+.stats-bar{
+  display:flex;
+  justify-content:space-between;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.72rem;
+  letter-spacing:.04em;
+  color:var(--moss-dark);
+  margin-bottom:14px;
+  padding:0 2px;
+}
+.stats-bar b{color:var(--ink);font-weight:700;}
+.reset-link{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.7rem;
+  color:var(--moss-dark);
+  text-decoration:underline;
+  cursor:pointer;
+  background:none;
+  border:none;
+  padding:0;
+  opacity:.7;
+}
+/* Quiz card */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:38px 26px 30px;
+  text-align:center;
+  position:relative;
+  box-shadow:0 1px 0 var(--line);
+}
+.eyebrow{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.64rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+.word-en{
+  font-size:2.1rem;
+  font-weight:700;
+  letter-spacing:.01em;
+  margin:0 0 4px;
+}
+.word-pos{
+  font-style:italic;
+  color:var(--moss-dark);
+  opacity:.65;
+  font-size:.95rem;
+  margin-bottom:26px;
+}
+.options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  text-align:left;
+}
+.opt{
+  font-family:"Georgia",serif;
+  font-size:.98rem;
+  border:1.5px solid var(--line);
+  background:#fff;
+  padding:14px 14px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all .1s ease;
+  line-height:1.3;
+}
+.opt:hover:not(:disabled){border-color:var(--moss);}
+.opt:disabled{cursor:default;}
+.opt.correct{background:var(--right);border-color:var(--right);color:#fff;}
+.opt.wrong{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+.opt.dim{opacity:.4;}
+.feedback{
+  min-height:26px;
+  margin-top:20px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.82rem;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+.feedback.right{color:var(--right);}
+.feedback.wrong{color:var(--wrong);}
+.next-hint{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.7rem;
+  color:var(--moss-dark);
+  opacity:.6;
+  margin-top:6px;
+}
+.progress-track{
+  height:3px;
+  background:var(--line);
+  border-radius:2px;
+  overflow:hidden;
+  margin-bottom:18px;
+}
+.progress-fill{
+  height:100%;
+  background:var(--moss);
+  transition:width .2s ease;
+}
+.back-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.72rem;
+  color:var(--moss-dark);
+  background:none;
+  border:none;
+  text-decoration:underline;
+  cursor:pointer;
+  padding:0;
+  margin-top:24px;
+  opacity:.7;
+}
+.tabbar{
+  display:flex;
+  gap:6px;
+  margin-bottom:16px;
+}
+.tab-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.74rem;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  font-weight:700;
+  background:transparent;
+  border:1.5px solid var(--line);
+  color:var(--moss-dark);
+  padding:9px 14px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all .12s ease;
+}
+.tab-btn.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+.mistake-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px 4px;
+  border-bottom:1px solid var(--line);
+}
+.mistake-row:last-child{border-bottom:none;}
+.mistake-main{flex:1;min-width:0;}
+.mistake-en{font-weight:700;font-size:1.02rem;}
+.mistake-pos{font-style:italic;color:var(--moss-dark);opacity:.6;font-size:.78rem;margin-left:6px;}
+.mistake-tr{font-size:.88rem;color:var(--moss-dark);margin-top:2px;}
+.mistake-badge{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.72rem;
+  font-weight:700;
+  color:#fff;
+  background:var(--wrong);
+  border-radius:20px;
+  padding:4px 11px;
+  white-space:nowrap;
+}
+.mistake-empty{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.85rem;
+  color:var(--moss-dark);
+  opacity:.7;
+  text-align:center;
+  padding:30px 10px;
+  line-height:1.6;
+}
+.mistake-loading{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.8rem;
+  color:var(--moss-dark);
+  opacity:.6;
+  text-align:center;
+  padding:20px;
+}
+.custom-form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:6px;
+}
+.custom-form input{
+  font-family:"Georgia",serif;
+  font-size:.92rem;
+  border:1.5px solid var(--line);
+  background:#fff;
+  padding:11px 12px;
+  border-radius:2px;
+  outline:none;
+}
+.custom-form input:focus{border-color:var(--moss);}
+.custom-form input#customEn, .custom-form input#customTr{grid-column:span 1;}
+.custom-form input#customPos{grid-column:span 2;}
+.add-btn{
+  grid-column:span 2;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-weight:700;
+  letter-spacing:.04em;
+  font-size:.82rem;
+  text-transform:uppercase;
+  background:var(--moss);
+  color:#fff;
+  border:none;
+  padding:12px;
+  border-radius:2px;
+  cursor:pointer;
+}
+.add-btn:hover{background:var(--moss-dark);}
+.custom-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 4px;
+  border-bottom:1px solid var(--line);
+}
+.custom-row:last-child{border-bottom:none;}
+.custom-main{flex:1;min-width:0;}
+.custom-en{font-weight:700;font-size:1rem;}
+.custom-pos{font-style:italic;color:var(--moss-dark);opacity:.6;font-size:.76rem;margin-left:5px;}
+.custom-tr{font-size:.86rem;color:var(--moss-dark);margin-top:2px;}
+.del-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:1rem;
+  line-height:1;
+  color:var(--wrong);
+  background:none;
+  border:1.5px solid var(--wrong);
+  border-radius:50%;
+  width:28px;height:28px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.del-btn:hover{background:var(--wrong);color:#fff;}
+.auth-box{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:16px;
+}
+.auth-btn{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.76rem;
+  font-weight:700;
+  letter-spacing:.02em;
+  border:1.5px solid var(--ink);
+  background:#fff;
+  color:var(--ink);
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.auth-btn.google{background:var(--ink);color:#fff;border-color:var(--ink);}
+.auth-btn.google:hover{background:var(--moss-dark);}
+.auth-btn:hover{background:#f0ebda;}
+.auth-user{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.78rem;
+  color:var(--moss-dark);
+}
+.auth-avatar{
+  width:24px;height:24px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  object-fit:cover;
+}
+.auth-name{font-weight:700;color:var(--ink);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.auth-status{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.66rem;
+  color:var(--moss-dark);
+  opacity:.7;
+  margin-left:4px;
+}
+.hidden{display:none !important;}
+@media(max-width:420px){
+  .options{grid-template-columns:1fr;}
+  .word-en{font-size:1.7rem;}
+}
+</style>
+</head>
+<body>
+<noscript>
+  <div style="max-width:480px;margin:60px auto;padding:24px;font-family:sans-serif;background:#fff3e0;border:1px solid #e0a05a;border-radius:6px;">
+    <strong>Bu sayfa JavaScript gerektiriyor.</strong><br><br>
+    iPhone'da dosyayı Dosyalar uygulamasından açtıysan, bu sadece bir önizleme olabilir ve komut dosyaları çalışmaz.
+    Sağ üstteki paylaş ikonuna dokunup <b>"Safari'de Aç"</b> seçeneğini seç.
+  </div>
+</noscript>
+<div class="wrap" id="mainWrap">
+
+
+  <div class="masthead">
+    <h1>Oxford 5000</h1>
+    <div class="tag">Kelime Tekrarı</div>
+  </div>
+
+  <div id="authBox" class="auth-box"></div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab-btn active" data-tab="setup">Pratik</button>
+    <button class="tab-btn" data-tab="mistakes">En Çok Yanlışlar</button>
+    <button class="tab-btn" data-tab="custom">Kelimelerim</button>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setup" class="panel">
+    <p class="section-label">Seviye seç</p>
+    <div class="level-grid" id="levelGrid"></div>
+    <button class="start-btn" id="startBtn">Teste Başla</button>
+    <p class="hint">Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.</p>
+  </div>
+
+  <!-- MISTAKES -->
+  <div id="mistakes" class="panel hidden">
+    <p class="section-label">En Çok Yanlış Yaptıkların</p>
+    <button class="start-btn" id="drillBtn" style="margin-bottom:18px;">Bu Kelimelerle Çalış</button>
+    <div id="mistakesList"></div>
+  </div>
+
+  <!-- CUSTOM WORDS -->
+  <div id="custom" class="panel hidden">
+    <p class="section-label">Kendi Kelimelerini Ekle</p>
+    <form id="customForm" class="custom-form">
+      <input type="text" id="customEn" placeholder="İngilizce kelime" autocomplete="off" required>
+      <input type="text" id="customTr" placeholder="Türkçe karşılığı" autocomplete="off" required>
+      <input type="text" id="customPos" placeholder="tür (v., n., adj. — opsiyonel)" autocomplete="off">
+      <button type="submit" class="add-btn">Ekle</button>
+    </form>
+    <button class="start-btn hidden" id="customDrillBtn" style="margin:18px 0;">Bu Kelimelerle Çalış</button>
+    <div id="customList"></div>
+    <p class="mistake-empty" id="customEmpty">Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="hidden">
+    <div class="stats-bar">
+      <span>Doğru: <b id="statCorrect">0</b> &nbsp;·&nbsp; Yanlış: <b id="statWrong">0</b> &nbsp;·&nbsp; Öğrenildi: <b id="statMastered">0</b>/<span id="statTotal">0</span></span>
+      <button class="reset-link" id="resetBtn">ilerlemeyi sıfırla</button>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="card">
+      <p class="eyebrow" id="levelBadge">B2</p>
+      <p class="word-en" id="wordEn">—</p>
+      <p class="word-pos" id="wordPos">—</p>
+      <div class="options" id="options"></div>
+      <p class="feedback" id="feedback"></p>
+      <p class="next-hint" id="nextHint"></p>
+    </div>
+    <button class="back-btn" id="backBtn">← Seviye seçimine dön</button>
+  </div>
+
+</div>
+<script>
+const WORDS = [
+["absorb","v.","emmek, soğurmak","B2"],
+["abstract","adj.","soyut","B2"],
+["accent","n.","aksan, şive","B2"],
+["accidentally","adv.","kazara, yanlışlıkla","B2"],
+["accommodate","v.","barındırmak, uyum sağlamak","B2"],
+["accomplish","v.","başarmak","B2"],
+["accountant","n.","muhasebeci","B2"],
+["accounting","n.","muhasebe","B2"],
+["accuracy","n.","doğruluk, kesinlik","B2"],
+["accurately","adv.","doğru bir şekilde","B2"],
+["acid","n.","asit","B2"],
+["activate","v.","etkinleştirmek","B2"],
+["addiction","n.","bağımlılık","B2"],
+["additionally","adv.","ayrıca, ek olarak","B2"],
+["adequate","adj.","yeterli","B2"],
+["adequately","adv.","yeterince","B2"],
+["adjust","v.","ayarlamak, uyum sağlamak","B2"],
+["affordable","adj.","uygun fiyatlı","B2"],
+["agriculture","n.","tarım","B2"],
+["AIDS","n.","AIDS","B2"],
+["alien","n.","uzaylı, yabancı","B2"],
+["alongside","prep.","yanında, birlikte","B2"],
+["altogether","adv.","tamamen, toptan","B2"],
+["ambulance","n.","ambulans","B2"],
+["amusing","adj.","eğlenceli","B2"],
+["analyst","n.","analist","B2"],
+["ancestor","n.","ata","B2"],
+["animation","n.","canlandırma, animasyon","B2"],
+["annually","adv.","yıllık olarak","B2"],
+["anticipate","v.","önceden tahmin etmek, beklemek","B2"],
+["anxiety","n.","kaygı, endişe","B2"],
+["apology","n.","özür","B2"],
+["applicant","n.","başvuru sahibi","B2"],
+["appropriately","adv.","uygun şekilde","B2"],
+["arrow","n.","ok","B2"],
+["artwork","n.","sanat eseri","B2"],
+["aside","adv.","bir kenara","B2"],
+["asset","n.","varlık, mal varlığı","B2"],
+["assign","v.","atamak, görevlendirmek","B2"],
+["assistance","n.","yardım","B2"],
+["assumption","n.","varsayım","B2"],
+["assure","v.","temin etmek, güvence vermek","B2"],
+["astonishing","adj.","şaşırtıcı","B2"],
+["attachment","n.","ek, bağlılık","B2"],
+["auction","n.","müzayede, açık artırma","B2"],
+["audio","adj.","işitsel, ses","B2"],
+["automatic","adj.","otomatik","B2"],
+["automatically","adv.","otomatik olarak","B2"],
+["awareness","n.","farkındalık","B2"],
+["awkward","adj.","garip, sıkıntılı","B2"],
+["badge","n.","rozet, kimlik kartı","B2"],
+["balanced","adj.","dengeli","B2"],
+["ballet","n.","bale","B2"],
+["balloon","n.","balon","B2"],
+["barely","adv.","zar zor, ancak","B2"],
+["bargain","n.","kelepir, pazarlık","B2"],
+["basement","n.","bodrum","B2"],
+["basket","n.","sepet","B2"],
+["bat","n.","yarasa, sopa","B2"],
+["beneficial","adj.","faydalı","B2"],
+["beside","prep.","yanında","B2"],
+["besides","adv.","ayrıca, üstelik","B2"],
+["bias","n.","önyargı","B2"],
+["bid","n.","teklif","B2"],
+["biological","adj.","biyolojik","B2"],
+["blanket","n.","battaniye","B2"],
+["blow","n.","darbe, vuruş","B2"],
+["bold","adj.","cesur, kalın (yazı)","B2"],
+["bombing","n.","bombalama","B2"],
+["booking","n.","rezervasyon","B2"],
+["boost","v.","artırmak, güçlendirmek","B2"],
+["bound","adj.","yükümlü, gitmekte olan","B2"],
+["brick","n.","tuğla","B2"],
+["briefly","adv.","kısaca","B2"],
+["broadcaster","n.","yayıncı","B2"],
+["broadly","adv.","genel olarak, geniş çapta","B2"],
+["bug","n.","böcek, yazılım hatası","B2"],
+["cabin","n.","kabin, kulübe","B2"],
+["canal","n.","kanal","B2"],
+["candle","n.","mum","B2"],
+["carbon","n.","karbon","B2"],
+["casual","adj.","rahat, gündelik","B2"],
+["cave","n.","mağara","B2"],
+["certainty","n.","kesinlik","B2"],
+["certificate","n.","sertifika","B2"],
+["challenging","adj.","zorlu, meydan okuyan","B2"],
+["championship","n.","şampiyona","B2"],
+["charming","adj.","çekici, cazibeli","B2"],
+["chase","v.","kovalamak","B2"],
+["cheek","n.","yanak","B2"],
+["cheer","v.","tezahürat yapmak","B2"],
+["choir","n.","koro","B2"],
+["chop","v.","doğramak, kesmek","B2"],
+["circuit","n.","devre, pist","B2"],
+["civilization","n.","medeniyet","B2"],
+["clarify","v.","açıklığa kavuşturmak","B2"],
+["classify","v.","sınıflandırmak","B2"],
+["cleaning","n.","temizlik","B2"],
+["clerk","n.","katip, memur","B2"],
+["cliff","n.","uçurum","B2"],
+["clinic","n.","klinik","B2"],
+["clip","n.","klip, ataç","B2"],
+["coincidence","n.","tesadüf","B2"],
+["collector","n.","koleksiyoncu, tahsildar","B2"],
+["colony","n.","koloni","B2"],
+["colourful","adj.","renkli","B2"],
+["comic","adj.","komik, çizgi roman","B2"],
+["commander","n.","komutan","B2"],
+["comparative","adj.","karşılaştırmalı","B2"],
+["completion","n.","tamamlama","B2"],
+["compose","v.","bestelemek, oluşturmak","B2"],
+["composer","n.","besteci","B2"],
+["compound","n.","bileşik","B2"],
+["comprehensive","adj.","kapsamlı","B2"],
+["comprise","v.","oluşturmak, içermek","B2"],
+["compulsory","adj.","zorunlu","B2"],
+["concrete","adj.","somut, beton","B2"],
+["confess","v.","itiraf etmek","B2"],
+["confusion","n.","kafa karışıklığı","B2"],
+["consequently","adv.","sonuç olarak","B2"],
+["conservation","n.","koruma","B2"],
+["considerable","adj.","önemli, hatırı sayılır","B2"],
+["considerably","adv.","önemli ölçüde","B2"],
+["consistently","adv.","tutarlı bir şekilde","B2"],
+["conspiracy","n.","komplo","B2"],
+["consult","v.","danışmak","B2"],
+["consultant","n.","danışman","B2"],
+["consumption","n.","tüketim","B2"],
+["controversial","adj.","tartışmalı","B2"],
+["controversy","n.","tartışma, ihtilaf","B2"],
+["convenience","n.","kolaylık","B2"],
+["convention","n.","kongre, gelenek","B2"],
+["conventional","adj.","geleneksel, alışılmış","B2"],
+["convey","v.","iletmek, aktarmak","B2"],
+["convincing","adj.","ikna edici","B2"],
+["cope","v.","baş etmek","B2"],
+["corporation","n.","şirket, kurum","B2"],
+["corridor","n.","koridor","B2"],
+["counter","n.","tezgah","B2"],
+["coverage","n.","kapsam, haber yayını","B2"],
+["crack","n.","çatlak","B2"],
+["craft","n.","el sanatı","B2"],
+["creativity","n.","yaratıcılık","B2"],
+["critically","adv.","eleştirel bir şekilde, ciddi olarak","B2"],
+["cruise","n.","gemi turu","B2"],
+["cue","n.","işaret, ipucu","B2"],
+["curious","adj.","meraklı","B2"],
+["curriculum","n.","müfredat","B2"],
+["cute","adj.","sevimli","B2"],
+["dairy","n.","süt ürünleri","B2"],
+["dare","v.","cesaret etmek","B2"],
+["darkness","n.","karanlık","B2"],
+["database","n.","veritabanı","B2"],
+["deadline","n.","son teslim tarihi","B2"],
+["deadly","adj.","ölümcül","B2"],
+["dealer","n.","satıcı, bayi","B2"],
+["deck","n.","güverte, kart destesi","B2"],
+["defender","n.","savunucu, defans oyuncusu","B2"],
+["delete","v.","silmek","B2"],
+["democracy","n.","demokrasi","B2"],
+["democratic","adj.","demokratik","B2"],
+["demonstration","n.","gösteri","B2"],
+["depart","v.","ayrılmak, hareket etmek","B2"],
+["dependent","adj.","bağımlı","B2"],
+["deposit","n.","depozito, mevduat","B2"],
+["depression","n.","depresyon, buhran","B2"],
+["derive","v.","türetmek, elde etmek","B2"],
+["desperately","adv.","çaresizce","B2"],
+["destruction","n.","yıkım","B2"],
+["determination","n.","kararlılık","B2"],
+["devote","v.","adamak","B2"],
+["differ","v.","farklılık göstermek","B2"],
+["disability","n.","engellilik","B2"],
+["disabled","adj.","engelli","B2"],
+["disagreement","n.","anlaşmazlık","B2"],
+["disappoint","v.","hayal kırıklığına uğratmak","B2"],
+["disappointment","n.","hayal kırıklığı","B2"],
+["discourage","v.","caydırmak","B2"],
+["disorder","n.","bozukluk, düzensizlik","B2"],
+["distant","adj.","uzak","B2"],
+["distinct","adj.","belirgin, farklı","B2"],
+["distinguish","v.","ayırt etmek","B2"],
+["distract","v.","dikkatini dağıtmak","B2"],
+["disturb","v.","rahatsız etmek","B2"],
+["dive","v.","dalmak","B2"],
+["diverse","adj.","çeşitli","B2"],
+["diversity","n.","çeşitlilik","B2"],
+["divorce","n.","boşanma","B2"],
+["dominant","adj.","baskın","B2"],
+["donation","n.","bağış","B2"],
+["dot","n.","nokta","B2"],
+["downtown","n.","şehir merkezi","B2"],
+["dramatically","adv.","çarpıcı biçimde","B2"],
+["drought","n.","kuraklık","B2"],
+["dull","adj.","sıkıcı, donuk","B2"],
+["dump","v.","boşaltmak, dökmek","B2"],
+["duration","n.","süre","B2"],
+["dynamic","adj.","dinamik","B2"],
+["economics","n.","ekonomi (bilim dalı)","B2"],
+["economist","n.","ekonomist","B2"],
+["editorial","adj.","yayın kuruluyla ilgili, başyazı","B2"],
+["efficiently","adv.","verimli bir şekilde","B2"],
+["elbow","n.","dirsek","B2"],
+["electronics","n.","elektronik","B2"],
+["elegant","adj.","zarif","B2"],
+["elementary","adj.","temel, ilkokul düzeyinde","B2"],
+["eliminate","v.","elemek, ortadan kaldırmak","B2"],
+["embrace","v.","kucaklamak, benimsemek","B2"],
+["emission","n.","emisyon, salım","B2"],
+["emotionally","adv.","duygusal olarak","B2"],
+["empire","n.","imparatorluk","B2"],
+["enjoyable","adj.","keyifli","B2"],
+["entertaining","adj.","eğlendirici","B2"],
+["entrepreneur","n.","girişimci","B2"],
+["envelope","n.","zarf","B2"],
+["equip","v.","donatmak","B2"],
+["equivalent","adj.","eşdeğer","B2"],
+["era","n.","çağ, dönem","B2"],
+["erupt","v.","patlamak, püskürmek","B2"],
+["essentially","adv.","esasen, temelde","B2"],
+["ethic","n.","etik değer","B2"],
+["ethnic","adj.","etnik","B2"],
+["evaluation","n.","değerlendirme","B2"],
+["evident","adj.","açık, belirgin","B2"],
+["evolution","n.","evrim","B2"],
+["evolve","v.","evrimleşmek, gelişmek","B2"],
+["exceed","v.","aşmak","B2"],
+["exception","n.","istisna","B2"],
+["excessive","adj.","aşırı","B2"],
+["exclude","v.","hariç tutmak, dışlamak","B2"],
+["exhibit","v.","sergilemek","B2"],
+["exit","n.","çıkış","B2"],
+["exotic","adj.","egzotik","B2"],
+["expansion","n.","genişleme","B2"],
+["expertise","n.","uzmanlık","B2"],
+["exploit","v.","sömürmek, istismar etmek","B2"],
+["exposure","n.","maruz kalma","B2"],
+["extension","n.","uzatma, ek","B2"],
+["extensive","adj.","kapsamlı, geniş","B2"],
+["extensively","adv.","geniş çapta","B2"],
+["extract","n.","özet, alıntı","B2"],
+["fabric","n.","kumaş","B2"],
+["fabulous","adj.","muhteşem","B2"],
+["failed","adj.","başarısız olmuş","B2"],
+["fake","adj.","sahte","B2"],
+["fame","n.","şöhret","B2"],
+["fantasy","n.","hayal, fantazi","B2"],
+["fare","n.","ücret (yol/bilet)","B2"],
+["federal","adj.","federal","B2"],
+["fever","n.","ateş","B2"],
+["firefighter","n.","itfaiyeci","B2"],
+["firework","n.","havai fişek","B2"],
+["firm","adj.","sağlam, kesin","B2"],
+["firmly","adv.","sıkıca, kesin bir şekilde","B2"],
+["flavour","n.","tat, lezzet","B2"],
+["fond","adj.","düşkün","B2"],
+["fool","n.","aptal","B2"],
+["forbid","v.","yasaklamak","B2"],
+["forecast","n.","tahmin","B2"],
+["format","n.","biçim, format","B2"],
+["formation","n.","oluşum, kuruluş","B2"],
+["formerly","adv.","eskiden, önceden","B2"],
+["fortunate","adj.","şanslı","B2"],
+["forum","n.","forum","B2"],
+["fossil","n.","fosil","B2"],
+["foundation","n.","vakıf, temel","B2"],
+["founder","n.","kurucu","B2"],
+["fraction","n.","kesir, küçük parça","B2"],
+["fragment","n.","parça, kırıntı","B2"],
+["framework","n.","çerçeve, çatı","B2"],
+["fraud","n.","dolandırıcılık","B2"],
+["freely","adv.","serbestçe","B2"],
+["frequent","adj.","sık","B2"],
+["fulfil","v.","yerine getirmek","B2"],
+["full-time","adj.","tam zamanlı","B2"],
+["fundamentally","adv.","temelde","B2"],
+["furious","adj.","çok öfkeli","B2"],
+["gaming","n.","oyun (video oyunu)","B2"],
+["gay","adj.","eşcinsel","B2"],
+["gender","n.","cinsiyet","B2"],
+["gene","n.","gen","B2"],
+["genetic","adj.","genetik","B2"],
+["genius","n.","deha","B2"],
+["genuine","adj.","gerçek, samimi","B2"],
+["genuinely","adv.","gerçekten, samimi olarak","B2"],
+["gesture","n.","jest, hareket","B2"],
+["gig","n.","konser, iş","B2"],
+["globalization","n.","küreselleşme","B2"],
+["globe","n.","küre, dünya","B2"],
+["golden","adj.","altın renkli, altın değerinde","B2"],
+["goodness","n.","iyilik","B2"],
+["gorgeous","adj.","muhteşem, çok güzel","B2"],
+["governor","n.","vali","B2"],
+["graphic","adj.","grafik, canlı (betimleme)","B2"],
+["graphics","n.","grafikler","B2"],
+["greatly","adv.","büyük ölçüde","B2"],
+["greenhouse","n.","sera","B2"],
+["grocery","n.","bakkaliye","B2"],
+["guideline","n.","kılavuz, yönerge","B2"],
+["habitat","n.","yaşam alanı","B2"],
+["harbour","n.","liman","B2"],
+["headquarters","n.","genel merkez","B2"],
+["heal","v.","iyileşmek, iyileştirmek","B2"],
+["healthcare","n.","sağlık hizmeti","B2"],
+["helmet","n.","kask","B2"],
+["hence","adv.","bu nedenle","B2"],
+["herb","n.","şifalı bitki, ot","B2"],
+["hidden","adj.","gizli","B2"],
+["highway","n.","otoyol","B2"],
+["hilarious","adj.","çok komik","B2"],
+["hip","n.","kalça","B2"],
+["historian","n.","tarihçi","B2"],
+["homeless","adj.","evsiz","B2"],
+["honesty","n.","dürüstlük","B2"],
+["hook","n.","kanca, çengel","B2"],
+["hopefully","adv.","umarım","B2"],
+["hunger","n.","açlık","B2"],
+["hypothesis","n.","hipotez, varsayım","B2"],
+["icon","n.","simge, ikon","B2"],
+["identical","adj.","tıpatıp aynı","B2"],
+["illusion","n.","yanılsama, hayal","B2"],
+["immigration","n.","göç","B2"],
+["immune","adj.","bağışık","B2"],
+["implement","v.","uygulamak, yürürlüğe koymak","B2"],
+["implication","n.","sonuç, ima","B2"],
+["incentive","n.","teşvik","B2"],
+["incorporate","v.","dahil etmek, birleştirmek","B2"],
+["incorrect","adj.","yanlış","B2"],
+["independence","n.","bağımsızlık","B2"],
+["index","n.","dizin, endeks","B2"],
+["indication","n.","belirti, işaret","B2"],
+["inevitable","adj.","kaçınılmaz","B2"],
+["infer","v.","çıkarım yapmak","B2"],
+["inflation","n.","enflasyon","B2"],
+["info","n.","bilgi","B2"],
+["infrastructure","n.","altyapı","B2"],
+["inhabitant","n.","sakin, yerleşik kişi","B2"],
+["inherit","v.","miras almak","B2"],
+["ink","n.","mürekkep","B2"],
+["innovation","n.","yenilik","B2"],
+["innovative","adj.","yenilikçi","B2"],
+["input","n.","girdi","B2"],
+["insert","v.","eklemek, sokmak","B2"],
+["inspector","n.","müfettiş","B2"],
+["installation","n.","kurulum","B2"],
+["instant","adj.","anlık, hemen olan","B2"],
+["instantly","adv.","anında","B2"],
+["integrate","v.","entegre etmek, bütünleştirmek","B2"],
+["intellectual","adj.","entelektüel, zihinsel","B2"],
+["interact","v.","etkileşimde bulunmak","B2"],
+["interaction","n.","etkileşim","B2"],
+["interpretation","n.","yorum","B2"],
+["interval","n.","aralık, ara","B2"],
+["invade","v.","işgal etmek","B2"],
+["invasion","n.","işgal","B2"],
+["investor","n.","yatırımcı","B2"],
+["isolate","v.","izole etmek","B2"],
+["isolated","adj.","izole, yalıtılmış","B2"],
+["jail","n.","hapishane","B2"],
+["jet","n.","jet uçağı","B2"],
+["joint","adj.","ortak","B2"],
+["journalism","n.","gazetecilik","B2"],
+["jury","n.","jüri","B2"],
+["kit","n.","takım, kit","B2"],
+["ladder","n.","merdiven","B2"],
+["landing","n.","iniş","B2"],
+["lane","n.","şerit, dar yol","B2"],
+["lately","adv.","son zamanlarda","B2"],
+["leaflet","n.","broşür","B2"],
+["legend","n.","efsane","B2"],
+["lens","n.","mercek, lens","B2"],
+["lifetime","n.","yaşam boyu","B2"],
+["lighting","n.","aydınlatma","B2"],
+["likewise","adv.","aynı şekilde","B2"],
+["limitation","n.","sınırlama","B2"],
+["literally","adv.","gerçekten, tam anlamıyla","B2"],
+["literary","adj.","edebi","B2"],
+["litre","n.","litre","B2"],
+["litter","n.","çöp","B2"],
+["logo","n.","logo","B2"],
+["lottery","n.","piyango","B2"],
+["loyal","adj.","sadık","B2"],
+["lyric","n.","şarkı sözü","B2"],
+["magnificent","adj.","muhteşem","B2"],
+["make-up","n.","makyaj","B2"],
+["making","n.","yapım","B2"],
+["manufacture","v.","imal etmek","B2"],
+["manufacturing","n.","imalat","B2"],
+["marathon","n.","maraton","B2"],
+["margin","n.","kenar boşluğu, kâr marjı","B2"],
+["marker","n.","işaretleyici","B2"],
+["martial","adj.","askeri, savaşla ilgili","B2"],
+["mate","n.","arkadaş, eş","B2"],
+["mayor","n.","belediye başkanı","B2"],
+["mechanic","n.","tamirci","B2"],
+["mechanical","adj.","mekanik","B2"],
+["mechanism","n.","mekanizma","B2"],
+["medal","n.","madalya","B2"],
+["medication","n.","ilaç","B2"],
+["membership","n.","üyelik","B2"],
+["memorable","adj.","akılda kalıcı","B2"],
+["metaphor","n.","mecaz, metafor","B2"],
+["miner","n.","madenci","B2"],
+["miserable","adj.","sefil, mutsuz","B2"],
+["mode","n.","mod, tarz","B2"],
+["modest","adj.","mütevazı","B2"],
+["monster","n.","canavar","B2"],
+["monthly","adj.","aylık","B2"],
+["monument","n.","anıt","B2"],
+["moreover","adv.","ayrıca, üstelik","B2"],
+["mortgage","n.","ipotek","B2"],
+["mosque","n.","cami","B2"],
+["motion","n.","hareket, önerge","B2"],
+["motivate","v.","motive etmek","B2"],
+["motivation","n.","motivasyon","B2"],
+["moving","adj.","dokunaklı, hareket eden","B2"],
+["myth","n.","efsane, mit","B2"],
+["naked","adj.","çıplak","B2"],
+["nasty","adj.","kötü, iğrenç","B2"],
+["navigation","n.","navigasyon, seyrüsefer","B2"],
+["nearby","adj.","yakındaki","B2"],
+["necessity","n.","zorunluluk, ihtiyaç","B2"],
+["negotiate","v.","müzakere etmek","B2"],
+["negotiation","n.","müzakere","B2"],
+["neutral","adj.","tarafsız","B2"],
+["newly","adv.","yeni, yakın zamanda","B2"],
+["norm","n.","norm","B2"],
+["notebook","n.","defter, dizüstü bilgisayar","B2"],
+["novelist","n.","romancı","B2"],
+["nowadays","adv.","günümüzde","B2"],
+["nursing","adj.","hemşirelik","B2"],
+["nutrition","n.","beslenme","B2"],
+["obesity","n.","obezite","B2"],
+["observer","n.","gözlemci","B2"],
+["obstacle","n.","engel","B2"],
+["occupation","n.","meslek","B2"],
+["occupy","v.","işgal etmek, meşgul etmek","B2"],
+["offender","n.","suçlu","B2"],
+["ongoing","adj.","devam eden","B2"],
+["openly","adv.","açıkça","B2"],
+["opera","n.","opera","B2"],
+["operator","n.","operatör","B2"],
+["optimistic","adj.","iyimser","B2"],
+["orchestra","n.","orkestra","B2"],
+["organic","adj.","organik","B2"],
+["outfit","n.","kıyafet","B2"],
+["output","n.","çıktı","B2"],
+["outstanding","adj.","olağanüstü","B2"],
+["overcome","v.","üstesinden gelmek","B2"],
+["overnight","adv.","gecede, bir gecede","B2"],
+["overseas","adv.","denizaşırı","B2"],
+["ownership","n.","sahiplik","B2"],
+["oxygen","n.","oksijen","B2"],
+["packet","n.","paket","B2"],
+["palm","n.","avuç içi, palmiye","B2"],
+["panic","n.","panik","B2"],
+["parade","n.","geçit töreni","B2"],
+["parallel","adj.","paralel","B2"],
+["participation","n.","katılım","B2"],
+["partnership","n.","ortaklık","B2"],
+["part-time","adj.","yarı zamanlı","B2"],
+["passionate","adj.","tutkulu","B2"],
+["password","n.","şifre","B2"],
+["patience","n.","sabır","B2"],
+["pause","v.","duraklamak","B2"],
+["peer","n.","akran","B2"],
+["penalty","n.","ceza","B2"],
+["perceive","v.","algılamak","B2"],
+["perception","n.","algı","B2"],
+["permanently","adv.","kalıcı olarak","B2"],
+["pill","n.","hap","B2"],
+["pity","n.","acıma, yazık","B2"],
+["placement","n.","yerleştirme","B2"],
+["portion","n.","porsiyon, kısım","B2"],
+["potentially","adv.","potansiyel olarak","B2"],
+["precede","v.","önce gelmek","B2"],
+["precious","adj.","değerli","B2"],
+["precise","adj.","kesin, tam","B2"],
+["precisely","adv.","tam olarak","B2"],
+["predictable","adj.","tahmin edilebilir","B2"],
+["preference","n.","tercih","B2"],
+["pride","n.","gurur","B2"],
+["primarily","adv.","öncelikle, esas olarak","B2"],
+["principal","adj.","başlıca, esas","B2"],
+["prior","adj.","önceki","B2"],
+["probability","n.","olasılık","B2"],
+["probable","adj.","muhtemel","B2"],
+["proceed","v.","devam etmek, ilerlemek","B2"],
+["programming","n.","programlama","B2"],
+["progressive","adj.","ilerici","B2"],
+["prohibit","v.","yasaklamak","B2"],
+["promising","adj.","umut verici","B2"],
+["promotion","n.","terfi, tanıtım","B2"],
+["prompt","v.","harekete geçirmek, teşvik etmek","B2"],
+["proportion","n.","oran","B2"],
+["protein","n.","protein","B2"],
+["protester","n.","protestocu","B2"],
+["psychological","adj.","psikolojik","B2"],
+["publicity","n.","tanıtım, reklam","B2"],
+["publishing","n.","yayıncılık","B2"],
+["punk","n.","punk","B2"],
+["purely","adv.","sadece, tamamen","B2"],
+["pursuit","n.","peşinde koşma, arayış","B2"],
+["puzzle","n.","bulmaca, yapboz","B2"],
+["questionnaire","n.","anket","B2"],
+["racial","adj.","ırksal","B2"],
+["racism","n.","ırkçılık","B2"],
+["racist","n.","ırkçı","B2"],
+["radiation","n.","radyasyon","B2"],
+["rail","n.","ray, demiryolu","B2"],
+["random","adj.","rastgele","B2"],
+["rat","n.","sıçan","B2"],
+["rating","n.","değerlendirme, puan","B2"],
+["reasonably","adv.","makul ölçüde","B2"],
+["rebuild","v.","yeniden inşa etmek","B2"],
+["receiver","n.","alıcı","B2"],
+["recession","n.","ekonomik durgunluk","B2"],
+["reckon","v.","tahmin etmek, sanmak","B2"],
+["recognition","n.","tanınma, tanıma","B2"],
+["recovery","n.","iyileşme, kurtarma","B2"],
+["recruit","v.","işe almak","B2"],
+["recruitment","n.","işe alım","B2"],
+["referee","n.","hakem","B2"],
+["refugee","n.","mülteci","B2"],
+["registration","n.","kayıt","B2"],
+["regulate","v.","düzenlemek","B2"],
+["reinforce","v.","güçlendirmek, pekiştirmek","B2"],
+["relieve","v.","hafifletmek, rahatlatmak","B2"],
+["relieved","adj.","rahatlamış","B2"],
+["remarkable","adj.","dikkat çekici, olağanüstü","B2"],
+["remarkably","adv.","dikkate değer biçimde","B2"],
+["reporting","n.","haber yapma, raporlama","B2"],
+["resign","v.","istifa etmek","B2"],
+["resolution","n.","karar, çözünürlük","B2"],
+["restore","v.","eski haline getirmek, restore etmek","B2"],
+["restrict","v.","kısıtlamak","B2"],
+["restriction","n.","kısıtlama","B2"],
+["retail","n.","perakende","B2"],
+["retirement","n.","emeklilik","B2"],
+["revenue","n.","gelir","B2"],
+["revision","n.","gözden geçirme, tekrar","B2"],
+["ridiculous","adj.","gülünç, saçma","B2"],
+["risky","adj.","riskli","B2"],
+["rival","n.","rakip","B2"],
+["rob","v.","soymak","B2"],
+["robbery","n.","soygun","B2"],
+["rocket","n.","roket","B2"],
+["romance","n.","romantizm, aşk","B2"],
+["rose","n.","gül","B2"],
+["roughly","adv.","yaklaşık olarak","B2"],
+["ruin","v.","mahvetmek, yıkmak","B2"],
+["satisfaction","n.","memnuniyet","B2"],
+["scandal","n.","skandal","B2"],
+["scare","v.","korkutmak","B2"],
+["scenario","n.","senaryo","B2"],
+["scholar","n.","bilgin, akademisyen","B2"],
+["scholarship","n.","burs","B2"],
+["scratch","v.","kaşımak, çizmek","B2"],
+["screening","n.","tarama, gösterim","B2"],
+["seeker","n.","arayan kişi","B2"],
+["seminar","n.","seminer","B2"],
+["settler","n.","yerleşimci","B2"],
+["severely","adv.","şiddetli biçimde","B2"],
+["sexy","adj.","seksi","B2"],
+["shaped","adj.","şekilli","B2"],
+["shocking","adj.","şok edici","B2"],
+["shore","n.","kıyı","B2"],
+["short-term","adj.","kısa vadeli","B2"],
+["shortage","n.","kıtlık, eksiklik","B2"],
+["shortly","adv.","kısa süre içinde","B2"],
+["sibling","n.","kardeş","B2"],
+["signature","n.","imza","B2"],
+["significance","n.","önem","B2"],
+["skilled","adj.","becerikli, vasıflı","B2"],
+["skull","n.","kafatası","B2"],
+["slogan","n.","slogan","B2"],
+["so-called","adj.","sözde","B2"],
+["somehow","adv.","bir şekilde","B2"],
+["sometime","adv.","bir ara, bir zaman","B2"],
+["sophisticated","adj.","gelişmiş, karmaşık","B2"],
+["spare","adj.","yedek, boş (zaman)","B2"],
+["specialize","v.","uzmanlaşmak","B2"],
+["specify","v.","belirtmek","B2"],
+["spectacular","adj.","göz alıcı, muhteşem","B2"],
+["spectator","n.","seyirci","B2"],
+["speculate","v.","spekülasyon yapmak, tahmin etmek","B2"],
+["speculation","n.","spekülasyon","B2"],
+["spill","v.","dökmek, dökülmek","B2"],
+["spite","n.","kin, inat","B2"],
+["spoil","v.","şımartmak, bozmak","B2"],
+["spokesman","n.","sözcü (erkek)","B2"],
+["spokesperson","n.","sözcü","B2"],
+["spokeswoman","n.","sözcü (kadın)","B2"],
+["sponsorship","n.","sponsorluk","B2"],
+["sporting","adj.","sporla ilgili","B2"],
+["stall","n.","tezgah, stant","B2"],
+["stance","n.","tutum, duruş","B2"],
+["starve","v.","açlıktan ölmek","B2"],
+["steadily","adv.","istikrarlı bir şekilde","B2"],
+["steam","n.","buhar","B2"],
+["stimulate","v.","teşvik etmek, uyarmak","B2"],
+["strengthen","v.","güçlendirmek","B2"],
+["strictly","adv.","kesinlikle, sıkı sıkıya","B2"],
+["stroke","n.","inme, vuruş","B2"],
+["stunning","adj.","çarpıcı, çok güzel","B2"],
+["subsequent","adj.","sonraki","B2"],
+["subsequently","adv.","daha sonra","B2"],
+["suburb","n.","banliyö","B2"],
+["suffering","n.","acı çekme","B2"],
+["sufficient","adj.","yeterli","B2"],
+["sufficiently","adv.","yeterince","B2"],
+["super","adj.","süper","B2"],
+["surgeon","n.","cerrah","B2"],
+["survival","n.","hayatta kalma","B2"],
+["survivor","n.","hayatta kalan","B2"],
+["suspend","v.","askıya almak","B2"],
+["sustainable","adj.","sürdürülebilir","B2"],
+["swallow","v.","yutmak","B2"],
+["sympathetic","adj.","anlayışlı, sempatik","B2"],
+["tackle","v.","üstesinden gelmek, ele almak","B2"],
+["tag","n.","etiket","B2"],
+["tap","v.","hafifçe vurmak, musluk","B2"],
+["technological","adj.","teknolojik","B2"],
+["teens","n.","gençlik çağı (13-19)","B2"],
+["temple","n.","tapınak, şakak","B2"],
+["temporarily","adv.","geçici olarak","B2"],
+["tendency","n.","eğilim","B2"],
+["tension","n.","gerginlik","B2"],
+["terminal","n.","terminal","B2"],
+["terms","n.","şartlar, terimler","B2"],
+["terribly","adv.","korkunç derecede","B2"],
+["terrify","v.","dehşete düşürmek","B2"],
+["territory","n.","toprak, bölge","B2"],
+["terror","n.","dehşet, terör","B2"],
+["terrorism","n.","terörizm","B2"],
+["terrorist","n.","terörist","B2"],
+["testing","n.","test etme","B2"],
+["textbook","n.","ders kitabı","B2"],
+["theft","n.","hırsızlık","B2"],
+["therapist","n.","terapist","B2"],
+["thesis","n.","tez","B2"],
+["thorough","adj.","kapsamlı, titiz","B2"],
+["thoroughly","adv.","tamamen, iyice","B2"],
+["thumb","n.","başparmak","B2"],
+["timing","n.","zamanlama","B2"],
+["tissue","n.","doku, kağıt mendil","B2"],
+["ton","n.","ton","B2"],
+["tonne","n.","ton (metrik)","B2"],
+["tournament","n.","turnuva","B2"],
+["trace","v.","izini sürmek","B2"],
+["trading","n.","ticaret","B2"],
+["tragedy","n.","trajedi, facia","B2"],
+["tragic","adj.","trajik","B2"],
+["trait","n.","özellik, karakter özelliği","B2"],
+["transmit","v.","iletmek, yaymak","B2"],
+["transportation","n.","ulaşım","B2"],
+["trap","n.","tuzak","B2"],
+["treasure","n.","hazine","B2"],
+["tribe","n.","kabile","B2"],
+["trigger","v.","tetiklemek","B2"],
+["trillion","number","trilyon","B2"],
+["troop","n.","asker birliği","B2"],
+["tsunami","n.","tsunami","B2"],
+["ultimate","adj.","nihai, son","B2"],
+["unacceptable","adj.","kabul edilemez","B2"],
+["uncertainty","n.","belirsizlik","B2"],
+["undergo","v.","geçirmek, maruz kalmak","B2"],
+["undertake","v.","üstlenmek","B2"],
+["unfold","v.","açılmak, gelişmek","B2"],
+["unfortunate","adj.","talihsiz","B2"],
+["unite","v.","birleştirmek","B2"],
+["unity","n.","birlik","B2"],
+["universal","adj.","evrensel","B2"],
+["urgent","adj.","acil","B2"],
+["usage","n.","kullanım","B2"],
+["useless","adj.","işe yaramaz","B2"],
+["valid","adj.","geçerli","B2"],
+["variation","n.","varyasyon, değişim","B2"],
+["vertical","adj.","dikey","B2"],
+["viewpoint","n.","bakış açısı","B2"],
+["visa","n.","vize","B2"],
+["visible","adj.","görünür","B2"],
+["voluntary","adj.","gönüllü","B2"],
+["voting","n.","oy verme","B2"],
+["wander","v.","dolaşmak, gezinmek","B2"],
+["warming","n.","ısınma","B2"],
+["weekly","adj.","haftalık","B2"],
+["weird","adj.","tuhaf","B2"],
+["welfare","n.","refah","B2"],
+["wheat","n.","buğday","B2"],
+["whilst","conj.","iken, oysa","B2"],
+["whoever","pron.","her kim","B2"],
+["widespread","adj.","yaygın","B2"],
+["wisdom","n.","bilgelik","B2"],
+["withdraw","v.","geri çekmek, para çekmek","B2"],
+["workforce","n.","işgücü","B2"],
+["workplace","n.","işyeri","B2"],
+["workshop","n.","atölye","B2"],
+["worm","n.","solucan","B2"],
+["wrist","n.","bilek","B2"],
+["abolish","v.","kaldırmak, feshetmek","C1"],
+["abortion","n.","kürtaj","C1"],
+["absence","n.","yokluk, devamsızlık","C1"],
+["absent","adj.","yok, gaip","C1"],
+["absurd","adj.","saçma","C1"],
+["abundance","n.","bolluk","C1"],
+["abuse","n.","istismar, kötüye kullanma","C1"],
+["academy","n.","akademi","C1"],
+["accelerate","v.","hızlandırmak","C1"],
+["acceptance","n.","kabul","C1"],
+["accessible","adj.","erişilebilir","C1"],
+["accomplishment","n.","başarı","C1"],
+["accordance","n.","uygunluk","C1"],
+["accordingly","adv.","buna göre","C1"],
+["accountability","n.","hesap verebilirlik","C1"],
+["accountable","adj.","hesap verebilir, sorumlu","C1"],
+["accumulate","v.","biriktirmek","C1"],
+["accumulation","n.","birikim","C1"],
+["accusation","n.","suçlama","C1"],
+["accused","n.","sanık","C1"],
+["acid","adj.","asidik","C1"],
+["acquisition","n.","edinim, satın alma","C1"],
+["acre","n.","dönüm (arazi ölçüsü)","C1"],
+["activation","n.","etkinleştirme","C1"],
+["activist","n.","aktivist","C1"],
+["acute","adj.","akut, keskin","C1"],
+["adaptation","n.","uyarlama, uyum","C1"],
+["adhere","v.","bağlı kalmak, yapışmak","C1"],
+["adjacent","adj.","bitişik","C1"],
+["adjustment","n.","ayarlama","C1"],
+["administer","v.","yönetmek, uygulamak","C1"],
+["administrative","adj.","idari","C1"],
+["administrator","n.","yönetici","C1"],
+["admission","n.","kabul, giriş","C1"],
+["adolescent","n.","ergen","C1"],
+["adoption","n.","evlat edinme, benimseme","C1"],
+["adverse","adj.","olumsuz, ters","C1"],
+["advocate","n.","savunucu","C1"],
+["aesthetic","adj.","estetik","C1"],
+["affection","n.","sevgi, şefkat","C1"],
+["aftermath","n.","art arda gelen sonuçlar","C1"],
+["aggression","n.","saldırganlık","C1"],
+["agricultural","adj.","tarımsal","C1"],
+["aide","n.","yardımcı","C1"],
+["albeit","conj.","gerçi, olsa da","C1"],
+["alert","adj.","tetikte, uyanık","C1"],
+["alien","adj.","yabancı","C1"],
+["align","v.","hizalamak, uyumlu hale getirmek","C1"],
+["alignment","n.","hizalama, uyum","C1"],
+["alike","adv.","benzer şekilde","C1"],
+["allegation","n.","iddia","C1"],
+["allege","v.","iddia etmek","C1"],
+["allegedly","adv.","iddiaya göre","C1"],
+["alliance","n.","ittifak","C1"],
+["allocate","v.","tahsis etmek","C1"],
+["allocation","n.","tahsis","C1"],
+["allowance","n.","ödenek, harçlık","C1"],
+["ally","n.","müttefik","C1"],
+["aluminium","n.","alüminyum","C1"],
+["amateur","n.","amatör","C1"],
+["ambassador","n.","büyükelçi","C1"],
+["amend","v.","değiştirmek, düzeltmek","C1"],
+["amendment","n.","değişiklik, ek madde","C1"],
+["amid","prep.","ortasında","C1"],
+["analogy","n.","benzetme, analoji","C1"],
+["anchor","n.","çapa, spiker","C1"],
+["angel","n.","melek","C1"],
+["anonymous","adj.","anonim, isimsiz","C1"],
+["apparatus","n.","aygıt, cihaz","C1"],
+["appealing","adj.","çekici","C1"],
+["appetite","n.","iştah","C1"],
+["applaud","v.","alkışlamak","C1"],
+["applicable","adj.","uygulanabilir","C1"],
+["appoint","v.","atamak","C1"],
+["appreciation","n.","takdir","C1"],
+["arbitrary","adj.","keyfi","C1"],
+["architectural","adj.","mimari","C1"],
+["archive","n.","arşiv","C1"],
+["arena","n.","arena","C1"],
+["arguably","adv.","tartışmasız denilebilir ki","C1"],
+["arm","v.","silahlandırmak","C1"],
+["array","n.","dizi, sıra","C1"],
+["articulate","v.","açıkça ifade etmek","C1"],
+["ash","n.","kül","C1"],
+["aspiration","n.","özlem, hedef","C1"],
+["aspire","v.","özlemini duymak, hedeflemek","C1"],
+["assassination","n.","suikast","C1"],
+["assault","n.","saldırı","C1"],
+["assemble","v.","bir araya getirmek, monte etmek","C1"],
+["assembly","n.","meclis, montaj","C1"],
+["assert","v.","iddia etmek, öne sürmek","C1"],
+["assertion","n.","iddia","C1"],
+["assurance","n.","güvence","C1"],
+["asylum","n.","sığınma, iltica","C1"],
+["atrocity","n.","vahşet, zulüm","C1"],
+["attain","v.","elde etmek, ulaşmak","C1"],
+["attendance","n.","katılım, devam","C1"],
+["attorney","n.","avukat","C1"],
+["attribute","v.","atfetmek","C1"],
+["audit","n.","denetim","C1"],
+["authentic","adj.","otantik, özgün","C1"],
+["authorize","v.","yetki vermek","C1"],
+["auto","n.","otomobil","C1"],
+["autonomy","n.","özerklik","C1"],
+["availability","n.","mevcudiyet, kullanılabilirlik","C1"],
+["await","v.","beklemek","C1"],
+["backdrop","n.","arka plan","C1"],
+["backing","n.","destek","C1"],
+["backup","n.","yedek","C1"],
+["bail","n.","kefalet","C1"],
+["ballot","n.","oy pusulası","C1"],
+["banner","n.","pankart, afiş","C1"],
+["bare","adj.","çıplak, boş","C1"],
+["barrel","n.","varil","C1"],
+["bass","n.","bas (ses/balık)","C1"],
+["bat","v.","vurmak (kriket/beyzbol)","C1"],
+["battlefield","n.","savaş alanı","C1"],
+["bay","n.","koy","C1"],
+["beam","n.","kiriş, ışın","C1"],
+["beast","n.","canavar, hayvan","C1"],
+["behalf","n.","adına, namına","C1"],
+["beloved","adj.","sevgili","C1"],
+["bench","n.","bank, sıra","C1"],
+["benchmark","n.","kıyaslama ölçütü","C1"],
+["beneath","prep.","altında","C1"],
+["beneficiary","n.","yararlanıcı, hak sahibi","C1"],
+["betray","v.","ihanet etmek","C1"],
+["bind","v.","bağlamak","C1"],
+["biography","n.","biyografi","C1"],
+["bishop","n.","piskopos","C1"],
+["bizarre","adj.","tuhaf, acayip","C1"],
+["blade","n.","bıçak ağzı, palet","C1"],
+["blast","n.","patlama","C1"],
+["bleed","v.","kanamak","C1"],
+["blend","v.","karıştırmak, harmanlamak","C1"],
+["bless","v.","kutsamak","C1"],
+["blessing","n.","nimet, kutsama","C1"],
+["boast","v.","övünmek","C1"],
+["bonus","n.","ikramiye","C1"],
+["boom","n.","patlama, hızlı büyüme","C1"],
+["bounce","v.","sekmek, zıplamak","C1"],
+["boundary","n.","sınır","C1"],
+["bow","v.","eğilmek, saygıyla eğilmek","C1"],
+["breach","n.","ihlal","C1"],
+["breakdown","n.","bozulma, çöküş","C1"],
+["breakthrough","n.","atılım, çığır açan gelişme","C1"],
+["breed","v.","üretmek, yetiştirmek","C1"],
+["broadband","n.","geniş bant","C1"],
+["browser","n.","tarayıcı","C1"],
+["brutal","adj.","vahşi, acımasız","C1"],
+["buck","n.","dolar (argo)","C1"],
+["buddy","n.","dost, arkadaş","C1"],
+["buffer","n.","tampon","C1"],
+["bulk","n.","büyük miktar, toplu","C1"],
+["burden","n.","yük","C1"],
+["bureaucracy","n.","bürokrasi","C1"],
+["burial","n.","gömme, defin","C1"],
+["burst","v.","patlamak","C1"],
+["cabinet","n.","kabine, dolap","C1"],
+["calculation","n.","hesaplama","C1"],
+["canvas","n.","tuval, kanvas","C1"],
+["capability","n.","yetenek, kapasite","C1"],
+["capitalism","n.","kapitalizm","C1"],
+["capitalist","adj.","kapitalist","C1"],
+["cargo","n.","kargo, yük","C1"],
+["carriage","n.","vagon, araba","C1"],
+["carve","v.","oymak","C1"],
+["casino","n.","kumarhane","C1"],
+["casualty","n.","zayiat, kazazede","C1"],
+["catalogue","n.","katalog","C1"],
+["cater","v.","hizmet vermek, ihtiyaç karşılamak","C1"],
+["cattle","n.","sığır","C1"],
+["caution","n.","dikkat, ihtiyat","C1"],
+["cautious","adj.","dikkatli, ihtiyatlı","C1"],
+["cease","v.","durdurmak, kesmek","C1"],
+["cemetery","n.","mezarlık","C1"],
+["chamber","n.","oda, meclis","C1"],
+["chaos","n.","kaos","C1"],
+["characterize","v.","nitelendirmek","C1"],
+["charm","n.","cazibe, çekicilik","C1"],
+["charter","n.","tüzük, kiralama","C1"],
+["chronic","adj.","kronik","C1"],
+["chunk","n.","büyük parça","C1"],
+["circulate","v.","dolaşmak, dolaştırmak","C1"],
+["circulation","n.","dolaşım, tiraj","C1"],
+["citizenship","n.","vatandaşlık","C1"],
+["civic","adj.","vatandaşlıkla ilgili, sivil","C1"],
+["civilian","n.","sivil","C1"],
+["clarity","n.","netlik","C1"],
+["clash","n.","çatışma","C1"],
+["classification","n.","sınıflandırma","C1"],
+["cling","v.","yapışmak, sarılmak","C1"],
+["clinical","adj.","klinik","C1"],
+["closure","n.","kapanış, kapatma","C1"],
+["cluster","n.","küme","C1"],
+["coalition","n.","koalisyon","C1"],
+["coastal","adj.","kıyıya ait","C1"],
+["cocktail","n.","kokteyl","C1"],
+["cognitive","adj.","bilişsel","C1"],
+["coincide","v.","çakışmak, denk gelmek","C1"],
+["collaborate","v.","işbirliği yapmak","C1"],
+["collaboration","n.","işbirliği","C1"],
+["collective","adj.","toplu, ortak","C1"],
+["collision","n.","çarpışma","C1"],
+["colonial","adj.","sömürgeci","C1"],
+["columnist","n.","köşe yazarı","C1"],
+["combat","n.","muharebe, savaş","C1"],
+["commence","v.","başlamak","C1"],
+["commentary","n.","yorum, spiker anlatımı","C1"],
+["commentator","n.","yorumcu, spiker","C1"],
+["commerce","n.","ticaret","C1"],
+["commissioner","n.","komiser, yetkili","C1"],
+["commodity","n.","emtia, mal","C1"],
+["communist","adj.","komünist","C1"],
+["companion","n.","yoldaş, arkadaş","C1"],
+["comparable","adj.","karşılaştırılabilir","C1"],
+["compassion","n.","şefkat","C1"],
+["compel","v.","zorlamak","C1"],
+["compelling","adj.","zorlayıcı, ikna edici","C1"],
+["compensate","v.","tazmin etmek, telafi etmek","C1"],
+["compensation","n.","tazminat","C1"],
+["competence","n.","yeterlilik","C1"],
+["competent","adj.","yetkin","C1"],
+["compile","v.","derlemek","C1"],
+["complement","v.","tamamlamak","C1"],
+["complexity","n.","karmaşıklık","C1"],
+["compliance","n.","uyum, uyma","C1"],
+["complication","n.","komplikasyon, karmaşıklaşma","C1"],
+["comply","v.","uymak","C1"],
+["composition","n.","kompozisyon, bileşim","C1"],
+["compromise","n.","uzlaşma","C1"],
+["compute","v.","hesaplamak","C1"],
+["conceal","v.","gizlemek","C1"],
+["concede","v.","kabul etmek, itiraf etmek","C1"],
+["conceive","v.","tasarlamak, hamile kalmak","C1"],
+["conception","n.","kavrayış, gebe kalma","C1"],
+["concession","n.","taviz, imtiyaz","C1"],
+["condemn","v.","kınamak","C1"],
+["confer","v.","danışmak, vermek (unvan)","C1"],
+["confession","n.","itiraf","C1"],
+["configuration","n.","yapılandırma","C1"],
+["confine","v.","sınırlamak, kapatmak","C1"],
+["confirmation","n.","onay","C1"],
+["confront","v.","yüzleşmek","C1"],
+["confrontation","n.","yüzleşme, çatışma","C1"],
+["congratulate","v.","tebrik etmek","C1"],
+["congregation","n.","cemaat","C1"],
+["congressional","adj.","kongreye ait","C1"],
+["conquer","v.","fethetmek","C1"],
+["conscience","n.","vicdan","C1"],
+["consciousness","n.","bilinç","C1"],
+["consecutive","adj.","ardışık","C1"],
+["consensus","n.","fikir birliği","C1"],
+["consent","n.","onay, rıza","C1"],
+["conserve","v.","korumak","C1"],
+["consistency","n.","tutarlılık","C1"],
+["consolidate","v.","pekiştirmek, birleştirmek","C1"],
+["constituency","n.","seçim bölgesi","C1"],
+["constitute","v.","oluşturmak","C1"],
+["constitution","n.","anayasa","C1"],
+["constitutional","adj.","anayasal","C1"],
+["constraint","n.","kısıtlama","C1"],
+["consultation","n.","danışma","C1"],
+["contemplate","v.","derin düşünmek","C1"],
+["contempt","n.","hor görme, küçümseme","C1"],
+["contend","v.","iddia etmek, mücadele etmek","C1"],
+["contender","n.","aday, rakip","C1"],
+["content","adj.","memnun, hoşnut","C1"],
+["contention","n.","iddia, çekişme","C1"],
+["continually","adv.","sürekli olarak","C1"],
+["contractor","n.","müteahhit","C1"],
+["contradiction","n.","çelişki","C1"],
+["contrary","adj.","aksi, ters","C1"],
+["contributor","n.","katkıda bulunan kişi","C1"],
+["conversion","n.","dönüşüm","C1"],
+["convict","v.","mahkum etmek","C1"],
+["conviction","n.","mahkumiyet, inanç","C1"],
+["cooperate","v.","işbirliği yapmak","C1"],
+["cooperative","adj.","işbirlikçi","C1"],
+["coordinate","v.","koordine etmek","C1"],
+["coordination","n.","koordinasyon","C1"],
+["coordinator","n.","koordinatör","C1"],
+["cop","n.","polis","C1"],
+["copper","n.","bakır","C1"],
+["copyright","n.","telif hakkı","C1"],
+["correction","n.","düzeltme","C1"],
+["correlate","v.","ilişkilendirmek","C1"],
+["correlation","n.","korelasyon, ilişki","C1"],
+["correspond","v.","yazışmak, uyuşmak","C1"],
+["correspondence","n.","yazışma","C1"],
+["correspondent","n.","muhabir","C1"],
+["corresponding","adj.","karşılık gelen","C1"],
+["corrupt","adj.","yozlaşmış, rüşvetçi","C1"],
+["corruption","n.","yolsuzluk","C1"],
+["costly","adj.","pahalı, maliyetli","C1"],
+["councillor","n.","meclis üyesi","C1"],
+["counselling","n.","danışmanlık","C1"],
+["counsellor","n.","danışman","C1"],
+["counter","v.","karşı koymak","C1"],
+["counterpart","n.","muadil","C1"],
+["countless","adj.","sayısız","C1"],
+["coup","n.","darbe","C1"],
+["courtesy","n.","nezaket","C1"],
+["craft","v.","özenle yapmak, ustalıkla yapmak","C1"],
+["crawl","v.","emeklemek, sürünmek","C1"],
+["creator","n.","yaratıcı","C1"],
+["credibility","n.","güvenilirlik","C1"],
+["credible","adj.","güvenilir, inandırıcı","C1"],
+["creep","v.","sinsice ilerlemek","C1"],
+["critique","n.","eleştiri","C1"],
+["crown","n.","taç","C1"],
+["crude","adj.","kaba, ham","C1"],
+["crush","v.","ezmek","C1"],
+["crystal","n.","kristal","C1"],
+["cult","n.","tarikat, kült","C1"],
+["cultivate","v.","yetiştirmek, geliştirmek","C1"],
+["curiosity","n.","merak","C1"],
+["custody","n.","gözaltı, velayet","C1"],
+["cutting","n.","kesme, kesim","C1"],
+["cynical","adj.","kinik, alaycı","C1"],
+["dam","n.","baraj","C1"],
+["damaging","adj.","zarar verici","C1"],
+["dawn","n.","şafak","C1"],
+["debris","n.","enkaz, döküntü","C1"],
+["debut","n.","ilk çıkış, prömiyer","C1"],
+["decision-making","n.","karar verme","C1"],
+["decisive","adj.","kesin, kararlı","C1"],
+["declaration","n.","bildiri, deklarasyon","C1"],
+["dedicated","adj.","kendini adamış","C1"],
+["dedication","n.","özveri, adanmışlık","C1"],
+["deed","n.","eylem, tapu","C1"],
+["deem","v.","saymak, addetmek","C1"],
+["default","n.","varsayılan, temerrüt","C1"],
+["defect","n.","kusur","C1"],
+["defensive","adj.","savunmacı","C1"],
+["deficiency","n.","eksiklik","C1"],
+["deficit","n.","açık, eksi bakiye","C1"],
+["defy","v.","karşı gelmek, meydan okumak","C1"],
+["delegate","n.","delege","C1"],
+["delegation","n.","heyet, delegasyon","C1"],
+["delicate","adj.","hassas, narin","C1"],
+["demon","n.","şeytan, iblis","C1"],
+["denial","n.","inkar","C1"],
+["denounce","v.","kınamak, ihbar etmek","C1"],
+["dense","adj.","yoğun","C1"],
+["density","n.","yoğunluk","C1"],
+["dependence","n.","bağımlılık","C1"],
+["depict","v.","tasvir etmek","C1"],
+["deploy","v.","konuşlandırmak","C1"],
+["deployment","n.","konuşlandırma","C1"],
+["deposit","v.","depozito yatırmak, biriktirmek","C1"],
+["deprive","v.","mahrum etmek","C1"],
+["deputy","n.","milletvekili, yardımcı","C1"],
+["descend","v.","inmek","C1"],
+["descent","n.","iniş, soy","C1"],
+["designate","v.","atamak, belirlemek","C1"],
+["desirable","adj.","arzu edilen","C1"],
+["desktop","n.","masaüstü","C1"],
+["destructive","adj.","yıkıcı","C1"],
+["detain","v.","gözaltına almak","C1"],
+["detection","n.","tespit","C1"],
+["detention","n.","gözaltı, alıkoyma","C1"],
+["deteriorate","v.","kötüleşmek","C1"],
+["devastate","v.","yıkıma uğratmak","C1"],
+["devil","n.","şeytan","C1"],
+["devise","v.","tasarlamak, icat etmek","C1"],
+["diagnose","v.","teşhis etmek","C1"],
+["diagnosis","n.","teşhis","C1"],
+["dictate","v.","dikte etmek, emretmek","C1"],
+["dictator","n.","diktatör","C1"],
+["differentiate","v.","ayırt etmek, farklılaştırmak","C1"],
+["dignity","n.","onur","C1"],
+["dilemma","n.","ikilem","C1"],
+["dimension","n.","boyut","C1"],
+["diminish","v.","azaltmak, küçültmek","C1"],
+["dip","v.","daldırmak, batırmak","C1"],
+["diplomat","n.","diplomat","C1"],
+["diplomatic","n.","diplomatik","C1"],
+["directory","n.","dizin, rehber","C1"],
+["disastrous","adj.","felaket getiren","C1"],
+["discard","v.","atmak, çıkarmak","C1"],
+["discharge","v.","salıvermek, taburcu etmek","C1"],
+["disclose","v.","açıklamak, ifşa etmek","C1"],
+["disclosure","n.","ifşa, açıklama","C1"],
+["discourse","n.","söylem","C1"],
+["discretion","n.","takdir yetkisi, sağduyu","C1"],
+["discrimination","n.","ayrımcılık","C1"],
+["dismissal","n.","işten çıkarma, reddetme","C1"],
+["displace","v.","yerinden etmek","C1"],
+["disposal","n.","imha, elden çıkarma","C1"],
+["dispose","v.","atmak, elden çıkarmak","C1"],
+["dispute","n.","anlaşmazlık","C1"],
+["disrupt","v.","aksatmak, bozmak","C1"],
+["disruption","n.","aksama, kesinti","C1"],
+["dissolve","v.","dağılmak, çözülmek","C1"],
+["distinction","n.","ayrım, farklılık","C1"],
+["distinctive","adj.","kendine özgü, ayırt edici","C1"],
+["distort","v.","çarpıtmak","C1"],
+["distress","n.","sıkıntı, üzüntü","C1"],
+["disturbing","adj.","rahatsız edici","C1"],
+["divert","v.","yönünü değiştirmek, saptırmak","C1"],
+["divine","adj.","ilahi","C1"],
+["doctrine","n.","doktrin","C1"],
+["documentation","n.","belgeleme, dokümantasyon","C1"],
+["domain","n.","alan, etki alanı","C1"],
+["dominance","n.","üstünlük, egemenlik","C1"],
+["donor","n.","bağışçı","C1"],
+["dose","n.","doz","C1"],
+["drain","v.","boşaltmak, akıtmak","C1"],
+["drift","v.","sürüklenmek","C1"],
+["driving","adj.","itici, sürücü","C1"],
+["drown","v.","boğulmak","C1"],
+["dual","adj.","ikili, çift","C1"],
+["dub","v.","dublaj yapmak, lakap takmak","C1"],
+["dumb","adj.","aptal, dilsiz","C1"],
+["duo","n.","ikili","C1"],
+["dynamic","n.","dinamik, güç dengesi","C1"],
+["eager","adj.","istekli, hevesli","C1"],
+["earnings","n.","kazanç","C1"],
+["ease","n.","kolaylık, rahatlık","C1"],
+["echo","v.","yankılanmak","C1"],
+["ecological","adj.","ekolojik","C1"],
+["educator","n.","eğitimci","C1"],
+["effectiveness","n.","etkinlik","C1"],
+["efficiency","n.","verimlilik","C1"],
+["ego","n.","ego, benlik","C1"],
+["elaborate","adj.","ayrıntılı, özenli","C1"],
+["electoral","adj.","seçimle ilgili","C1"],
+["elevate","v.","yükseltmek","C1"],
+["eligible","adj.","uygun, hak sahibi","C1"],
+["elite","n.","seçkin, elit","C1"],
+["embark","v.","girişmek, gemiye binmek","C1"],
+["embarrassment","n.","utanç, mahcubiyet","C1"],
+["embassy","n.","büyükelçilik","C1"],
+["embed","v.","gömmek, yerleştirmek","C1"],
+["embody","v.","somutlaştırmak, temsil etmek","C1"],
+["emergence","n.","ortaya çıkış","C1"],
+["empirical","adj.","deneysel, ampirik","C1"],
+["empower","v.","güçlendirmek, yetki vermek","C1"],
+["enact","v.","yasalaştırmak","C1"],
+["encompass","v.","kapsamak, içine almak","C1"],
+["encouragement","n.","teşvik, cesaretlendirme","C1"],
+["encouraging","adj.","cesaret verici","C1"],
+["endeavour","n.","gayret, çaba","C1"],
+["endless","adj.","sonsuz","C1"],
+["endorse","v.","onaylamak, desteklemek","C1"],
+["endorsement","n.","onay, destek","C1"],
+["endure","v.","dayanmak, katlanmak","C1"],
+["enforce","v.","uygulamak, zorlamak (kanun)","C1"],
+["enforcement","n.","uygulama, yaptırım","C1"],
+["engagement","n.","nişan, bağlılık, katılım","C1"],
+["engaging","adj.","ilgi çekici","C1"],
+["enquire","v.","sormak, soruşturmak","C1"],
+["enrich","v.","zenginleştirmek","C1"],
+["enrol","v.","kaydolmak","C1"],
+["ensue","v.","ardından gelmek","C1"],
+["enterprise","n.","girişim, işletme","C1"],
+["enthusiast","n.","tutkun, meraklı","C1"],
+["entitle","v.","hak tanımak, unvan vermek","C1"],
+["entity","n.","varlık, kurum","C1"],
+["epidemic","n.","salgın","C1"],
+["equality","n.","eşitlik","C1"],
+["equation","n.","denklem","C1"],
+["erect","v.","dikmek, inşa etmek","C1"],
+["escalate","v.","tırmanmak, şiddetlenmek","C1"],
+["essence","n.","öz, esas","C1"],
+["establishment","n.","kuruluş, yerleşik düzen","C1"],
+["eternal","adj.","ebedi","C1"],
+["evacuate","v.","tahliye etmek","C1"],
+["evoke","v.","çağrıştırmak, uyandırmak","C1"],
+["evolutionary","adj.","evrimsel","C1"],
+["exaggerate","v.","abartmak","C1"],
+["excellence","n.","mükemmellik","C1"],
+["exceptional","adj.","olağanüstü, istisnai","C1"],
+["excess","n.","aşırılık, fazlalık","C1"],
+["exclusion","n.","dışlama","C1"],
+["exclusive","adj.","münhasır, özel","C1"],
+["exclusively","adv.","yalnızca, sadece","C1"],
+["execute","v.","idam etmek, yürütmek","C1"],
+["execution","n.","idam, yürütme","C1"],
+["exert","v.","uygulamak, sarf etmek","C1"],
+["exile","n.","sürgün","C1"],
+["expenditure","n.","harcama","C1"],
+["experimental","adj.","deneysel","C1"],
+["expire","v.","süresi dolmak","C1"],
+["explicit","adj.","açık, net","C1"],
+["explicitly","adv.","açıkça","C1"],
+["exploitation","n.","sömürü, istismar","C1"],
+["explosive","adj.","patlayıcı","C1"],
+["extract","v.","çıkarmak, çekmek","C1"],
+["extremist","n.","aşırıcı","C1"],
+["facilitate","v.","kolaylaştırmak","C1"],
+["faction","n.","hizip, fraksiyon","C1"],
+["faculty","n.","fakülte, yetenek","C1"],
+["fade","v.","solmak, kaybolmak","C1"],
+["fairness","n.","adalet, doğruluk","C1"],
+["fatal","adj.","ölümcül","C1"],
+["fate","n.","kader","C1"],
+["favourable","adj.","olumlu, elverişli","C1"],
+["feat","n.","başarı, kahramanlık","C1"],
+["feeding","n.","besleme","C1"],
+["feminist","adj.","feminist","C1"],
+["fibre","n.","lif","C1"],
+["fierce","adj.","şiddetli, azılı","C1"],
+["film-maker","n.","film yapımcısı","C1"],
+["filter","n.","filtre","C1"],
+["fine","n.","para cezası","C1"],
+["firearm","n.","ateşli silah","C1"],
+["fit","n.","nöbet, kriz","C1"],
+["fixture","n.","sabit tesisat, karşılaşma","C1"],
+["flaw","n.","kusur","C1"],
+["flawed","adj.","kusurlu","C1"],
+["flee","v.","kaçmak","C1"],
+["fleet","n.","filo","C1"],
+["flesh","n.","et, ten","C1"],
+["flexibility","n.","esneklik","C1"],
+["flourish","v.","gelişmek, serpilmek","C1"],
+["fluid","n.","sıvı","C1"],
+["footage","n.","film görüntüsü","C1"],
+["foreigner","n.","yabancı","C1"],
+["forge","v.","sahtesini yapmak, oluşturmak","C1"],
+["formula","n.","formül","C1"],
+["formulate","v.","formüle etmek","C1"],
+["forth","adv.","ileriye, dışarıya","C1"],
+["forthcoming","adj.","yaklaşan, gelecek olan","C1"],
+["foster","v.","teşvik etmek, beslemek","C1"],
+["fragile","adj.","kırılgan","C1"],
+["franchise","n.","bayilik, imtiyaz","C1"],
+["frankly","adv.","açıkçası","C1"],
+["frustrated","adj.","hayal kırıklığına uğramış","C1"],
+["frustrating","adj.","sinir bozucu","C1"],
+["frustration","n.","hayal kırıklığı","C1"],
+["functional","adj.","işlevsel","C1"],
+["fundraising","n.","bağış toplama","C1"],
+["funeral","n.","cenaze","C1"],
+["gallon","n.","galon","C1"],
+["gambling","n.","kumar","C1"],
+["gathering","n.","toplantı, buluşma","C1"],
+["gaze","n.","bakış","C1"],
+["gear","n.","vites, ekipman","C1"],
+["generic","adj.","jenerik, genel","C1"],
+["genocide","n.","soykırım","C1"],
+["glance","n.","kısa bakış","C1"],
+["glimpse","n.","gözucuyla bakış","C1"],
+["glorious","adj.","şanlı, muhteşem","C1"],
+["glory","n.","şan, zafer","C1"],
+["governance","n.","yönetişim","C1"],
+["grace","n.","zarafet, lütuf","C1"],
+["grasp","v.","kavramak","C1"],
+["grave","n.","mezar","C1"],
+["grave","adj.","ciddi, vahim","C1"],
+["gravity","n.","yer çekimi, ciddiyet","C1"],
+["grid","n.","şebeke, ızgara","C1"],
+["grief","n.","keder","C1"],
+["grin","v.","sırıtmak","C1"],
+["grind","v.","öğütmek","C1"],
+["grip","n.","kavrama, tutuş","C1"],
+["guerrilla","n.","gerilla","C1"],
+["guidance","n.","rehberlik","C1"],
+["guilt","n.","suçluluk","C1"],
+["gut","n.","bağırsak, iç güdü","C1"],
+["hail","v.","selamlamak, övmek","C1"],
+["halfway","adv.","yarı yolda","C1"],
+["halt","v.","durdurmak","C1"],
+["handful","n.","avuç dolusu, az sayıda","C1"],
+["handling","n.","ele alma, kullanım","C1"],
+["handy","adj.","kullanışlı, el altında","C1"],
+["harassment","n.","taciz","C1"],
+["hardware","n.","donanım","C1"],
+["harmony","n.","uyum","C1"],
+["harsh","adj.","sert, acımasız","C1"],
+["harvest","n.","hasat","C1"],
+["hatred","n.","nefret","C1"],
+["haunt","v.","musallat olmak, rahatsız etmek","C1"],
+["hazard","n.","tehlike","C1"],
+["heighten","v.","artırmak, şiddetlendirmek","C1"],
+["heritage","n.","miras","C1"],
+["hierarchy","n.","hiyerarşi","C1"],
+["high-profile","adj.","göz önünde olan, önemli","C1"],
+["hint","n.","ipucu","C1"],
+["homeland","n.","anavatan","C1"],
+["hook","v.","kancaya takmak","C1"],
+["hopeful","adj.","umutlu","C1"],
+["horizon","n.","ufuk","C1"],
+["horn","n.","boynuz, korna","C1"],
+["hostage","n.","rehine","C1"],
+["hostile","adj.","düşmanca","C1"],
+["hostility","n.","düşmanlık","C1"],
+["humanitarian","adj.","insani","C1"],
+["humanity","n.","insanlık","C1"],
+["humble","adj.","alçakgönüllü","C1"],
+["hydrogen","n.","hidrojen","C1"],
+["identification","n.","kimlik tespiti, kimlik","C1"],
+["ideological","adj.","ideolojik","C1"],
+["ideology","n.","ideoloji","C1"],
+["idiot","n.","aptal, salak","C1"],
+["ignorance","n.","cehalet","C1"],
+["imagery","n.","imge, betimleme","C1"],
+["immense","adj.","muazzam","C1"],
+["imminent","adj.","yakın, an meselesi","C1"],
+["implementation","n.","uygulama","C1"],
+["imprison","v.","hapsetmek","C1"],
+["imprisonment","n.","hapis","C1"],
+["inability","n.","yetersizlik, acizlik","C1"],
+["inadequate","adj.","yetersiz","C1"],
+["inappropriate","adj.","uygunsuz","C1"],
+["incidence","n.","görülme sıklığı","C1"],
+["inclined","adj.","eğilimli","C1"],
+["inclusion","n.","dahil etme, kapsayıcılık","C1"],
+["incur","v.","maruz kalmak, uğramak","C1"],
+["indicator","n.","gösterge","C1"],
+["indictment","n.","suçlama, iddianame","C1"],
+["indigenous","adj.","yerli","C1"],
+["induce","v.","neden olmak, ikna etmek","C1"],
+["indulge","v.","kendini kaptırmak, göz yummak","C1"],
+["inequality","n.","eşitsizlik","C1"],
+["infamous","adj.","adı kötüye çıkmış","C1"],
+["infant","n.","bebek","C1"],
+["infect","v.","enfekte etmek, bulaştırmak","C1"],
+["inflict","v.","zarar vermek, uğratmak","C1"],
+["influential","adj.","etkili, nüfuzlu","C1"],
+["inherent","adj.","doğuştan, içkin","C1"],
+["inhibit","v.","engellemek, önlemek","C1"],
+["initiate","v.","başlatmak","C1"],
+["inject","v.","enjekte etmek","C1"],
+["injection","n.","enjeksiyon, iğne","C1"],
+["injustice","n.","adaletsizlik","C1"],
+["inmate","n.","mahkum","C1"],
+["insertion","n.","ekleme, sokma","C1"],
+["insider","n.","içeriden biri","C1"],
+["inspect","v.","denetlemek, incelemek","C1"],
+["inspection","n.","denetim","C1"],
+["inspiration","n.","ilham","C1"],
+["instinct","n.","içgüdü","C1"],
+["institutional","adj.","kurumsal","C1"],
+["instruct","v.","talimat vermek, öğretmek","C1"],
+["instrumental","adj.","etkili, araçsal","C1"],
+["insufficient","adj.","yetersiz","C1"],
+["insult","n.","hakaret","C1"],
+["intact","adj.","bozulmamış, sağlam","C1"],
+["intake","n.","alım","C1"],
+["integral","adj.","ayrılmaz, bütünleyici","C1"],
+["integrated","adj.","entegre, bütünleşik","C1"],
+["integration","n.","entegrasyon, bütünleşme","C1"],
+["integrity","n.","dürüstlük, bütünlük","C1"],
+["intellectual","n.","aydın, entelektüel","C1"],
+["intensify","v.","yoğunlaştırmak","C1"],
+["intensity","n.","yoğunluk","C1"],
+["intensive","adj.","yoğun","C1"],
+["intent","n.","niyet","C1"],
+["interactive","adj.","etkileşimli","C1"],
+["interface","n.","arayüz","C1"],
+["interfere","v.","müdahale etmek","C1"],
+["interference","n.","müdahale, girişim","C1"],
+["interim","adj.","geçici, ara","C1"],
+["interior","adj.","iç, iç kısım","C1"],
+["intermediate","adj.","orta düzey, ara","C1"],
+["intervene","v.","müdahale etmek","C1"],
+["intervention","n.","müdahale","C1"],
+["intimate","adj.","samimi, mahrem","C1"],
+["intriguing","adj.","merak uyandıran","C1"],
+["investigator","n.","müfettiş, dedektif","C1"],
+["invisible","adj.","görünmez","C1"],
+["invoke","v.","başvurmak, çağırmak","C1"],
+["involvement","n.","dahil olma, katılım","C1"],
+["ironic","adj.","ironik","C1"],
+["ironically","adv.","ironik biçimde","C1"],
+["irony","n.","ironi","C1"],
+["irrelevant","adj.","alakasız","C1"],
+["isolation","n.","izolasyon, yalnızlık","C1"],
+["judicial","adj.","adli, yargısal","C1"],
+["junction","n.","kavşak","C1"],
+["jurisdiction","n.","yargı yetkisi","C1"],
+["just","adj.","adil","C1"],
+["justification","n.","gerekçe, haklı çıkarma","C1"],
+["kidnap","v.","kaçırmak (insan)","C1"],
+["kidney","n.","böbrek","C1"],
+["kingdom","n.","krallık","C1"],
+["lad","n.","delikanlı, oğlan","C1"],
+["landlord","n.","ev sahibi","C1"],
+["landmark","n.","simge yapı, dönüm noktası","C1"],
+["lap","n.","kucak, tur","C1"],
+["large-scale","adj.","büyük ölçekli","C1"],
+["laser","n.","lazer","C1"],
+["latter","adj.","sonraki, ikincisi","C1"],
+["lawn","n.","çim alan","C1"],
+["lawsuit","n.","dava","C1"],
+["layout","n.","yerleşim, düzen","C1"],
+["leak","v.","sızmak, sızdırmak","C1"],
+["leap","v.","sıçramak","C1"],
+["legacy","n.","miras","C1"],
+["legendary","adj.","efsanevi","C1"],
+["legislation","n.","mevzuat, yasama","C1"],
+["legislative","adj.","yasama ile ilgili","C1"],
+["legislature","n.","yasama organı","C1"],
+["legitimate","adj.","meşru","C1"],
+["lengthy","adj.","uzun, uzun süreli","C1"],
+["lesbian","adj.","lezbiyen","C1"],
+["lesser","adj.","daha az, ikincil","C1"],
+["lethal","adj.","öldürücü","C1"],
+["liable","adj.","sorumlu, muhtemel","C1"],
+["liberal","adj.","liberal","C1"],
+["liberation","n.","kurtuluş","C1"],
+["liberty","n.","özgürlük","C1"],
+["license","v.","lisans vermek, ruhsatlandırmak","C1"],
+["lifelong","adj.","ömür boyu","C1"],
+["likelihood","n.","olasılık","C1"],
+["limb","n.","uzuv","C1"],
+["linear","adj.","doğrusal","C1"],
+["line-up","n.","kadro, dizilim","C1"],
+["linger","v.","oyalanmak, uzun sürmek","C1"],
+["listing","n.","liste, ilan","C1"],
+["literacy","n.","okuryazarlık","C1"],
+["liver","n.","karaciğer","C1"],
+["lobby","n.","lobi","C1"],
+["log","n.","kütük, kayıt","C1"],
+["logic","n.","mantık","C1"],
+["long-standing","adj.","uzun süredir var olan","C1"],
+["long-time","adj.","uzun süreli","C1"],
+["loom","v.","belirmek, tehdit oluşturmak","C1"],
+["loop","n.","döngü","C1"],
+["loyalty","n.","sadakat","C1"],
+["machinery","n.","makine, mekanizma","C1"],
+["magical","adj.","büyülü","C1"],
+["magistrate","n.","sulh hakimi","C1"],
+["magnetic","adj.","manyetik","C1"],
+["magnitude","n.","büyüklük, önem","C1"],
+["mainland","n.","anakara","C1"],
+["mainstream","n.","ana akım","C1"],
+["maintenance","n.","bakım","C1"],
+["major","n.","binbaşı, ana dal (üniversite)","C1"],
+["mandate","n.","yetki, görev","C1"],
+["mandatory","adj.","zorunlu","C1"],
+["manifest","v.","açığa çıkmak, tezahür etmek","C1"],
+["manipulate","v.","manipüle etmek","C1"],
+["manipulation","n.","manipülasyon","C1"],
+["manuscript","n.","el yazması","C1"],
+["march","n.","yürüyüş","C1"],
+["marginal","adj.","marjinal, önemsiz","C1"],
+["marine","adj.","denizle ilgili","C1"],
+["marketplace","n.","pazar yeri","C1"],
+["mask","n.","maske","C1"],
+["massacre","n.","katliam","C1"],
+["mathematical","adj.","matematiksel","C1"],
+["mature","adj.","olgun","C1"],
+["maximize","v.","en üst düzeye çıkarmak","C1"],
+["meaningful","adj.","anlamlı","C1"],
+["meantime","n.","bu arada, aradaki süre","C1"],
+["medieval","adj.","ortaçağa ait","C1"],
+["meditation","n.","meditasyon","C1"],
+["melody","n.","melodi","C1"],
+["memo","n.","not, muhtıra","C1"],
+["memoir","n.","anı, hatırat","C1"],
+["memorial","n.","anıt","C1"],
+["mentor","n.","akıl hocası","C1"],
+["merchant","n.","tüccar","C1"],
+["mercy","n.","merhamet","C1"],
+["mere","adj.","sadece, salt","C1"],
+["merely","adv.","sadece","C1"],
+["merge","v.","birleşmek","C1"],
+["merger","n.","birleşme (şirket)","C1"],
+["merit","n.","liyakat, değer","C1"],
+["methodology","n.","metodoloji","C1"],
+["midst","n.","orta, ortasında","C1"],
+["migration","n.","göç","C1"],
+["militant","n.","militan","C1"],
+["militia","n.","milis","C1"],
+["mill","n.","değirmen, fabrika","C1"],
+["minimal","adj.","asgari, en az","C1"],
+["minimize","v.","en aza indirmek","C1"],
+["mining","n.","madencilik","C1"],
+["ministry","n.","bakanlık","C1"],
+["minute","adj.","çok küçük, ayrıntılı","C1"],
+["miracle","n.","mucize","C1"],
+["misery","n.","sefalet, acı","C1"],
+["misleading","adj.","yanıltıcı","C1"],
+["missile","n.","füze","C1"],
+["mob","n.","kalabalık, ayaktakımı","C1"],
+["mobility","n.","hareketlilik","C1"],
+["mobilize","v.","seferber etmek","C1"],
+["moderate","adj.","ılımlı, orta düzeyde","C1"],
+["modification","n.","değişiklik","C1"],
+["momentum","n.","ivme","C1"],
+["monk","n.","keşiş","C1"],
+["monopoly","n.","tekel","C1"],
+["morality","n.","ahlak","C1"],
+["motive","n.","güdü, saik","C1"],
+["motorist","n.","sürücü","C1"],
+["municipal","adj.","belediyeye ait","C1"],
+["mutual","adj.","karşılıklı","C1"],
+["namely","adv.","yani, daha doğrusu","C1"],
+["nationwide","adj.","ülke çapında","C1"],
+["naval","adj.","deniz kuvvetlerine ait","C1"],
+["neglect","v.","ihmal etmek","C1"],
+["neighbouring","adj.","komşu","C1"],
+["nest","n.","yuva","C1"],
+["net","adj.","net (kâr/tutar)","C1"],
+["newsletter","n.","bülten","C1"],
+["niche","n.","niş, uygun alan","C1"],
+["noble","adj.","asil","C1"],
+["nod","v.","başını sallamak","C1"],
+["nominate","v.","aday göstermek","C1"],
+["nomination","n.","adaylık","C1"],
+["nominee","n.","aday","C1"],
+["nonetheless","adv.","yine de","C1"],
+["non-profit","adj.","kâr amacı gütmeyen","C1"],
+["nonsense","n.","saçmalık","C1"],
+["noon","n.","öğle vakti","C1"],
+["notable","adj.","kayda değer","C1"],
+["notably","adv.","özellikle, kayda değer şekilde","C1"],
+["notify","v.","bildirmek","C1"],
+["notorious","adj.","adı kötüye çıkmış","C1"],
+["novel","adj.","yeni, özgün","C1"],
+["nursery","n.","kreş, fidanlık","C1"],
+["objection","n.","itiraz","C1"],
+["oblige","v.","zorunlu kılmak","C1"],
+["obsess","v.","saplantı haline getirmek","C1"],
+["obsession","n.","saplantı, takıntı","C1"],
+["occasional","adj.","ara sıra olan","C1"],
+["occurrence","n.","olay, vuku bulma","C1"],
+["odds","n.","olasılık, ihtimal","C1"],
+["offering","n.","sunum, teklif","C1"],
+["offspring","n.","yavru, döl","C1"],
+["operational","adj.","operasyonel, işlevsel","C1"],
+["opt","v.","tercih etmek","C1"],
+["optical","adj.","optik","C1"],
+["optimism","n.","iyimserlik","C1"],
+["oral","adj.","sözlü","C1"],
+["organizational","adj.","örgütsel","C1"],
+["orientation","n.","yönelim, oryantasyon","C1"],
+["originate","v.","kaynaklanmak, doğmak","C1"],
+["outbreak","n.","salgının başlaması, patlak verme","C1"],
+["outing","n.","gezi","C1"],
+["outlet","n.","satış noktası, priz","C1"],
+["outlook","n.","bakış açısı, görünüm","C1"],
+["outrage","n.","öfke, hiddet","C1"],
+["outsider","n.","yabancı, dışarıdan biri","C1"],
+["overlook","v.","gözden kaçırmak, göz yummak","C1"],
+["overly","adv.","aşırı derecede","C1"],
+["oversee","v.","denetlemek","C1"],
+["overturn","v.","alt üst etmek, iptal etmek","C1"],
+["overwhelm","v.","bunaltmak, alt etmek","C1"],
+["overwhelming","adj.","ezici, bunaltıcı","C1"],
+["pad","n.","yastıkçık, blok","C1"],
+["parameter","n.","parametre","C1"],
+["parental","adj.","ebeveynle ilgili","C1"],
+["parish","n.","cemaat bölgesi","C1"],
+["parliamentary","adj.","parlamentoya ait","C1"],
+["partial","adj.","kısmi","C1"],
+["partially","adv.","kısmen","C1"],
+["passing","n.","geçiş, geçme","C1"],
+["passive","adj.","edilgen, pasif","C1"],
+["pastor","n.","papaz","C1"],
+["patch","n.","yama","C1"],
+["patent","n.","patent","C1"],
+["pathway","n.","yol, patika","C1"],
+["patrol","n.","devriye","C1"],
+["patron","n.","hami, müşteri","C1"],
+["peak","n.","zirve","C1"],
+["peasant","n.","köylü","C1"],
+["peculiar","adj.","tuhaf, kendine özgü","C1"],
+["persist","v.","ısrar etmek, sürmek","C1"],
+["persistent","adj.","ısrarlı, sürekli","C1"],
+["personnel","n.","personel","C1"],
+["petition","n.","dilekçe","C1"],
+["philosopher","n.","filozof","C1"],
+["philosophical","adj.","felsefi","C1"],
+["physician","n.","doktor","C1"],
+["pioneer","n.","öncü","C1"],
+["pipeline","n.","boru hattı","C1"],
+["pirate","n.","korsan","C1"],
+["pit","n.","çukur","C1"],
+["plea","n.","yalvarma, savunma","C1"],
+["plead","v.","yalvarmak, savunmak","C1"],
+["pledge","v.","söz vermek","C1"],
+["plug","n.","fiş, tapa","C1"],
+["plunge","v.","dalmak, düşmek","C1"],
+["pole","n.","kutup, direk","C1"],
+["poll","n.","anket, oylama","C1"],
+["pond","n.","gölet","C1"],
+["pop","v.","patlamak, çıkıvermek","C1"],
+["portfolio","n.","portföy","C1"],
+["portray","v.","tasvir etmek, canlandırmak","C1"],
+["postpone","v.","ertelemek","C1"],
+["post-war","adj.","savaş sonrası","C1"],
+["practitioner","n.","uygulayıcı, pratisyen","C1"],
+["preach","v.","vaaz vermek","C1"],
+["precedent","n.","emsal","C1"],
+["precision","n.","hassasiyet, kesinlik","C1"],
+["predator","n.","yırtıcı hayvan","C1"],
+["predecessor","n.","selef","C1"],
+["predominantly","adv.","ağırlıklı olarak","C1"],
+["pregnancy","n.","hamilelik","C1"],
+["prejudice","n.","önyargı","C1"],
+["preliminary","adj.","ön, hazırlık niteliğinde","C1"],
+["premier","n.","başbakan","C1"],
+["premise","n.","önerme, öncül","C1"],
+["premium","n.","prim, ek ücret","C1"],
+["prescribe","v.","reçete yazmak, öngörmek","C1"],
+["prescription","n.","reçete","C1"],
+["presently","adv.","şu anda, yakında","C1"],
+["preservation","n.","koruma","C1"],
+["preside","v.","başkanlık etmek","C1"],
+["presidency","n.","başkanlık","C1"],
+["presidential","adj.","başkanlığa ait","C1"],
+["prestigious","adj.","prestijli","C1"],
+["presumably","adv.","muhtemelen","C1"],
+["presume","v.","varsaymak","C1"],
+["prevail","v.","üstün gelmek, yaygın olmak","C1"],
+["prevalence","n.","yaygınlık","C1"],
+["prevention","n.","önleme","C1"],
+["prey","n.","av","C1"],
+["principal","n.","müdür, anapara","C1"],
+["privatization","n.","özelleştirme","C1"],
+["privilege","n.","ayrıcalık","C1"],
+["probe","n.","soruşturma, sonda","C1"],
+["problematic","adj.","sorunlu","C1"],
+["proceedings","n.","dava süreci, tutanaklar","C1"],
+["proceeds","n.","gelir, hasılat","C1"],
+["processing","n.","işleme","C1"],
+["processor","n.","işlemci","C1"],
+["proclaim","v.","ilan etmek","C1"],
+["productive","adj.","üretken","C1"],
+["productivity","n.","üretkenlik","C1"],
+["profitable","adj.","kârlı","C1"],
+["profound","adj.","derin, köklü","C1"],
+["projection","n.","tahmin, projeksiyon","C1"],
+["prominent","adj.","önde gelen, belirgin","C1"],
+["pronounced","adj.","belirgin","C1"],
+["propaganda","n.","propaganda","C1"],
+["proposition","n.","öneri, önerme","C1"],
+["prosecute","v.","kovuşturmak, dava açmak","C1"],
+["prosecution","n.","kovuşturma, savcılık","C1"],
+["prosecutor","n.","savcı","C1"],
+["prospective","adj.","olası, gelecekteki","C1"],
+["prosperity","n.","refah","C1"],
+["protective","adj.","koruyucu","C1"],
+["protocol","n.","protokol","C1"],
+["province","n.","il, eyalet","C1"],
+["provincial","adj.","taşra, il ile ilgili","C1"],
+["provision","n.","hüküm, tedarik","C1"],
+["provoke","v.","kışkırtmak","C1"],
+["psychiatric","adj.","psikiyatrik","C1"],
+["pulse","n.","nabız","C1"],
+["pump","n.","pompa","C1"],
+["punch","n.","yumruk","C1"],
+["query","n.","sorgu","C1"],
+["quest","n.","arayış","C1"],
+["quota","n.","kota","C1"],
+["radar","n.","radar","C1"],
+["radical","adj.","radikal","C1"],
+["rage","n.","öfke","C1"],
+["raid","n.","baskın","C1"],
+["rally","n.","miting, ralli","C1"],
+["ranking","n.","sıralama","C1"],
+["rape","n.","tecavüz","C1"],
+["ratio","n.","oran","C1"],
+["rational","adj.","akılcı","C1"],
+["ray","n.","ışın","C1"],
+["readily","adv.","kolayca, hemen","C1"],
+["realization","n.","fark etme, gerçekleştirme","C1"],
+["realm","n.","alan, krallık","C1"],
+["rear","adj.","arka","C1"],
+["reassure","v.","güven vermek","C1"],
+["reasoning","n.","muhakeme","C1"],
+["rebel","n.","asi","C1"],
+["rebellion","n.","isyan","C1"],
+["recipient","n.","alıcı","C1"],
+["reconstruction","n.","yeniden yapılanma","C1"],
+["recount","v.","anlatmak, yeniden saymak","C1"],
+["referendum","n.","referandum","C1"],
+["reflection","n.","yansıma, düşünme","C1"],
+["reform","n.","reform","C1"],
+["refuge","n.","sığınak","C1"],
+["refusal","n.","reddetme","C1"],
+["regain","v.","yeniden kazanmak","C1"],
+["regardless","adv.","ne olursa olsun","C1"],
+["regime","n.","rejim","C1"],
+["regulator","n.","düzenleyici kurum","C1"],
+["regulatory","adj.","düzenleyici","C1"],
+["rehabilitation","n.","rehabilitasyon","C1"],
+["reign","n.","hükümdarlık, saltanat","C1"],
+["rejection","n.","ret","C1"],
+["relevance","n.","ilgi, alaka","C1"],
+["reliability","n.","güvenilirlik","C1"],
+["reluctant","adj.","isteksiz","C1"],
+["remainder","n.","kalan kısım","C1"],
+["remains","n.","kalıntılar","C1"],
+["remedy","n.","çare, tedavi","C1"],
+["reminder","n.","hatırlatma","C1"],
+["removal","n.","kaldırma, çıkarma","C1"],
+["render","v.","hale getirmek, sunmak","C1"],
+["renew","v.","yenilemek","C1"],
+["renowned","adj.","ünlü, tanınmış","C1"],
+["rental","n.","kiralama","C1"],
+["replacement","n.","değişim, yedek","C1"],
+["reportedly","adv.","bildirildiğine göre","C1"],
+["representation","n.","temsil","C1"],
+["reproduce","v.","yeniden üretmek, üremek","C1"],
+["reproduction","n.","üreme, kopya","C1"],
+["republic","n.","cumhuriyet","C1"],
+["resemble","v.","benzemek","C1"],
+["reside","v.","ikamet etmek","C1"],
+["residence","n.","ikametgah","C1"],
+["residential","adj.","yerleşim ile ilgili","C1"],
+["residue","n.","kalıntı","C1"],
+["resignation","n.","istifa","C1"],
+["resistance","n.","direniş","C1"],
+["respective","adj.","kendi, ilgili","C1"],
+["respectively","adv.","sırasıyla","C1"],
+["restoration","n.","restorasyon, geri getirme","C1"],
+["restraint","n.","kısıtlama, kendini tutma","C1"],
+["resume","v.","yeniden başlamak, devam etmek","C1"],
+["retreat","n.","geri çekilme","C1"],
+["retrieve","v.","geri almak, kurtarmak","C1"],
+["revelation","n.","ifşa, açığa çıkarma","C1"],
+["revenge","n.","intikam","C1"],
+["reverse","v.","tersine çevirmek","C1"],
+["revival","n.","canlanma, yeniden diriliş","C1"],
+["revive","v.","canlandırmak","C1"],
+["revolutionary","adj.","devrimci","C1"],
+["rhetoric","n.","retorik","C1"],
+["rifle","n.","tüfek","C1"],
+["riot","n.","isyan, ayaklanma","C1"],
+["rip","v.","yırtmak","C1"],
+["ritual","n.","ritüel, ayin","C1"],
+["robust","adj.","sağlam, dayanıklı","C1"],
+["rock","v.","sallamak","C1"],
+["rod","n.","çubuk","C1"],
+["rotate","v.","döndürmek","C1"],
+["rotation","n.","dönüş, rotasyon","C1"],
+["ruling","n.","hüküm, karar","C1"],
+["rumour","n.","söylenti","C1"],
+["sack","v.","işten kovmak","C1"],
+["sacred","adj.","kutsal","C1"],
+["sacrifice","n.","fedakarlık, kurban","C1"],
+["saint","n.","aziz","C1"],
+["sake","n.","hatırı, uğruna","C1"],
+["sanction","n.","yaptırım","C1"],
+["say","n.","söz hakkı","C1"],
+["scattered","adj.","dağınık","C1"],
+["sceptical","adj.","şüpheci","C1"],
+["scope","n.","kapsam","C1"],
+["screw","v.","vidalamak","C1"],
+["scrutiny","n.","yakın inceleme","C1"],
+["seal","v.","mühürlemek, kapatmak","C1"],
+["secular","adj.","laik","C1"],
+["seemingly","adv.","görünüşte","C1"],
+["segment","n.","bölüm, kesim","C1"],
+["seize","v.","ele geçirmek, yakalamak","C1"],
+["seldom","n.","nadiren","C1"],
+["selective","adj.","seçici","C1"],
+["senator","n.","senatör","C1"],
+["sensation","n.","duygu, sansasyon","C1"],
+["sensitivity","n.","hassasiyet","C1"],
+["sentiment","n.","duygu, kanı","C1"],
+["separation","n.","ayrılık, ayrım","C1"],
+["serial","adj.","seri halinde","C1"],
+["settlement","n.","yerleşim, uzlaşma","C1"],
+["set-up","n.","düzen, kurulum","C1"],
+["sexuality","n.","cinsellik","C1"],
+["shareholder","n.","hissedar","C1"],
+["shatter","v.","paramparça etmek","C1"],
+["shed","v.","dökmek, atmak","C1"],
+["sheer","adj.","tamamen, saf","C1"],
+["shipping","n.","nakliye, gemicilik","C1"],
+["shoot","n.","çekim, fide","C1"],
+["shrink","v.","küçülmek","C1"],
+["shrug","v.","omuz silkmek","C1"],
+["sigh","v.","iç çekmek","C1"],
+["simulate","v.","simüle etmek","C1"],
+["simulation","n.","simülasyon","C1"],
+["simultaneously","adv.","aynı anda","C1"],
+["sin","n.","günah","C1"],
+["situated","adj.","konumlanmış","C1"],
+["sketch","n.","taslak, kroki","C1"],
+["skip","v.","atlamak","C1"],
+["slam","v.","çarpmak, hızla kapatmak","C1"],
+["slap","v.","tokatlamak","C1"],
+["slash","v.","büyük ölçüde azaltmak, yarmak","C1"],
+["slavery","n.","kölelik","C1"],
+["slot","n.","yuva, zaman dilimi","C1"],
+["smash","v.","parçalamak","C1"],
+["snap","v.","kırılmak, aniden söylemek","C1"],
+["soak","v.","ıslatmak, suya batırmak","C1"],
+["soar","v.","yükselmek, süzülmek","C1"],
+["socialist","adj.","sosyalist","C1"],
+["sole","adj.","tek, yegane","C1"],
+["solely","adv.","sadece","C1"],
+["solicitor","n.","avukat (İngiltere)","C1"],
+["solidarity","n.","dayanışma","C1"],
+["solo","adj.","tek başına, solo","C1"],
+["sound","adj.","sağlam, mantıklı","C1"],
+["sovereignty","n.","egemenlik","C1"],
+["spam","n.","istenmeyen e-posta","C1"],
+["span","v.","kapsamak, uzanmak","C1"],
+["spare","v.","esirgemek, ayırmak","C1"],
+["spark","v.","kıvılcım çıkarmak, tetiklemek","C1"],
+["specialized","adj.","özelleşmiş","C1"],
+["specification","n.","şartname, özellik","C1"],
+["specimen","n.","numune, örnek","C1"],
+["spectacle","n.","gösteri","C1"],
+["spectrum","n.","tayf, yelpaze","C1"],
+["spell","n.","büyü","C1"],
+["sphere","n.","küre, alan","C1"],
+["spin","v.","döndürmek","C1"],
+["spine","n.","omurga","C1"],
+["spotlight","n.","spot ışığı, dikkat","C1"],
+["spouse","n.","eş","C1"],
+["spy","n.","casus","C1"],
+["squad","n.","ekip, takım","C1"],
+["squeeze","v.","sıkmak","C1"],
+["stab","v.","bıçaklamak","C1"],
+["stability","n.","istikrar","C1"],
+["stabilize","v.","istikrara kavuşturmak","C1"],
+["stake","n.","risk altındaki menfaat, hisse","C1"],
+["standing","adj.","daimi, ayakta duran","C1"],
+["stark","adj.","çıplak, sert (gerçek)","C1"],
+["statistical","adj.","istatistiksel","C1"],
+["steer","v.","yönlendirmek, dümen kırmak","C1"],
+["stem","n.","sap, gövde","C1"],
+["stereotype","n.","kalıp yargı","C1"],
+["stimulus","n.","uyarıcı, teşvik","C1"],
+["stir","v.","karıştırmak","C1"],
+["storage","n.","depolama","C1"],
+["straightforward","adj.","basit, açık","C1"],
+["strain","n.","gerginlik, zorlanma","C1"],
+["strand","n.","tel, iplik","C1"],
+["strategic","adj.","stratejik","C1"],
+["striking","adj.","çarpıcı","C1"],
+["strip","n.","uzun ince şerit","C1"],
+["strip","v.","soymak, sıyırmak","C1"],
+["strive","v.","çabalamak","C1"],
+["structural","adj.","yapısal","C1"],
+["stumble","v.","tökezlemek","C1"],
+["stun","v.","sersemletmek, şaşırtmak","C1"],
+["submission","n.","teslim, sunum","C1"],
+["subscriber","n.","abone","C1"],
+["subscription","n.","abonelik","C1"],
+["subsidy","n.","sübvansiyon","C1"],
+["substantial","adj.","önemli, hatırı sayılır","C1"],
+["substantially","adv.","önemli ölçüde","C1"],
+["substitute","n.","yedek, ikame","C1"],
+["substitution","n.","değiştirme","C1"],
+["subtle","adj.","ince, belli belirsiz","C1"],
+["suburban","adj.","banliyöye ait","C1"],
+["succession","n.","art arda gelme, veraset","C1"],
+["successive","adj.","ardışık","C1"],
+["successor","n.","halef","C1"],
+["suck","v.","emmek","C1"],
+["sue","v.","dava açmak","C1"],
+["suicide","n.","intihar","C1"],
+["suite","n.","süit, takım","C1"],
+["summit","n.","zirve","C1"],
+["superb","adj.","mükemmel","C1"],
+["superior","adj.","üstün","C1"],
+["supervise","v.","denetlemek","C1"],
+["supervision","n.","gözetim","C1"],
+["supervisor","n.","gözetmen, amir","C1"],
+["supplement","n.","takviye, ek","C1"],
+["supportive","adj.","destekleyici","C1"],
+["supposedly","adv.","güya, sözde","C1"],
+["suppress","v.","bastırmak","C1"],
+["supreme","adj.","en yüksek, yüce","C1"],
+["surge","n.","ani artış","C1"],
+["surgical","adj.","cerrahi","C1"],
+["surplus","n.","fazla, artık","C1"],
+["surrender","v.","teslim olmak","C1"],
+["surveillance","n.","gözetim","C1"],
+["suspension","n.","askıya alma","C1"],
+["suspicion","n.","şüphe","C1"],
+["suspicious","adj.","şüpheli","C1"],
+["sustain","v.","sürdürmek, desteklemek","C1"],
+["swing","v.","sallamak","C1"],
+["sword","n.","kılıç","C1"],
+["symbolic","adj.","sembolik","C1"],
+["syndrome","n.","sendrom","C1"],
+["synthesis","n.","sentez","C1"],
+["systematic","adj.","sistematik","C1"],
+["tackle","n.","müdahale (spor)","C1"],
+["tactic","n.","taktik","C1"],
+["tactical","adj.","taktiksel","C1"],
+["taxpayer","n.","vergi mükellefi","C1"],
+["tempt","v.","cezbetmek, ayartmak","C1"],
+["tenant","n.","kiracı","C1"],
+["tender","adj.","hassas, şefkatli","C1"],
+["tenure","n.","görev süresi, kadro","C1"],
+["terminal","adj.","son, ölümcül (hastalık)","C1"],
+["terminate","v.","sonlandırmak","C1"],
+["terrain","n.","arazi","C1"],
+["terrific","adj.","harika","C1"],
+["testify","v.","tanıklık etmek","C1"],
+["testimony","n.","tanıklık, ifade","C1"],
+["texture","n.","doku","C1"],
+["thankfully","adv.","şükürler olsun ki","C1"],
+["theatrical","adj.","tiyatral","C1"],
+["theology","n.","teoloji","C1"],
+["theoretical","adj.","teorik","C1"],
+["thereafter","adv.","ondan sonra","C1"],
+["thereby","adv.","böylece","C1"],
+["thoughtful","adj.","düşünceli","C1"],
+["thought-provoking","adj.","düşündürücü","C1"],
+["thread","n.","iplik, konu (forum)","C1"],
+["threshold","n.","eşik","C1"],
+["thrilled","adj.","çok heyecanlı","C1"],
+["thrive","v.","gelişip serpilmek","C1"],
+["tide","n.","gelgit","C1"],
+["tighten","v.","sıkılaştırmak","C1"],
+["timber","n.","kereste","C1"],
+["timely","adj.","zamanında","C1"],
+["tobacco","n.","tütün","C1"],
+["tolerance","n.","tolerans, hoşgörü","C1"],
+["tolerate","v.","tolere etmek, hoşgörmek","C1"],
+["toll","n.","geçiş ücreti, kayıp bilançosu","C1"],
+["top","v.","aşmak, en üstte olmak","C1"],
+["torture","n.","işkence","C1"],
+["toss","v.","fırlatmak, atmak","C1"],
+["total","v.","toplamak, tutmak","C1"],
+["toxic","adj.","zehirli, toksik","C1"],
+["trace","n.","iz","C1"],
+["trademark","n.","ticari marka","C1"],
+["trail","n.","patika, iz","C1"],
+["trailer","n.","fragman, römork","C1"],
+["transaction","n.","işlem","C1"],
+["transcript","n.","dökümü, transkript","C1"],
+["transformation","n.","dönüşüm","C1"],
+["transit","n.","transit, geçiş","C1"],
+["transmission","n.","iletim, aktarım","C1"],
+["transparency","n.","şeffaflık","C1"],
+["transparent","adj.","şeffaf","C1"],
+["trauma","n.","travma","C1"],
+["treaty","n.","antlaşma","C1"],
+["tremendous","adj.","muazzam","C1"],
+["tribal","adj.","kabileye ait","C1"],
+["tribunal","n.","mahkeme, tribunal","C1"],
+["tribute","n.","saygı gösterisi, haraç","C1"],
+["trigger","n.","tetik, tetikleyici","C1"],
+["trio","n.","üçlü","C1"],
+["triumph","n.","zafer","C1"],
+["trophy","n.","kupa","C1"],
+["troubled","adj.","sıkıntılı, sorunlu","C1"],
+["trustee","n.","mütevelli, vasi","C1"],
+["tuition","n.","öğretim, okul ücreti","C1"],
+["turnout","n.","katılım oranı (seçim)","C1"],
+["turnover","n.","ciro, personel devri","C1"],
+["twist","v.","bükmek, çarpıtmak","C1"],
+["undergraduate","n.","lisans öğrencisi","C1"],
+["underlying","adj.","altta yatan","C1"],
+["undermine","v.","zayıflatmak, baltalamak","C1"],
+["undoubtedly","adv.","hiç şüphesiz","C1"],
+["unify","v.","birleştirmek","C1"],
+["unprecedented","adj.","eşi görülmemiş","C1"],
+["unveil","v.","tanıtmak, örtüsünü kaldırmak","C1"],
+["upcoming","adj.","yaklaşan","C1"],
+["upgrade","v.","yükseltmek, iyileştirmek","C1"],
+["uphold","v.","desteklemek, sürdürmek","C1"],
+["utility","n.","fayda, kamu hizmeti","C1"],
+["utilize","v.","kullanmak, faydalanmak","C1"],
+["utterly","adv.","tamamen","C1"],
+["vacuum","n.","boşluk, vakum","C1"],
+["vague","adj.","belirsiz","C1"],
+["validity","n.","geçerlilik","C1"],
+["vanish","v.","kaybolmak","C1"],
+["variable","n.","değişken","C1"],
+["varied","adj.","çeşitli, farklı","C1"],
+["vein","n.","damar","C1"],
+["venture","n.","girişim","C1"],
+["verbal","adj.","sözlü","C1"],
+["verdict","n.","karar, hüküm","C1"],
+["verify","v.","doğrulamak","C1"],
+["verse","n.","dize, ayet","C1"],
+["versus","prep.","karşı","C1"],
+["vessel","n.","gemi, kap","C1"],
+["veteran","n.","emektar, gazi","C1"],
+["viable","adj.","uygulanabilir, yaşayabilir","C1"],
+["vibrant","adj.","canlı, hareketli","C1"],
+["vice","n.","kötü alışkanlık, kusur","C1"],
+["vicious","adj.","gaddar, azılı","C1"],
+["villager","n.","köylü","C1"],
+["violate","v.","ihlal etmek","C1"],
+["violation","n.","ihlal","C1"],
+["virtue","n.","erdem","C1"],
+["vocal","adj.","sesle ilgili, açıkça konuşan","C1"],
+["vow","v.","yemin etmek","C1"],
+["vulnerability","n.","kırılganlık, savunmasızlık","C1"],
+["vulnerable","adj.","savunmasız, kırılgan","C1"],
+["ward","n.","koğuş, semt","C1"],
+["warehouse","n.","depo","C1"],
+["warfare","n.","savaş","C1"],
+["warrant","n.","arama emri, teminat","C1"],
+["warrior","n.","savaşçı","C1"],
+["weaken","v.","zayıflatmak","C1"],
+["weave","v.","dokumak","C1"],
+["weed","n.","yabani ot","C1"],
+["well","n.","kuyu","C1"],
+["well-being","n.","refah, iyi olma hali","C1"],
+["whatsoever","adv.","hiçbir şekilde","C1"],
+["whereby","adv.","bununla, bu sayede","C1"],
+["whip","v.","kırbaçlamak, çırpmak","C1"],
+["wholly","adv.","tamamen","C1"],
+["widen","v.","genişletmek","C1"],
+["widow","n.","dul kadın","C1"],
+["width","n.","genişlik","C1"],
+["willingness","n.","isteklilik","C1"],
+["wipe","v.","silmek","C1"],
+["wit","n.","zeka, espri yeteneği","C1"],
+["withdrawal","n.","geri çekilme, para çekme","C1"],
+["workout","n.","antrenman","C1"],
+["worship","n.","ibadet","C1"],
+["worthwhile","adj.","değerli, zahmete değer","C1"],
+["worthy","adj.","değer, layık","C1"],
+["yell","v.","bağırmak","C1"],
+["yield","n.","verim, getiri","C1"],
+["youngster","n.","genç, çocuk","C1"],
+];
+</script>
+<script>
+/* ===== Persistence helpers (per-word weight + stats) — uses localStorage, with in-memory fallback ===== */
+const STORE_PREFIX = "w5k:";
+const memoryStore = {}; // fallback if localStorage is unavailable/blocked
+let storageWorks = true;
+try{
+  localStorage.setItem("w5k:__test__","1");
+  localStorage.removeItem("w5k:__test__");
+}catch(e){ storageWorks = false; }
+
+async function loadWord(key){
+  if(!storageWorks) return memoryStore[STORE_PREFIX+key] || null;
+  try{
+    const raw = localStorage.getItem(STORE_PREFIX+key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return memoryStore[STORE_PREFIX+key] || null; }
+}
+async function saveWord(key, val){
+  memoryStore[STORE_PREFIX+key] = val;
+  if(!storageWorks) return;
+  try{ localStorage.setItem(STORE_PREFIX+key, JSON.stringify(val)); }
+  catch(e){ storageWorks = false; }
+}
+function listWordKeys(){
+  if(!storageWorks) return Object.keys(memoryStore);
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore); }
+}
+
+/* ===== Custom word list (separate namespace, never collides with Oxford keys) ===== */
+const CUSTOM_LIST_KEY = "c5k:list";
+const CUSTOM_STAT_PREFIX = "c5k:stat:";
+
+async function rawGet(key){
+  if(!storageWorks) return memoryStore[key] ?? null;
+  try{ return localStorage.getItem(key); }
+  catch(e){ storageWorks=false; return memoryStore[key] ?? null; }
+}
+async function rawSet(key, value){
+  memoryStore[key] = value;
+  if(!storageWorks) return;
+  try{ localStorage.setItem(key, value); }
+  catch(e){ storageWorks=false; }
+}
+async function rawRemove(key){
+  delete memoryStore[key];
+  if(!storageWorks) return;
+  try{ localStorage.removeItem(key); }catch(e){}
+}
+
+async function loadCustomList(){
+  const raw = await rawGet(CUSTOM_LIST_KEY);
+  try{ return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+}
+async function saveCustomList(list){
+  await rawSet(CUSTOM_LIST_KEY, JSON.stringify(list));
+}
+
+/* ===== State ===== */
+let pool = [];            // active words for the session {e,p,t,l, weight, correct, wrong}
+let current = null;
+let currentOptions = [];
+let answered = false;
+let sessionCorrect = 0, sessionWrong = 0;
+let mistakeRowsCache = [];
+const MASTER_THRESHOLD = 1; // weight at/under this = considered "mastered" once seen correctly a couple times
+const ALL_WORDS = WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
+let selectedLevels = new Set(["B2"]);
+
+const b2Count = WORDS.filter(w=>w[3]==="B2").length;
+const c1Count = WORDS.filter(w=>w[3]==="C1").length;
+
+/* ===== Setup screen ===== */
+const levelGrid = document.getElementById("levelGrid");
+const levelDefs = [
+  {key:"B2", name:"B2", count:b2Count},
+  {key:"C1", name:"C1", count:c1Count},
+  {key:"ALL", name:"B2+C1", count:b2Count+c1Count},
+];
+levelDefs.forEach(l=>{
+  const btn = document.createElement("button");
+  btn.className = "level-btn" + (l.key==="B2" ? " active":"");
+  btn.dataset.key = l.key;
+  btn.innerHTML = `<span class="lvl-name">${l.name}</span><span class="lvl-count">${l.count} kelime</span>`;
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedLevels = l.key === "ALL" ? new Set(["B2","C1"]) : new Set([l.key]);
+  });
+  levelGrid.appendChild(btn);
+});
+
+document.getElementById("startBtn").addEventListener("click", startSession);
+document.getElementById("backBtn").addEventListener("click", ()=>{
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("setup").classList.remove("hidden");
+  document.getElementById("tabbar").classList.remove("hidden");
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelector('.tab-btn[data-tab="setup"]').classList.add("active");
+});
+document.getElementById("resetBtn").addEventListener("click", async ()=>{
+  if(!confirm("Bu seviyedeki tüm ilerleme sıfırlansın mı?")) return;
+  for(const w of pool){
+    await saveWord(w.e, {weight:1, correct:0, wrong:0});
+    w.weight = 1; w.correct = 0; w.wrong = 0;
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  updateStats();
+  nextQuestion();
+});
+
+async function startSession(){
+  const startBtn = document.getElementById("startBtn");
+  startBtn.disabled = true;
+  startBtn.textContent = "Yükleniyor…";
+
+  const chosen = WORDS.filter(w => selectedLevels.has(w[3]));
+  pool = [];
+  for(const w of chosen){
+    const saved = await loadWord(w[0]);
+    pool.push({
+      e:w[0], p:w[1], t:w[2], l:w[3],
+      weight: saved ? saved.weight : 3,
+      correct: saved ? saved.correct : 0,
+      wrong: saved ? saved.wrong : 0,
+    });
+  }
+
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("mistakes").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+
+  startBtn.disabled = false;
+  startBtn.textContent = "Teste Başla";
+}
+
+/* ===== Weighted pick ===== */
+function pickWord(){
+  const total = pool.reduce((s,w)=>s+w.weight,0);
+  let r = Math.random()*total;
+  for(const w of pool){
+    r -= w.weight;
+    if(r<=0) return w;
+  }
+  return pool[pool.length-1];
+}
+
+function buildOptions(correctWord){
+  const others = ALL_WORDS.filter(w=>w.e!==correctWord.e);
+  const shuffled = others.sort(()=>Math.random()-0.5).slice(0,3);
+  const opts = [correctWord, ...shuffled].sort(()=>Math.random()-0.5);
+  return opts;
+}
+
+function nextQuestion(){
+  if(pool.length < 1){
+    document.getElementById("wordEn").textContent = "Bu seviyede yeterli kelime yok";
+    document.getElementById("options").innerHTML = "";
+    return;
+  }
+  answered = false;
+  current = pickWord();
+  currentOptions = buildOptions(current);
+
+  document.getElementById("levelBadge").textContent = current.l;
+  document.getElementById("wordEn").textContent = current.e;
+  document.getElementById("wordPos").textContent = current.p;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("feedback").className = "feedback";
+  document.getElementById("nextHint").textContent = "";
+
+  const optsDiv = document.getElementById("options");
+  optsDiv.innerHTML = "";
+  currentOptions.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = opt.t;
+    btn.addEventListener("click", ()=>handleAnswer(opt, btn));
+    optsDiv.appendChild(btn);
+  });
+}
+
+async function handleAnswer(chosenOpt, btnEl){
+  if(answered) return;
+  answered = true;
+  const isCorrect = chosenOpt.e === current.e;
+  const allBtns = Array.from(document.querySelectorAll(".opt"));
+
+  allBtns.forEach(b=>{
+    b.disabled = true;
+    const wasCorrectBtn = b.textContent === current.t;
+    if(wasCorrectBtn) b.classList.add("correct");
+    else if(b === btnEl && !isCorrect) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+
+  const fb = document.getElementById("feedback");
+  if(isCorrect){
+    current.weight = Math.max(1, current.weight - 2);
+    current.correct += 1;
+    sessionCorrect += 1;
+    fb.textContent = "Doğru!";
+    fb.className = "feedback right";
+  } else {
+    current.weight = current.weight + 5;
+    current.wrong += 1;
+    sessionWrong += 1;
+    fb.textContent = `Yanlış — doğrusu: ${current.t}`;
+    fb.className = "feedback wrong";
+  }
+  if(current.custom){
+    const idx = customWordsCache.findIndex(w=>w.id===current.id);
+    if(idx>=0){
+      customWordsCache[idx].weight = current.weight;
+      customWordsCache[idx].correct = current.correct;
+      customWordsCache[idx].wrong = current.wrong;
+    }
+    await saveCustomList(customWordsCache);
+    if(window.currentUser && window.FB) window.FB.pushCustomWord(window.currentUser.uid, current.id, customWordsCache[idx] || {en:current.e, tr:current.t, pos:current.p, weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else {
+    await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  }
+  updateStats();
+
+  document.getElementById("nextHint").textContent = "Sonraki kelime için tıkla →";
+  document.getElementById("options").style.cursor = "pointer";
+  setTimeout(()=>{ nextQuestion(); }, isCorrect ? 700 : 1600);
+}
+
+function updateStats(){
+  document.getElementById("statCorrect").textContent = sessionCorrect;
+  document.getElementById("statWrong").textContent = sessionWrong;
+  const mastered = pool.filter(w=>w.weight<=1 && w.correct>0).length;
+  document.getElementById("statMastered").textContent = mastered;
+  const pct = pool.length ? Math.round((mastered/pool.length)*100) : 0;
+  document.getElementById("progressFill").style.width = pct+"%";
+}
+
+/* ===== Tabs ===== */
+const WORD_LOOKUP = {};
+WORDS.forEach(w => { WORD_LOOKUP[w[0]] = {p:w[1], t:w[2], l:w[3]}; });
+
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const tab = btn.dataset.tab;
+    document.getElementById("setup").classList.toggle("hidden", tab!=="setup");
+    document.getElementById("mistakes").classList.toggle("hidden", tab!=="mistakes");
+    document.getElementById("custom").classList.toggle("hidden", tab!=="custom");
+    document.getElementById("quiz").classList.add("hidden");
+    if(tab === "mistakes") loadMistakes();
+    if(tab === "custom") renderCustomTab();
+  });
+});
+
+async function loadMistakes(){
+  const listEl = document.getElementById("mistakesList");
+  const drillBtn = document.getElementById("drillBtn");
+  drillBtn.classList.add("hidden");
+  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  try{
+    const keys = listWordKeys();
+    if(keys.length === 0){
+      listEl.innerHTML = '<p class="mistake-empty">Henüz hiç soru cevaplamadın.<br>Pratik sekmesinden başla, yanlış yaptıkların burada listelenecek.</p>';
+      return;
+    }
+    const rows = [];
+    for(const k of keys){
+      try{
+        const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+        if(!raw || raw === "undefined") continue;
+        const val = JSON.parse(raw);
+        if(!val.wrong) continue;
+        const en = k.slice(STORE_PREFIX.length);
+        const info = WORD_LOOKUP[en];
+        if(!info) continue;
+        rows.push({en, wrong:val.wrong, correct:val.correct||0, weight: (val.weight||3), ...info});
+      }catch(e){}
+    }
+    if(rows.length === 0){
+      listEl.innerHTML = '<p class="mistake-empty">Harika — henüz yanlış yaptığın bir kelime yok.</p>';
+      return;
+    }
+    rows.sort((a,b)=> b.wrong - a.wrong);
+    mistakeRowsCache = rows;
+    drillBtn.classList.remove("hidden");
+    drillBtn.textContent = `Bu ${rows.length} Kelimeyle Çalış`;
+    const top = rows.slice(0, 50);
+    listEl.innerHTML = top.map(r => `
+      <div class="mistake-row">
+        <div class="mistake-main">
+          <span class="mistake-en">${r.en}</span><span class="mistake-pos">${r.p}</span>
+          <div class="mistake-tr">${r.t} <span style="opacity:.5">· ${r.l}</span></div>
+        </div>
+        <div class="mistake-badge">${r.wrong}× yanlış</div>
+      </div>
+    `).join("");
+  }catch(e){
+    listEl.innerHTML = '<p class="mistake-empty">Liste yüklenemedi.</p>';
+  }
+}
+
+document.getElementById("drillBtn").addEventListener("click", ()=>{
+  if(!mistakeRowsCache.length) return;
+  pool = mistakeRowsCache.map(r => ({
+    e:r.en, p:r.p, t:r.t, l:r.l,
+    weight: Math.max(r.weight, 3),
+    correct:r.correct, wrong:r.wrong
+  }));
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("mistakes").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
+/* ===== Custom words tab ===== */
+let customWordsCache = [];
+
+async function renderCustomTab(){
+  customWordsCache = await loadCustomList();
+  const listEl = document.getElementById("customList");
+  const emptyEl = document.getElementById("customEmpty");
+  const drillBtn = document.getElementById("customDrillBtn");
+
+  if(customWordsCache.length === 0){
+    listEl.innerHTML = "";
+    emptyEl.classList.remove("hidden");
+    drillBtn.classList.add("hidden");
+    return;
+  }
+  emptyEl.classList.add("hidden");
+  drillBtn.classList.remove("hidden");
+  drillBtn.textContent = `Bu ${customWordsCache.length} Kelimeyle Çalış`;
+
+  listEl.innerHTML = customWordsCache.map(w => `
+    <div class="custom-row" data-id="${w.id}">
+      <div class="custom-main">
+        <span class="custom-en">${w.en}</span><span class="custom-pos">${w.pos||""}</span>
+        <div class="custom-tr">${w.tr}</div>
+      </div>
+      <button class="del-btn" data-del="${w.id}" title="Sil">×</button>
+    </div>
+  `).join("");
+
+  listEl.querySelectorAll(".del-btn").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const id = btn.dataset.del;
+      customWordsCache = customWordsCache.filter(w=>w.id!==id);
+      await saveCustomList(customWordsCache);
+      if(window.currentUser && window.FB) window.FB.deleteCustomWordCloud(window.currentUser.uid, id);
+      renderCustomTab();
+    });
+  });
+}
+
+document.getElementById("customForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const enInput = document.getElementById("customEn");
+  const trInput = document.getElementById("customTr");
+  const posInput = document.getElementById("customPos");
+  const en = enInput.value.trim();
+  const tr = trInput.value.trim();
+  const pos = posInput.value.trim();
+  if(!en || !tr) return;
+
+  customWordsCache = await loadCustomList();
+  const newWord = {
+    id: "c"+Date.now()+Math.random().toString(36).slice(2,7),
+    en, tr, pos, weight:3, correct:0, wrong:0
+  };
+  customWordsCache.push(newWord);
+  await saveCustomList(customWordsCache);
+  if(window.currentUser && window.FB) window.FB.pushCustomWord(window.currentUser.uid, newWord.id, newWord);
+
+  enInput.value = ""; trInput.value = ""; posInput.value = "";
+  enInput.focus();
+  renderCustomTab();
+});
+
+document.getElementById("customDrillBtn").addEventListener("click", async ()=>{
+  if(!customWordsCache.length) return;
+  pool = customWordsCache.map(w => ({
+    id:w.id, e:w.en, p:w.pos||"", t:w.tr, l:"Kelimelerim",
+    weight: w.weight ?? 3,
+    correct: w.correct ?? 0,
+    wrong: w.wrong ?? 0,
+    custom: true
+  }));
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("custom").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
+/* ===== Auth (Google sign-in) + cloud sync ===== */
+window.currentUser = null;
+
+function renderAuthUI(user){
+  const box = document.getElementById("authBox");
+  if(!box) return;
+  if(user){
+    const photo = user.photoURL ? `<img src="${user.photoURL}" class="auth-avatar" referrerpolicy="no-referrer">` : "";
+    box.innerHTML = `
+      <div class="auth-user">
+        ${photo}
+        <span class="auth-name">${user.displayName || user.email || "Hesap"}</span>
+        <button class="auth-btn" id="logoutBtn">Çıkış</button>
+      </div>`;
+    document.getElementById("logoutBtn").addEventListener("click", ()=>{
+      if(window.FB) window.FB.signOutUser();
+    });
+  } else {
+    box.innerHTML = `<button class="auth-btn google" id="loginBtn">Google ile Giriş Yap</button>`;
+    document.getElementById("loginBtn").addEventListener("click", ()=>{
+      if(window.FB) window.FB.signIn();
+      else alert("Bulut bağlantısı yüklenemedi. Sayfayı yenile.");
+    });
+  }
+}
+renderAuthUI(null); // initial state before Firebase reports in
+
+window.onAuthChanged = async function(user){
+  window.currentUser = user;
+  renderAuthUI(user);
+  if(user){
+    const box = document.getElementById("authBox");
+    box.insertAdjacentHTML("beforeend", '<span class="auth-status" id="syncStatus">senkronize ediliyor…</span>');
+    try{
+      await syncWithCloud(user.uid);
+      const st = document.getElementById("syncStatus");
+      if(st) st.textContent = "senkronize edildi ✓";
+      setTimeout(()=>{ const s=document.getElementById("syncStatus"); if(s) s.remove(); }, 2500);
+    }catch(e){
+      console.error("Senkronizasyon hatası:", e);
+      const st = document.getElementById("syncStatus");
+      if(st) st.textContent = "senkronizasyon başarısız";
+    }
+  }
+};
+
+async function syncWithCloud(uid){
+  // --- Oxford word stats (weight/correct/wrong), merged by taking best progress on each side ---
+  const cloudWords = await window.FB.fetchAllCloudWords(uid);
+  const localKeys = listWordKeys();
+  const localMap = {};
+  for(const k of localKeys){
+    const en = k.slice(STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localMap[en] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allEn = new Set([...Object.keys(localMap), ...Object.keys(cloudWords)]);
+  for(const en of allEn){
+    const l = localMap[en], c = cloudWords[en];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveWord(en, merged);
+    window.FB.pushWordStat(uid, en, merged);
+  }
+
+  // --- Custom word list, merged by id, respecting cloud-side deletions ---
+  const cloudCustom = await window.FB.fetchAllCloudCustom(uid);
+  const localCustom = await loadCustomList();
+  const localById = {};
+  localCustom.forEach(w => localById[w.id] = w);
+  const allIds = new Set([...Object.keys(localById), ...Object.keys(cloudCustom)]);
+  const mergedList = [];
+  for(const id of allIds){
+    const c = cloudCustom[id];
+    if(c && c.deleted) continue;
+    const l = localById[id];
+    let word;
+    if(l && c){
+      word = {
+        id, en:l.en, tr:l.tr, pos:l.pos||"",
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      word = l ? {...l} : {id, ...c};
+    }
+    mergedList.push(word);
+    window.FB.pushCustomWord(uid, id, word);
+  }
+  await saveCustomList(mergedList);
+
+  const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
+  const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+  if(mistakesTabActive) loadMistakes();
+  if(customTabActive) renderCustomTab();
+}
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithRedirect, signInWithPopup,
+  getRedirectResult, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, collection, getDocs
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA3qLZaY9xHxQTcJ30H7GuzCO1E3jHNIYY",
+  authDomain: "kelime-listesi.firebaseapp.com",
+  projectId: "kelime-listesi",
+  storageBucket: "kelime-listesi.firebasestorage.app",
+  messagingSenderId: "788446622607",
+  appId: "1:788446622607:web:0ad6ca3b3557c84f5891fa",
+  measurementId: "G-Y3575REVP7"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+function isMobile(){
+  return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
+
+async function signIn(){
+  try{
+    if(isMobile()){
+      await signInWithRedirect(auth, provider);
+    } else {
+      await signInWithPopup(auth, provider);
+    }
+  }catch(e){
+    console.error("Giriş hatası:", e);
+    alert("Giriş yapılamadı: " + e.message);
+  }
+}
+async function signOutUser(){
+  try{ await signOut(auth); }catch(e){ console.error(e); }
+}
+
+async function fetchAllCloudWords(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "oxford"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
+async function fetchAllCloudCustom(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "custom"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
+async function pushWordStat(uid, en, data){
+  try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
+  catch(e){ console.error("Kelime buluta yazılamadı:", e); }
+}
+async function pushCustomWord(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "custom", id), {...data, deleted:false}); }
+  catch(e){ console.error("Özel kelime buluta yazılamadı:", e); }
+}
+async function deleteCustomWordCloud(uid, id){
+  try{ await setDoc(doc(db, "users", uid, "custom", id), {deleted:true}); }
+  catch(e){ console.error(e); }
+}
+
+window.FB = {
+  signIn, signOutUser,
+  fetchAllCloudWords, fetchAllCloudCustom,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud
+};
+
+onAuthStateChanged(auth, (user) => {
+  if(window.onAuthChanged) window.onAuthChanged(user);
+});
+
+getRedirectResult(auth).catch(e => console.error("Yönlendirme sonucu hatası:", e));
+</script>
+</body>
+</html>
