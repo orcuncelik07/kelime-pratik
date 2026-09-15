@@ -422,6 +422,7 @@ body{
   </div>
 
   <div id="authBox" class="auth-box"></div>
+  <div id="debugStatus" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:.7rem;color:#b5562f;text-align:right;margin-top:-10px;margin-bottom:10px;"></div>
 
   <div class="tabbar" id="tabbar">
     <button class="tab-btn active" data-tab="setup">Pratik</button>
@@ -3067,14 +3068,18 @@ function isMobile(){
 
 async function signIn(){
   try{
-    if(isMobile()){
-      await signInWithRedirect(auth, provider);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
+    await signInWithPopup(auth, provider);
   }catch(e){
     console.error("Giriş hatası:", e);
-    alert("Giriş yapılamadı: " + e.message);
+    if(e.code === "auth/popup-blocked" || e.code === "auth/cancelled-popup-request"){
+      try{
+        await signInWithRedirect(auth, provider);
+      }catch(e2){
+        alert("Giriş yapılamadı: " + (e2.code || e2.message));
+      }
+    } else {
+      alert("Giriş yapılamadı: " + (e.code || e.message));
+    }
   }
 }
 async function signOutUser(){
@@ -3117,17 +3122,22 @@ onAuthStateChanged(auth, (user) => {
 });
 
 getRedirectResult(auth).then((result) => {
-  const box = document.getElementById("authBox");
-  if(!box) return;
+  const dbg = document.getElementById("debugStatus");
+  if(!dbg) return;
   if(result && result.user){
-    box.insertAdjacentHTML("beforeend", '<span class="auth-status" style="color:green">yönlendirmeden giriş alındı ✓</span>');
+    dbg.style.color = "green";
+    dbg.textContent = "yönlendirmeden giriş alındı ✓ (" + result.user.email + ")";
   } else {
-    box.insertAdjacentHTML("beforeend", '<span class="auth-status" style="color:#b5562f">yönlendirme sonucu boş döndü</span>');
+    dbg.style.color = "#b5562f";
+    dbg.textContent = "TANI: yönlendirme sonucu boş döndü (result=null) — büyük ihtimalle taraycının üçüncü taraf depolama/çerez engeli sebebiyle oturum tamamlanamadı.";
   }
 }).catch(e => {
   console.error("Yönlendirme sonucu hatası:", e);
-  const box = document.getElementById("authBox");
-  if(box) box.insertAdjacentHTML("beforeend", `<span class="auth-status" style="color:#b5562f">Giriş hatası: ${e.code || e.message}</span>`);
+  const dbg = document.getElementById("debugStatus");
+  if(dbg){
+    dbg.style.color = "#b5562f";
+    dbg.textContent = "TANI: Giriş hatası — " + (e.code || "") + " " + (e.message || "");
+  }
 });
 </script>
 </body>
