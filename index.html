@@ -35,8 +35,10 @@ body{
 .wrap{width:100%;max-width:640px;}
 .masthead{
   display:flex;
-  align-items:baseline;
+  align-items:center;
   justify-content:space-between;
+  flex-wrap:wrap;
+  gap:10px;
   border-bottom:2px solid var(--ink);
   padding-bottom:10px;
   margin-bottom:22px;
@@ -164,6 +166,11 @@ body{
   letter-spacing:.01em;
   margin:0 0 4px;
 }
+.word-en.small-text{
+  font-size:1.15rem;
+  line-height:1.4;
+  font-weight:600;
+}
 .word-pos{
   font-style:italic;
   color:var(--moss-dark);
@@ -238,7 +245,21 @@ body{
   display:flex;
   gap:6px;
   margin-bottom:16px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  flex-wrap:nowrap;
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  padding-bottom:4px;
+  margin-left:-2px;
+  padding-left:2px;
+  margin-right:-2px;
+  padding-right:2px;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, black 2px, black calc(100% - 18px), transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0, black 2px, black calc(100% - 18px), transparent 100%);
 }
+.tabbar::-webkit-scrollbar{ display:none; }
 .tab-btn{
   font-family:"Helvetica Neue",Arial,sans-serif;
   font-size:.74rem;
@@ -252,6 +273,9 @@ body{
   border-radius:2px;
   cursor:pointer;
   transition:all .12s ease;
+  flex-shrink:0;
+  white-space:nowrap;
+  scroll-snap-align:start;
 }
 .tab-btn.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
 .mistake-row{
@@ -356,7 +380,8 @@ body{
 .auth-box{
   display:flex;
   justify-content:flex-end;
-  margin-bottom:16px;
+  align-items:center;
+  margin:0;
 }
 .auth-btn{
   font-family:"Helvetica Neue",Arial,sans-serif;
@@ -425,9 +450,9 @@ body{
 
   <div class="masthead">
     <h1>Aralıklı Tekrar</h1>
+    <div id="authBox" class="auth-box"></div>
   </div>
 
-  <div id="authBox" class="auth-box"></div>
   <div id="debugStatus" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:.7rem;color:#b5562f;text-align:right;margin-top:-10px;margin-bottom:10px;"></div>
 
   <div class="tabbar" id="tabbar">
@@ -436,6 +461,7 @@ body{
     <button class="tab-btn" data-tab="custom">Kelime Ekle</button>
     <button class="tab-btn" data-tab="realestate">Real Estate</button>
     <button class="tab-btn" data-tab="asvab">ASVAB</button>
+    <button class="tab-btn" data-tab="finlit">Finansal Okuryazarlık</button>
   </div>
 
   <!-- SETUP -->
@@ -486,6 +512,15 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;">ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.</p>
     <button class="start-btn" id="asDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
     <div id="asList"></div>
+  </div>
+
+  <!-- FINANCIAL LITERACY -->
+  <div id="finlit" class="panel hidden">
+    <p class="section-label">Finansal Okuryazarlık Soruları</p>
+    <p class="tab-count" id="flCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;">Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.</p>
+    <button class="start-btn" id="flDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
+    <div id="flList"></div>
   </div>
 
   <!-- QUIZ -->
@@ -2982,6 +3017,53 @@ const ASVAB_WORDS = [
 ["zealous","hevesli, gayretli (aşırı istekli)"],
 ];
 
+const FINLIT_QUESTIONS = [
+["100 TL'niz olsa ve yıllık faiz oranı %2 olsa, parayı 5 yıl hesapta bıraksanız sonunda ne kadar paranız olur?","102 TL'den fazla","Tam olarak 102 TL","102 TL'den az","Hiç değişmez"],
+["Tasarruf hesabınızın faizi yıllık %1, enflasyon yıllık %2 ise, bir yıl sonra bu parayla alabildiğiniz mal/hizmet miktarı nasıl değişir?","Bugünkünden daha azını alabilirsiniz","Tam olarak aynısını alabilirsiniz","Bugünkünden daha fazlasını alabilirsiniz","Faiz ve enflasyonun birbirine etkisi yoktur"],
+["Tek bir şirketin hissesine yatırım yapmak mı, yoksa birçok farklı şirket hissesinden oluşan bir yatırım fonuna (endeks fonu) yatırım yapmak mı genellikle daha risklidir?","Tek bir şirketin hissesi daha risklidir","İkisi de aynı risktedir","Yatırım fonu daha risklidir","Risk hisse senedinin fiyatına bağlı değildir"],
+["'Bileşik faiz' ne demektir?","Hem ana paraya hem de önceki dönemlerde birikmiş faize yeniden faiz işlemesi","Sadece ana para üzerinden hesaplanan sabit faiz","Bankanın uyguladığı en düşük faiz oranı","Kredi kartı yıllık üyelik ücreti"],
+["Kredi kartı borcunuzu her ay sadece asgari tutar kadar öderseniz ne olur?","Kalan borca yüksek faiz işlemeye devam eder, toplam maliyet artar","Borç faizsiz şekilde ertelenmiş olur","Kredi puanınız otomatik olarak yükselir","Borcunuz bir sonraki ay silinir"],
+["Acil durum fonu (emergency fund) neden önemlidir?","Beklenmedik bir gider çıktığında borca/krediye başvurmadan karşılamayı sağlar","Yatırım getirisini maksimize etmek içindir","Vergi ödememek için kullanılır","Sadece emeklilik için biriktirilir"],
+["Kredi puanınızı (kredi notunuzu) en çok etkileyen faktör genellikle hangisidir?","Ödemelerinizi zamanında yapıp yapmadığınız (ödeme geçmişi)","Saçınızın rengi","Kaç tane sosyal medya hesabınız olduğu","Yaşadığınız şehir"],
+["'APR' (yıllık yüzde oran) bir kredi kartında neyi ifade eder?","Borç alma işleminin faiz ve ücretler dahil yıllık toplam maliyetini","Kartla yapabileceğiniz maksimum harcama tutarını","Her ay ödemeniz gereken minimum tutarı","Kart kullanımından kazanılan puan oranını"],
+["Aynı tutarda kredi için 15 yıllık ipotek (mortgage) ile 30 yıllık ipoteği karşılaştırırsak, hangisi ödenen toplam faiz açısından daha avantajlıdır?","15 yıllık kredi, çünkü daha kısa sürede daha az toplam faiz öder","30 yıllık kredi, çünkü aylık ödeme daha düşüktür","İkisi de tam olarak aynı toplam faizi öder","Bu, kredi kartı şirketine bağlıdır, ipotekle ilgisi yoktur"],
+["'Net değer' (net worth) nasıl hesaplanır?","Toplam varlıklardan toplam borçların çıkarılmasıyla","Sadece banka hesabındaki nakit miktarıyla","Aylık brüt maaşla","Sahip olunan kredi kartı sayısıyla"],
+["Yatırımda 'çeşitlendirme' (diversification) ne anlama gelir?","Parayı farklı varlık türlerine dağıtarak riski azaltmak","Tüm parayı tek bir hisseye yatırmak","Sadece nakit olarak tutmak","Yatırım yapmaktan tamamen kaçınmak"],
+["Enflasyon paranızın satın alma gücünü nasıl etkiler?","Fiyatlar yükseldiği için satın alma gücünü azaltır","Satın alma gücünü artırır","Hiçbir etkisi yoktur","Sadece borç alanları etkiler, tasarruf sahiplerini etkilemez"],
+["'Likidite' (likit varlık) ne anlama gelir?","Bir varlığın hızlıca ve değer kaybetmeden nakde çevrilebilmesi","Bir varlığın yıllık getiri oranı","Bir kredinin vade süresi","Bir şirketin toplam çalışan sayısı"],
+["'Fırsat maliyeti' (opportunity cost) kavramı neyi ifade eder?","Bir seçim yaparken vazgeçilen bir sonraki en iyi alternatifin değerini","Bir ürünün mağazadaki etiket fiyatını","Yatırımdan elde edilen kesin kâr miktarını","Bankanın uyguladığı işlem ücretini"],
+["Sabit faizli kredi ile değişken faizli kredi arasındaki temel fark nedir?","Sabit faizde oran kredi boyunca değişmez, değişkende piyasaya göre dalgalanır","Sabit faizli krediler her zaman daha pahalıdır","Değişken faizli krediler faizsizdir","İkisi arasında pratikte bir fark yoktur"],
+["'Amortisman' (amortization) bir kredi bağlamında ne anlama gelir?","Kredinin taksitlerle zaman içinde anapara ve faiz olarak geri ödenme planı","Kredinin tamamen silinmesi","Bir varlığın piyasa değerinin artması","Kredi başvurusunun reddedilmesi"],
+["Borç/gelir oranı (debt-to-income ratio) neyi gösterir?","Aylık gelirinizin ne kadarının borç ödemelerine gittiğini","Toplam varlıklarınızın toplam değerini","Kredi kartı limitinizin toplam tutarını","Vergi diliminizi"],
+["Sigortanın (insurance) temel amacı nedir?","Büyük ve beklenmedik bir mali kaybın riskini küçük, düzenli ödemelerle paylaşmak","Kesin olarak kâr elde etmek","Vergi ödememeyi sağlamak","Kredi puanını doğrudan yükseltmek"],
+["'Muafiyet payı' (deductible) bir sigorta poliçesinde ne anlama gelir?","Sigortanın ödeme yapmaya başlamadan önce sizin cepten ödediğiniz tutar","Sigorta şirketinin yıllık kârı","Poliçenin süresi","Sigortalının yaşı"],
+["Rule of 72 (72 kuralı) neyi tahmin etmek için kullanılır?","Bir yatırımın belirli bir faiz oranında yaklaşık kaç yılda ikiye katlanacağını","Bir kredinin toplam faizini","Vergi iadesinin ne zaman geleceğini","Bir hissenin bir sonraki fiyatını"],
+["Sabit faizli bir kredi borcunuz varken enflasyon yükselirse, bu borçlu (siz) için genellikle nasıl bir etki yaratır?","Borcu gerçek (enflasyondan arındırılmış) değer olarak geri ödemek görece kolaylaşır","Borcunuzun faizi otomatik olarak artar","Borç anında tamamen silinir","Hiçbir etkisi olmaz"],
+["'Ortalama maliyetleme' (dollar-cost averaging) stratejisi nedir?","Piyasanın zamanlamasını tahmin etmeye çalışmadan düzenli aralıklarla sabit tutarda yatırım yapmak","Tüm parayı tek seferde en düşük fiyattan yatırmaya çalışmak","Sadece fiyat düşerken yatırım yapmak","Yatırımı hiç yapmadan beklemek"],
+["Bir endeks fonu (index fund) genellikle ne yapar?","Belirli bir piyasa endeksinin (örn. S&P 500) performansını takip eder","Tek bir şirketin hissesine yatırım yapar","Sabit, garanti edilmiş bir getiri sunar","Sadece devlet tahvillerinden oluşur"],
+["Hisse senetleri ile tahviller (bonds) karşılaştırıldığında genel eğilim nedir?","Hisse senetleri genelde daha yüksek risk ve potansiyel getiri, tahviller daha düşük risk taşır","Tahviller her zaman hisse senetlerinden daha yüksek getiri sağlar","İkisi de risksizdir","Hisse senedi ve tahvil arasında fark yoktur"],
+["Kredi kartı 'kullanım oranı' (credit utilization) neyi ifade eder ve kredi puanını nasıl etkiler?","Kullanılan bakiyenin toplam limite oranıdır; düşük tutulması genelde kredi puanına iyi gelir","Kartın yıllık aidatıdır ve puanla ilgisi yoktur","Kart üzerindeki puan/mil oranıdır","Sadece bankanın belirlediği rastgele bir sayıdır"],
+["50/30/20 bütçeleme kuralına göre gelirin yaklaşık %20'si genellikle neye ayrılır?","Tasarruf ve borç ödemelerine","Sadece eğlenceye","Zorunlu ihtiyaçlara (kira, fatura)","Vergiye"],
+["ABD'de 401(k) gibi işveren emeklilik planlarında 'employer match' (işveren eşleştirmesi) ne anlama gelir?","İşverenin, çalışanın katkısına belirli bir orana kadar ek katkı yapması","İşverenin çalışana kredi vermesi","Devletin emeklilik vergisini iptal etmesi","Çalışanın maaşının otomatik olarak iki katına çıkması"],
+["'Varlık' (asset) ile 'borç/yükümlülük' (liability) arasındaki temel fark nedir?","Varlık cebinize para koyar veya değer taşır, yükümlülük cebinizden para çıkarır (borç yaratır)","İkisi de aynı anlama gelir","Varlık her zaman nakittir","Yükümlülük her zaman bir ev demektir"],
+["Bir krediyi 'refinanse etmek' (refinance) ne anlama gelir?","Mevcut krediyi genelde daha iyi şartlarla yeni bir kredi ile değiştirmek","Krediyi tamamen iptal etmek","Kredi kartı limitini artırmak","Vergi beyannamesi vermek"],
+["Pozitif nakit akışı (positive cash flow) bir yatırım gayrimenkulü için ne anlama gelir?","Kira geliri, tüm giderleri (kredi, vergi, bakım) aştığında kalan pozitif tutar","Gayrimenkulün piyasa değerinin artması","Kredi başvurusunun onaylanması","Kiracının depozito ödemesi"],
+["'Boğa piyasası' (bull market) ne anlama gelir?","Fiyatların genel olarak yükseliş eğiliminde olduğu piyasa dönemi","Fiyatların genel olarak düşüş eğiliminde olduğu dönem","Piyasanın tamamen kapalı olduğu dönem","Sadece tahvil fiyatlarının arttığı dönem"],
+["'Ayı piyasası' (bear market) genellikle nasıl tanımlanır?","Fiyatların zirveden yaklaşık %20 veya daha fazla düştüğü uzun süreli düşüş dönemi","Fiyatların sürekli yükseldiği dönem","Sadece bir günlük fiyat düşüşü","Piyasanın tatil nedeniyle kapalı olduğu gün"],
+["Kredi raporu (credit report) ile kredi puanı (credit score) arasındaki fark nedir?","Kredi raporu detaylı geçmiş bilgisidir, kredi puanı bu bilgiden türetilen tek bir sayıdır","İkisi birebir aynı şeydir","Kredi raporu sadece bankalar tarafından görülebilir, puan görülemez","Kredi puanı yıllık gelire göre hesaplanır"],
+["Değişken faizli bir krediyi (adjustable-rate) sabit faizli bir krediyle (fixed-rate) karşılaştırdığımızda temel risk farkı nedir?","Değişken faizde piyasa koşullarına göre ödemeniz artabilir veya azalabilir, sabitte ödeme sabit kalır","Sabit faizli kredilerde risk daha yüksektir","Değişken faizli krediler asla değişmez","İkisi arasında risk farkı yoktur"],
+["Bir kredi kartı borcunu öderken 'çığ yöntemi' (avalanche method) ne yapar?","Önce en yüksek faizli borcu önceliklendirerek öder, toplam faiz maliyetini azaltır","Önce en küçük borcu öder, motivasyon sağlar","Tüm borçları eşit oranda öder","Sadece asgari ödemeyi yapar"],
+["'Kartopu yöntemi' (snowball method) borç ödemede neyi önceliklendirir?","En küçük bakiyeli borcu önce kapatarak psikolojik motivasyon sağlamayı","En yüksek faizli borcu önce kapatmayı","Sadece kredi kartı borçlarını","Sadece ipotek borcunu"],
+["Bir hisse senedinin 'temettü' (dividend) ödemesi nedir?","Şirketin kârından hissedarlara düzenli olarak dağıttığı pay","Hisse senedinin alım komisyonu","Şirketin aldığı bir kredi türü","Borsanın uyguladığı bir vergi"],
+["'Enflasyona endeksli' (yani reel) getiri ile 'nominal' getiri arasındaki fark nedir?","Reel getiri enflasyon etkisi çıkarılmış getiridir, nominal getiri enflasyon dahil ham rakamdır","İkisi aynı şeydir","Nominal getiri her zaman reel getiriden düşüktür","Reel getiri sadece tahviller için geçerlidir"],
+["Kira geliri elde eden bir gayrimenkul yatırımcısı için 'boşluk oranı' (vacancy rate) neyi ifade eder?","Mülkün belirli bir dönemde kiracısız/boş kaldığı sürenin oranını","Kiracının ödediği depozito miktarını","Mülkün sigorta primini","Emlak vergisinin oranını"],
+["Kredi kartı şirketlerinin 'gecikme faizi/cezası' (late fee) uygulamasının temel sonucu nedir?","Zamanında ödenmeyen borca ek maliyet biner ve toplam borç artar","Kredi puanınız otomatik olarak yükselir","Borcunuz otomatik olarak silinir","Kart limitiniz otomatik olarak artar"],
+["Yatırımda 'zaman ufku' (time horizon) uzun olan biri genellikle hangi stratejiye daha uygun görülür?","Kısa vadeli dalgalanmalara nazaran daha yüksek risk/getiri potansiyeli olan yatırımlara (örn. hisse senedi)","Sadece nakit tutmaya","Her zaman en düşük riskli seçeneğe","Yatırım yapmamaya"],
+["Bir gayrimenkulün 'öz sermayesi' (equity) nasıl artar?","Kredi anaparası ödendikçe ve/veya mülkün piyasa değeri yükseldikçe","Sadece kira geliri arttıkça","Sadece sigorta primi düştükçe","Mülk sahibinin yaşı ilerledikçe"],
+["'Vergi ertelemeli' (tax-deferred) bir emeklilik hesabında (örn. geleneksel IRA/401k) vergi genellikle ne zaman ödenir?","Para hesaptan çekildiğinde (emeklilikte)","Para hesaba yatırıldığı anda","Hiçbir zaman ödenmez","Her ay otomatik olarak kesilir"],
+["Kredi başvurusunda 'ön onay' (pre-approval) almış olmak ne anlama gelir?","Finansal durumunuza göre bankanın size ne kadar kredi verebileceğine dair ön değerlendirme yapmış olması","Kredinin kesin olarak onaylandığı ve paranın hesaba geçtiği anlamına gelir","Kredi başvurusunun reddedildiği anlamına gelir","Sadece kredi kartı için geçerli bir kavramdır"],
+];
+
 </script>
 <script>
 /* ===== Persistence helpers (per-word weight + stats) — uses localStorage, with in-memory fallback ===== */
@@ -3061,6 +3143,7 @@ const c1Count = WORDS.filter(w=>w[3]==="C1").length;
 document.getElementById("oxfordCount").textContent = `Toplam ${b2Count+c1Count} kelime (B2: ${b2Count} · C1: ${c1Count})`;
 document.getElementById("reCount").textContent = `Toplam ${REAL_ESTATE_WORDS.length} kelime`;
 document.getElementById("asCount").textContent = `Toplam ${ASVAB_WORDS.length} kelime`;
+document.getElementById("flCount").textContent = `Toplam ${FINLIT_QUESTIONS.length} soru`;
 
 /* ===== Setup screen ===== */
 const levelGrid = document.getElementById("levelGrid");
@@ -3150,6 +3233,15 @@ function buildOptions(correctWord){
   return opts;
 }
 
+function buildFinlitOptions(correctWord){
+  const wrongs = correctWord.wrongOpts.map((text,i) => ({
+    e: correctWord.id + "__wrong" + i,
+    p: "", t: text, l: correctWord.l
+  }));
+  const opts = [correctWord, ...wrongs].sort(()=>Math.random()-0.5);
+  return opts;
+}
+
 function nextQuestion(){
   if(pool.length < 1){
     document.getElementById("wordEn").textContent = "Bu seviyede yeterli kelime yok";
@@ -3158,10 +3250,12 @@ function nextQuestion(){
   }
   answered = false;
   current = pickWord();
-  currentOptions = buildOptions(current);
+  currentOptions = current.finlit ? buildFinlitOptions(current) : buildOptions(current);
 
   document.getElementById("levelBadge").textContent = current.l;
-  document.getElementById("wordEn").textContent = current.e;
+  const wordEnEl = document.getElementById("wordEn");
+  wordEnEl.textContent = current.e;
+  wordEnEl.classList.toggle("small-text", current.e.length > 40);
   document.getElementById("wordPos").textContent = current.p;
   document.getElementById("feedback").textContent = "";
   document.getElementById("feedback").className = "feedback";
@@ -3221,6 +3315,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.asv){
     await saveASWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushASVABStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.finlit){
+    await saveFLQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushFinlitStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -3255,11 +3352,13 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     document.getElementById("custom").classList.toggle("hidden", tab!=="custom");
     document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
     document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
+    document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
     document.getElementById("quiz").classList.add("hidden");
     if(tab === "mistakes") loadMistakes();
     if(tab === "custom") renderCustomTab();
     if(tab === "realestate") renderRealEstateTab();
     if(tab === "asvab") renderASVABTab();
+    if(tab === "finlit") renderFinlitTab();
   });
 });
 
@@ -3536,6 +3635,67 @@ document.getElementById("asDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== Financial Literacy tab (fixed curated question bank, own options per question) ===== */
+const FL_STORE_PREFIX = "fl5k:";
+
+function listFLKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(FL_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(FL_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(FL_STORE_PREFIX)); }
+}
+async function loadFLQuestion(id){
+  const raw = await rawGet(FL_STORE_PREFIX+id);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveFLQuestion(id, val){
+  await rawSet(FL_STORE_PREFIX+id, JSON.stringify(val));
+}
+
+async function renderFinlitTab(){
+  const listEl = document.getElementById("flList");
+  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  const rows = [];
+  for(let i=0; i<FINLIT_QUESTIONS.length; i++){
+    const id = "fl"+i;
+    const stat = await loadFLQuestion(id);
+    rows.push({q:FINLIT_QUESTIONS[i][0], wrong: stat ? (stat.wrong||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <div class="mistake-tr">${r.q}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}× yanlış</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("flDrillBtn").addEventListener("click", async ()=>{
+  pool = [];
+  for(let i=0; i<FINLIT_QUESTIONS.length; i++){
+    const [q, correct, w1, w2, w3] = FINLIT_QUESTIONS[i];
+    const id = "fl"+i;
+    const stat = await loadFLQuestion(id);
+    pool.push({
+      id, e:q, p:"", t:correct, l:"Finansal Okuryazarlık",
+      wrongOpts:[w1,w2,w3],
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      finlit: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("finlit").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* ===== Auth (Google sign-in) + cloud sync ===== */
 window.currentUser = null;
 
@@ -3565,11 +3725,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -3602,10 +3762,12 @@ window.onAuthChanged = async function(user){
     const customTabActive = !document.getElementById("custom").classList.contains("hidden");
     const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
+    const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
     if(customTabActive) renderCustomTab();
     if(reTabActive) renderRealEstateTab();
     if(asTabActive) renderASVABTab();
+    if(flTabActive) renderFinlitTab();
   }
 };
 
@@ -3721,14 +3883,44 @@ async function syncWithCloud(uid){
     window.FB.pushASVABStat(uid, en, merged);
   }
 
+  // --- Financial Literacy question stats, merged the same way ---
+  const cloudFL = await window.FB.fetchAllCloudFinlit(uid);
+  const localFLKeys = listFLKeys();
+  const localFLMap = {};
+  for(const k of localFLKeys){
+    const id = k.slice(FL_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localFLMap[id] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allFLId = new Set([...Object.keys(localFLMap), ...Object.keys(cloudFL)]);
+  for(const id of allFLId){
+    const l = localFLMap[id], c = cloudFL[id];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveFLQuestion(id, merged);
+    window.FB.pushFinlitStat(uid, id, merged);
+  }
+
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
+  const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
+  if(flTabActive) renderFinlitTab();
 }
 </script>
 <script type="module">
@@ -3804,6 +3996,12 @@ async function fetchAllCloudASVAB(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudFinlit(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "finlit"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function pushWordStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
   catch(e){ console.error("Kelime buluta yazılamadı:", e); }
@@ -3816,6 +4014,10 @@ async function pushASVABStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "asvab", en), data); }
   catch(e){ console.error("ASVAB kelimesi buluta yazılamadı:", e); }
 }
+async function pushFinlitStat(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "finlit", id), data); }
+  catch(e){ console.error("Finansal okuryazarlık sorusu buluta yazılamadı:", e); }
+}
 async function pushCustomWord(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "custom", id), {...data, deleted:false}); }
   catch(e){ console.error("Özel kelime buluta yazılamadı:", e); }
@@ -3827,8 +4029,8 @@ async function deleteCustomWordCloud(uid, id){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat
 };
 
 onAuthStateChanged(auth, (user) => {
