@@ -131,17 +131,17 @@ body{
   padding:0 2px;
 }
 .stats-bar b{color:var(--ink);font-weight:700;}
-.reset-link{
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:.7rem;
-  color:var(--moss-dark);
-  text-decoration:underline;
-  cursor:pointer;
+.icon-btn{
+  font-size:1rem;
+  line-height:1;
   background:none;
   border:none;
-  padding:0;
-  opacity:.7;
+  cursor:pointer;
+  padding:2px 4px;
+  opacity:.75;
+  transition:opacity .12s ease, transform .12s ease;
 }
+.icon-btn:hover{opacity:1;transform:scale(1.1);}
 /* Quiz card */
 .card{
   background:var(--card);
@@ -228,18 +228,6 @@ body{
   height:100%;
   background:var(--moss);
   transition:width .2s ease;
-}
-.back-btn{
-  font-family:"Helvetica Neue",Arial,sans-serif;
-  font-size:.72rem;
-  color:var(--moss-dark);
-  background:none;
-  border:none;
-  text-decoration:underline;
-  cursor:pointer;
-  padding:0;
-  margin-top:24px;
-  opacity:.7;
 }
 .tabbar{
   display:flex;
@@ -526,8 +514,9 @@ body{
   <!-- QUIZ -->
   <div id="quiz" class="hidden">
     <div class="stats-bar">
+      <button class="icon-btn" id="backBtn" title="Seviye seçimine dön" aria-label="Seviye seçimine dön">🏠</button>
       <span>Doğru: <b id="statCorrect">0</b> &nbsp;·&nbsp; Yanlış: <b id="statWrong">0</b> &nbsp;·&nbsp; Öğrenildi: <b id="statMastered">0</b>/<span id="statTotal">0</span></span>
-      <button class="reset-link" id="resetBtn">ilerlemeyi sıfırla</button>
+      <button class="icon-btn" id="resetBtn" title="İlerlemeyi sıfırla" aria-label="İlerlemeyi sıfırla">🔄</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     <div class="card">
@@ -538,7 +527,6 @@ body{
       <p class="feedback" id="feedback"></p>
       <p class="next-hint" id="nextHint"></p>
     </div>
-    <button class="back-btn" id="backBtn">← Seviye seçimine dön</button>
   </div>
 
 </div>
@@ -3337,7 +3325,7 @@ async function handleAnswer(chosenOpt, btnEl){
     document.getElementById("nextHint").textContent = "Devam etmek için ekrana dokun →";
     document.getElementById("options").style.cursor = "pointer";
     const advanceOnTap = (ev) => {
-      if(ev.target.closest("#backBtn")) return;
+      if(ev.target.closest("#backBtn") || ev.target.closest("#resetBtn")) return;
       document.removeEventListener("click", advanceOnTap);
       nextQuestion();
     };
