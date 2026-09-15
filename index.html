@@ -398,6 +398,13 @@ body{
   opacity:.7;
   margin-left:4px;
 }
+.tab-count{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.72rem;
+  color:var(--moss-dark);
+  opacity:.65;
+  margin:-8px 0 14px;
+}
 .hidden{display:none !important;}
 @media(max-width:420px){
   .options{grid-template-columns:1fr;}
@@ -417,17 +424,16 @@ body{
 
 
   <div class="masthead">
-    <h1>Oxford 5000</h1>
-    <div class="tag">Kelime Tekrarı</div>
+    <h1>Aralıklı Tekrar</h1>
   </div>
 
   <div id="authBox" class="auth-box"></div>
   <div id="debugStatus" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:.7rem;color:#b5562f;text-align:right;margin-top:-10px;margin-bottom:10px;"></div>
 
   <div class="tabbar" id="tabbar">
-    <button class="tab-btn active" data-tab="setup">Pratik</button>
-    <button class="tab-btn" data-tab="mistakes">En Çok Yanlışlar</button>
-    <button class="tab-btn" data-tab="custom">Kelimelerim</button>
+    <button class="tab-btn active" data-tab="setup">Oxford 5000</button>
+    <button class="tab-btn" data-tab="mistakes">Yanlışlarım</button>
+    <button class="tab-btn" data-tab="custom">Kelime Ekle</button>
     <button class="tab-btn" data-tab="realestate">Real Estate</button>
     <button class="tab-btn" data-tab="asvab">ASVAB</button>
   </div>
@@ -435,6 +441,7 @@ body{
   <!-- SETUP -->
   <div id="setup" class="panel">
     <p class="section-label">Seviye seç</p>
+    <p class="tab-count" id="oxfordCount"></p>
     <div class="level-grid" id="levelGrid"></div>
     <button class="start-btn" id="startBtn">Teste Başla</button>
     <p class="hint">Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.</p>
@@ -443,6 +450,7 @@ body{
   <!-- MISTAKES -->
   <div id="mistakes" class="panel hidden">
     <p class="section-label">En Çok Yanlış Yaptıkların</p>
+    <p class="tab-count" id="mistakesCount"></p>
     <button class="start-btn" id="drillBtn" style="margin-bottom:18px;">Bu Kelimelerle Çalış</button>
     <div id="mistakesList"></div>
   </div>
@@ -450,6 +458,7 @@ body{
   <!-- CUSTOM WORDS -->
   <div id="custom" class="panel hidden">
     <p class="section-label">Kendi Kelimelerini Ekle</p>
+    <p class="tab-count" id="customCount"></p>
     <form id="customForm" class="custom-form">
       <input type="text" id="customEn" placeholder="İngilizce kelime" autocomplete="off" required>
       <input type="text" id="customTr" placeholder="Türkçe karşılığı" autocomplete="off" required>
@@ -464,6 +473,7 @@ body{
   <!-- REAL ESTATE -->
   <div id="realestate" class="panel hidden">
     <p class="section-label">Emlak Lisans Sınavı Kelimeleri</p>
+    <p class="tab-count" id="reCount"></p>
     <p class="hint" style="margin-top:0;margin-bottom:16px;">ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.</p>
     <button class="start-btn" id="reDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
     <div id="reList"></div>
@@ -472,6 +482,7 @@ body{
   <!-- ASVAB -->
   <div id="asvab" class="panel hidden">
     <p class="section-label">ASVAB Word Knowledge Kelimeleri</p>
+    <p class="tab-count" id="asCount"></p>
     <p class="hint" style="margin-top:0;margin-bottom:16px;">ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.</p>
     <button class="start-btn" id="asDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
     <div id="asList"></div>
@@ -3047,6 +3058,9 @@ let selectedLevels = new Set(["B2"]);
 
 const b2Count = WORDS.filter(w=>w[3]==="B2").length;
 const c1Count = WORDS.filter(w=>w[3]==="C1").length;
+document.getElementById("oxfordCount").textContent = `Toplam ${b2Count+c1Count} kelime (B2: ${b2Count} · C1: ${c1Count})`;
+document.getElementById("reCount").textContent = `Toplam ${REAL_ESTATE_WORDS.length} kelime`;
+document.getElementById("asCount").textContent = `Toplam ${ASVAB_WORDS.length} kelime`;
 
 /* ===== Setup screen ===== */
 const levelGrid = document.getElementById("levelGrid");
@@ -3252,11 +3266,13 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
 async function loadMistakes(){
   const listEl = document.getElementById("mistakesList");
   const drillBtn = document.getElementById("drillBtn");
+  const countEl = document.getElementById("mistakesCount");
   drillBtn.classList.add("hidden");
   listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
   try{
     const keys = listWordKeys();
     if(keys.length === 0){
+      countEl.textContent = "Toplam 0 kelime";
       listEl.innerHTML = '<p class="mistake-empty">Henüz hiç soru cevaplamadın.<br>Pratik sekmesinden başla, yanlış yaptıkların burada listelenecek.</p>';
       return;
     }
@@ -3274,11 +3290,13 @@ async function loadMistakes(){
       }catch(e){}
     }
     if(rows.length === 0){
+      countEl.textContent = "Toplam 0 kelime";
       listEl.innerHTML = '<p class="mistake-empty">Harika — henüz yanlış yaptığın bir kelime yok.</p>';
       return;
     }
     rows.sort((a,b)=> b.wrong - a.wrong);
     mistakeRowsCache = rows;
+    countEl.textContent = `Toplam ${rows.length} kelime`;
     drillBtn.classList.remove("hidden");
     drillBtn.textContent = `Bu ${rows.length} Kelimeyle Çalış`;
     const top = rows.slice(0, 50);
@@ -3322,6 +3340,8 @@ async function renderCustomTab(){
   const listEl = document.getElementById("customList");
   const emptyEl = document.getElementById("customEmpty");
   const drillBtn = document.getElementById("customDrillBtn");
+  const countEl = document.getElementById("customCount");
+  countEl.textContent = `Toplam ${customWordsCache.length} kelime`;
 
   if(customWordsCache.length === 0){
     listEl.innerHTML = "";
