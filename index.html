@@ -3121,23 +3121,11 @@ onAuthStateChanged(auth, (user) => {
   if(window.onAuthChanged) window.onAuthChanged(user);
 });
 
-getRedirectResult(auth).then((result) => {
-  const dbg = document.getElementById("debugStatus");
-  if(!dbg) return;
-  if(result && result.user){
-    dbg.style.color = "green";
-    dbg.textContent = "yönlendirmeden giriş alındı ✓ (" + result.user.email + ")";
-  } else {
-    dbg.style.color = "#b5562f";
-    dbg.textContent = "TANI: yönlendirme sonucu boş döndü (result=null) — büyük ihtimalle taraycının üçüncü taraf depolama/çerez engeli sebebiyle oturum tamamlanamadı.";
-  }
-}).catch(e => {
+// Redirect result is only relevant if a redirect sign-in was in progress.
+// We use popup sign-in now, so a null result here is normal and not an error —
+// keep it silent (console only) instead of surfacing a false alarm in the UI.
+getRedirectResult(auth).catch(e => {
   console.error("Yönlendirme sonucu hatası:", e);
-  const dbg = document.getElementById("debugStatus");
-  if(dbg){
-    dbg.style.color = "#b5562f";
-    dbg.textContent = "TANI: Giriş hatası — " + (e.code || "") + " " + (e.message || "");
-  }
 });
 </script>
 </body>
