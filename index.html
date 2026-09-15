@@ -3116,7 +3116,19 @@ onAuthStateChanged(auth, (user) => {
   if(window.onAuthChanged) window.onAuthChanged(user);
 });
 
-getRedirectResult(auth).catch(e => console.error("Yönlendirme sonucu hatası:", e));
+getRedirectResult(auth).then((result) => {
+  const box = document.getElementById("authBox");
+  if(!box) return;
+  if(result && result.user){
+    box.insertAdjacentHTML("beforeend", '<span class="auth-status" style="color:green">yönlendirmeden giriş alındı ✓</span>');
+  } else {
+    box.insertAdjacentHTML("beforeend", '<span class="auth-status" style="color:#b5562f">yönlendirme sonucu boş döndü</span>');
+  }
+}).catch(e => {
+  console.error("Yönlendirme sonucu hatası:", e);
+  const box = document.getElementById("authBox");
+  if(box) box.insertAdjacentHTML("beforeend", `<span class="auth-status" style="color:#b5562f">Giriş hatası: ${e.code || e.message}</span>`);
+});
 </script>
 </body>
 </html>
