@@ -3306,7 +3306,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = `Yanlış — doğrusu: ${current.t}`;
+    fb.textContent = current.finlit ? "Yanlış" : `Yanlış — doğrusu: ${current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -3336,12 +3336,12 @@ async function handleAnswer(chosenOpt, btnEl){
   if(current.finlit){
     document.getElementById("nextHint").textContent = "Devam etmek için ekrana dokun →";
     document.getElementById("options").style.cursor = "pointer";
-    const cardEl = document.querySelector(".card");
-    const advanceOnTap = () => {
-      cardEl.removeEventListener("click", advanceOnTap);
+    const advanceOnTap = (ev) => {
+      if(ev.target.closest("#backBtn")) return;
+      document.removeEventListener("click", advanceOnTap);
       nextQuestion();
     };
-    setTimeout(()=>{ cardEl.addEventListener("click", advanceOnTap); }, 60);
+    setTimeout(()=>{ document.addEventListener("click", advanceOnTap); }, 60);
   } else {
     document.getElementById("nextHint").textContent = "Sonraki kelime için tıkla →";
     document.getElementById("options").style.cursor = "pointer";
