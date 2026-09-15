@@ -429,6 +429,7 @@ body{
     <button class="tab-btn" data-tab="mistakes">En Çok Yanlışlar</button>
     <button class="tab-btn" data-tab="custom">Kelimelerim</button>
     <button class="tab-btn" data-tab="realestate">Real Estate</button>
+    <button class="tab-btn" data-tab="asvab">ASVAB</button>
   </div>
 
   <!-- SETUP -->
@@ -466,6 +467,14 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;">ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.</p>
     <button class="start-btn" id="reDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
     <div id="reList"></div>
+  </div>
+
+  <!-- ASVAB -->
+  <div id="asvab" class="panel hidden">
+    <p class="section-label">ASVAB Word Knowledge Kelimeleri</p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;">ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.</p>
+    <button class="start-btn" id="asDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
+    <div id="asList"></div>
   </div>
 
   <!-- QUIZ -->
@@ -2661,6 +2670,307 @@ const REAL_ESTATE_WORDS = [
 ["material fact","önemli/etkileyici gerçek"],
 ];
 
+const ASVAB_WORDS = [
+["abate","azaltmak, hafiflemek"],
+["aberrant","normalden sapan, anormal"],
+["abhor","nefret etmek, tiksinmek"],
+["abstain","kaçınmak, çekimser kalmak"],
+["abundant","bol, bereketli"],
+["accord","uyum, anlaşma"],
+["acute","keskin, şiddetli"],
+["adamant","kesinlikle taviz vermeyen, inatçı"],
+["adept","usta, becerikli"],
+["adhere","bağlı kalmak, yapışmak"],
+["adjacent","bitişik, yanındaki"],
+["adversary","rakip, düşman"],
+["adversity","zorluk, sıkıntı"],
+["advocate","savunmak; savunucu"],
+["aesthetic","estetik"],
+["affable","cana yakın, sıcakkanlı"],
+["affluent","zengin, varlıklı"],
+["aggravate","kötüleştirmek, ağırlaştırmak"],
+["agile","çevik"],
+["allocate","tahsis etmek, ayırmak"],
+["aloof","mesafeli, soğuk"],
+["ambiguous","belirsiz, çift anlamlı"],
+["ambivalent","kararsız, iki duygulu"],
+["amiable","sevimli, hoş sohbet"],
+["ample","yeterli, bol"],
+["animosity","düşmanlık, kin"],
+["anomaly","anormallik, sapma"],
+["antagonist","hasım, karşıt karakter"],
+["apathy","ilgisizlik, kayıtsızlık"],
+["appease","yatıştırmak, teskin etmek"],
+["arbitrary","keyfi"],
+["arduous","zahmetli, yorucu"],
+["articulate","açık ve net ifade etmek"],
+["ascend","yükselmek, çıkmak"],
+["assert","iddia etmek, ısrarla söylemek"],
+["astute","zeki, kurnaz"],
+["audacious","cüretkâr, gözü pek"],
+["austere","sade, çilekeş"],
+["authentic","özgün, gerçek"],
+["avert","önlemek, engellemek"],
+["banal","sıradan, bayağı"],
+["belligerent","saldırgan, kavgacı"],
+["benevolent","iyiliksever, hayırsever"],
+["bewilder","şaşırtmak, kafasını karıştırmak"],
+["blatant","apaçık, göze batan"],
+["bolster","desteklemek, güçlendirmek"],
+["boundless","sınırsız"],
+["brevity","kısalık, özlülük"],
+["brittle","kırılgan, gevrek"],
+["brusque","kaba ve sert (tavırda)"],
+["candid","samimi, dürüst (sözde)"],
+["capricious","kaprisli, değişken"],
+["catalyst","tetikleyici, katalizör"],
+["caustic","yakıcı, iğneleyici"],
+["chronic","kronik, süregelen"],
+["coerce","zorlamak"],
+["coherent","tutarlı, anlaşılır"],
+["collaborate","işbirliği yapmak"],
+["compassion","şefkat, merhamet"],
+["complacent","kendinden hoşnut, rehavete kapılmış"],
+["compliant","itaatkâr, uyumlu"],
+["comprehensive","kapsamlı"],
+["concede","kabul etmek, teslim etmek"],
+["concise","özlü, kısa ve net"],
+["condone","göz yummak, hoş görmek"],
+["conform","uymak, uyum sağlamak"],
+["congenial","uyumlu, hoş"],
+["conspicuous","göze çarpan, belirgin"],
+["contemplate","derin düşünmek"],
+["contempt","hor görme, küçümseme"],
+["contentious","tartışmalı, çekişmeli"],
+["converge","birleşmek, bir noktada toplanmak"],
+["convey","iletmek, aktarmak"],
+["copious","bol, çok miktarda"],
+["cordial","içten, sıcak (tavırda)"],
+["corroborate","doğrulamak, teyit etmek"],
+["credible","güvenilir, inandırıcı"],
+["cryptic","muğlak, şifreli"],
+["cumbersome","hantal, kullanışsız"],
+["cursory","üstünkörü, gelişigüzel"],
+["deceive","aldatmak"],
+["decisive","kararlı, kesin"],
+["deficient","eksik, yetersiz"],
+["defy","karşı gelmek, meydan okumak"],
+["deliberate","kasıtlı; iyice düşünmek"],
+["delude","kandırmak, yanıltmak"],
+["demeanor","tavır, davranış biçimi"],
+["denounce","kınamak, suçlamak"],
+["deplete","tüketmek, azaltmak"],
+["deprive","mahrum etmek"],
+["deride","alay etmek, küçümsemek"],
+["despondent","umutsuz, kederli"],
+["deter","caydırmak"],
+["deteriorate","kötüleşmek"],
+["detrimental","zararlı"],
+["devious","hileci, dolambaçlı"],
+["diligent","gayretli, çalışkan"],
+["diminish","azalmak, küçülmek"],
+["disclose","açıklamak, ifşa etmek"],
+["discord","anlaşmazlık, uyumsuzluk"],
+["discreet","ağzı sıkı, sağduyulu"],
+["disdain","hor görme, tepeden bakma"],
+["disparage","küçümsemek, kötülemek"],
+["disperse","dağıtmak, dağılmak"],
+["diverse","çeşitli, farklı"],
+["dubious","şüpheli, kuşkulu"],
+["eccentric","tuhaf, alışılmışın dışında"],
+["eclectic","seçmeci, çeşitli kaynaklardan derlenmiş"],
+["elated","çok sevinçli, coşkulu"],
+["elicit","ortaya çıkarmak (tepki, bilgi)"],
+["eloquent","güzel/akıcı konuşan"],
+["elusive","yakalanması/tanımlanması zor"],
+["emulate","örnek alıp taklit etmek"],
+["endeavor","çaba, gayret; çabalamak"],
+["enhance","geliştirmek, artırmak"],
+["enigma","bilmece, gizemli şey"],
+["epitome","en mükemmel örnek, timsal"],
+["equitable","adil, hakkaniyetli"],
+["eradicate","kökünü kazımak, yok etmek"],
+["erratic","düzensiz, kararsız"],
+["esteem","saygı, değer vermek"],
+["euphoric","aşırı mutlu, coşkulu"],
+["evasive","kaçamaklı, kaçıngan"],
+["exemplary","örnek teşkil eden, mükemmel"],
+["exhaustive","kapsamlı, ayrıntılı"],
+["exonerate","aklamak, suçsuz bulmak"],
+["expedite","hızlandırmak"],
+["explicit","açık, net"],
+["extol","göklere çıkarmak, övmek"],
+["extravagant","müsrif, aşırıya kaçan"],
+["exuberant","coşkulu, taşkın"],
+["fabricate","uydurmak, icat etmek (yalan)"],
+["facilitate","kolaylaştırmak"],
+["fallacy","yanlış inanç, yanılgı"],
+["fastidious","titiz, zor beğenen"],
+["feasible","uygulanabilir, mümkün"],
+["feign","numara yapmak, taklit etmek"],
+["ferocious","vahşi, azgın"],
+["fervent","ateşli, hararetli"],
+["flagrant","göz göre göre, apaçık (kötü anlamda)"],
+["flippant","saygısızca şakacı, ciddiyetsiz"],
+["formidable","güçlü, korkutucu derecede etkileyici"],
+["forsake","terk etmek, vazgeçmek"],
+["fortify","güçlendirmek, tahkim etmek"],
+["frank","dürüst, açık sözlü"],
+["frivolous","önemsiz, ciddiyetsiz"],
+["frugal","tutumlu, idareli"],
+["futile","boşuna, nafile"],
+["gaunt","bitkin ve zayıf görünümlü"],
+["genial","güler yüzlü, sıcakkanlı"],
+["gregarious","sosyal, toplum içinde olmayı seven"],
+["gullible","saf, kolay kanan"],
+["hamper","engellemek, zorlaştırmak"],
+["haphazard","gelişigüzel, plansız"],
+["hasty","aceleci, aceleyle yapılan"],
+["haughty","kibirli, kendini beğenmiş"],
+["hazardous","tehlikeli"],
+["hostile","düşmanca"],
+["humane","insancıl, merhametli"],
+["hypocrite","ikiyüzlü kişi"],
+["illicit","yasa dışı, gayrimeşru"],
+["immaculate","tertemiz, kusursuz"],
+["impartial","tarafsız"],
+["impeccable","kusursuz"],
+["impede","engellemek"],
+["imperative","zorunlu, acil önem taşıyan"],
+["implicit","örtük, dolaylı olarak ifade edilen"],
+["impromptu","hazırlıksız, doğaçlama"],
+["inadvertent","kasıtsız, farkında olmadan yapılan"],
+["inane","saçma, anlamsız"],
+["incessant","aralıksız, sürekli"],
+["incite","kışkırtmak, tahrik etmek"],
+["indignant","öfkeli, kızgın (haksızlığa karşı)"],
+["indolent","tembel, uyuşuk"],
+["inevitable","kaçınılmaz"],
+["infamous","adı kötüye çıkmış"],
+["ingenious","yaratıcı, akıllıca tasarlanmış"],
+["inherent","doğuştan var olan, içkin"],
+["innate","doğuştan gelen"],
+["insolent","küstah, saygısız"],
+["integrity","dürüstlük, bütünlük"],
+["intricate","karmaşık, girift"],
+["intrepid","korkusuz, yürekli"],
+["inundate","sel gibi kaplamak, boğmak (iş/talep)"],
+["invigorate","canlandırmak, güç vermek"],
+["jeopardize","tehlikeye atmak"],
+["jubilant","sevinçli, coşkulu"],
+["judicious","sağduyulu, isabetli karar veren"],
+["juxtapose","yan yana koyup karşılaştırmak"],
+["keen","hevesli, keskin (zekâ, duyu)"],
+["lament","yakınmak, feryat etmek"],
+["latent","gizli, henüz ortaya çıkmamış"],
+["lethargic","uyuşuk, halsiz"],
+["levity","hafiflik, şakacılık (ciddi bir durumda)"],
+["listless","isteksiz, cansız"],
+["loathe","nefret etmek, iğrenmek"],
+["lucid","açık ve anlaşılır, berrak"],
+["ludicrous","gülünç, saçma"],
+["lure","cezbetmek, tuzağa düşürmek"],
+["malicious","kötü niyetli"],
+["mandatory","zorunlu"],
+["meager","kıt, yetersiz"],
+["meander","kıvrıla kıvrıla ilerlemek, dolaşmak"],
+["meticulous","titiz, çok dikkatli"],
+["mitigate","hafifletmek, azaltmak"],
+["morose","asık suratlı, hüzünlü"],
+["mundane","sıradan, gündelik"],
+["negligent","ihmalkâr"],
+["nostalgic","özlem dolu, nostaljik"],
+["notorious","adı kötüye çıkmış, ünlü (kötü anlamda)"],
+["novice","acemi, yeni başlayan"],
+["nurture","beslemek, yetiştirmek"],
+["obscure","belirsiz, anlaşılması güç"],
+["obsolete","kullanım dışı kalmış, modası geçmiş"],
+["obstinate","inatçı"],
+["ominous","kötüye işaret eden, uğursuz"],
+["opulent","gösterişli, zengin"],
+["ostentatious","gösterişçi, çalım satan"],
+["pacify","yatıştırmak, sakinleştirmek"],
+["paramount","en önemli, üstün"],
+["perceptive","kavrayışlı, sezgisi güçlü"],
+["peril","büyük tehlike"],
+["perpetual","sürekli, sonsuz"],
+["pervasive","her yere yayılan, yaygın"],
+["petty","önemsiz, ufak (olumsuz anlamda)"],
+["plausible","akla yatkın, makul"],
+["plight","zor durum, çıkmaz"],
+["ponder","derin derin düşünmek"],
+["pragmatic","pratik, gerçekçi"],
+["precarious","güvensiz, tehlikeli (denge açısından)"],
+["prevalent","yaygın"],
+["pristine","el değmemiş, tertemiz"],
+["procrastinate","işi erteleme"],
+["prolific","üretken, bereketli"],
+["prominent","önde gelen, belirgin"],
+["prudent","tedbirli, sağduyulu"],
+["quaint","hoş ve eski usul, sevimli tuhaf"],
+["quell","bastırmak, yatıştırmak"],
+["quench","gidermek (susuzluk vb.), söndürmek"],
+["radiant","parlak, ışıl ışıl"],
+["rampant","yaygın ve kontrolsüz, azgın"],
+["rebuttal","karşı çıkış, cevap (iddiaya karşı)"],
+["reciprocal","karşılıklı"],
+["reluctant","isteksiz"],
+["remorse","pişmanlık, vicdan azabı"],
+["renowned","ünlü, tanınmış"],
+["repel","itmek, defetmek; iğrendirmek"],
+["reprimand","azarlamak, kınamak"],
+["resilient","dayanıklı, çabuk toparlanan"],
+["resolute","kararlı, azimli"],
+["reticent","az konuşan, ağzı sıkı"],
+["reverence","büyük saygı"],
+["rigorous","titiz, sıkı"],
+["robust","sağlam, dayanıklı"],
+["rudimentary","temel düzeyde, ilkel"],
+["savvy","işini bilen, kurnaz"],
+["scrupulous","vicdanlı, çok titiz"],
+["scrutinize","dikkatle incelemek"],
+["serene","huzurlu, sakin"],
+["skeptical","şüpheci"],
+["sparse","seyrek, az"],
+["spontaneous","kendiliğinden, plansız"],
+["sporadic","aralıklı, düzensiz"],
+["stagnant","durgun, hareketsiz"],
+["stern","sert, katı (tavırda)"],
+["stringent","sıkı, katı (kural)"],
+["subdue","boyun eğdirmek, bastırmak"],
+["subtle","ince, belli belirsiz"],
+["succinct","kısa ve öz"],
+["superficial","yüzeysel"],
+["superfluous","gereksiz, fazladan"],
+["surpass","aşmak, geçmek"],
+["sustain","sürdürmek, desteklemek"],
+["tedious","sıkıcı, yorucu (uzun sürdüğü için)"],
+["tenacious","azimli, inatla direnen"],
+["tentative","geçici, kesin olmayan"],
+["terse","kısa ve sert (sözde)"],
+["thrive","gelişip serpilmek, başarılı olmak"],
+["timid","çekingen, ürkek"],
+["tranquil","sakin, huzurlu"],
+["transient","geçici, kısa süreli"],
+["trivial","önemsiz"],
+["turbulent","çalkantılı, kargaşalı"],
+["ubiquitous","her yerde bulunan"],
+["unanimous","oybirliğiyle"],
+["unprecedented","eşi görülmemiş"],
+["vague","belirsiz"],
+["valiant","yiğit, cesur"],
+["verify","doğrulamak"],
+["versatile","çok yönlü"],
+["vigilant","tetikte, uyanık"],
+["vigorous","enerjik, güçlü"],
+["vindicate","haklı çıkarmak, aklamak"],
+["virtuous","erdemli"],
+["vivid","canlı, net (görüntü/anlatım)"],
+["volatile","değişken, patlamaya hazır (durum/kişi)"],
+["wary","temkinli, ihtiyatlı"],
+["zealous","hevesli, gayretli (aşırı istekli)"],
+];
+
 </script>
 <script>
 /* ===== Persistence helpers (per-word weight + stats) — uses localStorage, with in-memory fallback ===== */
@@ -2731,6 +3041,7 @@ let mistakeRowsCache = [];
 const MASTER_THRESHOLD = 1; // weight at/under this = considered "mastered" once seen correctly a couple times
 const ALL_WORDS = WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
 const ALL_RE_WORDS = REAL_ESTATE_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
+const ALL_AS_WORDS = ASVAB_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"ASVAB"}));
 let currentDistractorPool = ALL_WORDS;
 let selectedLevels = new Set(["B2"]);
 
@@ -2893,6 +3204,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.re){
     await saveREWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushRealEstateStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.asv){
+    await saveASWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushASVABStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -2926,10 +3240,12 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     document.getElementById("mistakes").classList.toggle("hidden", tab!=="mistakes");
     document.getElementById("custom").classList.toggle("hidden", tab!=="custom");
     document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
+    document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
     document.getElementById("quiz").classList.add("hidden");
     if(tab === "mistakes") loadMistakes();
     if(tab === "custom") renderCustomTab();
     if(tab === "realestate") renderRealEstateTab();
+    if(tab === "asvab") renderASVABTab();
   });
 });
 
@@ -3141,6 +3457,65 @@ document.getElementById("reDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== ASVAB tab (fixed curated list) ===== */
+const AS_STORE_PREFIX = "as5k:";
+
+function listASKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(AS_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(AS_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(AS_STORE_PREFIX)); }
+}
+async function loadASWord(en){
+  const raw = await rawGet(AS_STORE_PREFIX+en);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveASWord(en, val){
+  await rawSet(AS_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+async function renderASVABTab(){
+  const listEl = document.getElementById("asList");
+  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  const rows = [];
+  for(const w of ASVAB_WORDS){
+    const stat = await loadASWord(w[0]);
+    rows.push({en:w[0], tr:w[1], wrong: stat ? (stat.wrong||0) : 0, correct: stat ? (stat.correct||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <span class="mistake-en">${r.en}</span>
+        <div class="mistake-tr">${r.tr}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}× yanlış</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("asDrillBtn").addEventListener("click", async ()=>{
+  currentDistractorPool = ALL_AS_WORDS;
+  pool = [];
+  for(const w of ASVAB_WORDS){
+    const stat = await loadASWord(w[0]);
+    pool.push({
+      e:w[0], p:"", t:w[1], l:"ASVAB",
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      asv: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("asvab").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* ===== Auth (Google sign-in) + cloud sync ===== */
 window.currentUser = null;
 
@@ -3170,11 +3545,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -3206,9 +3581,11 @@ window.onAuthChanged = async function(user){
     const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
     const customTabActive = !document.getElementById("custom").classList.contains("hidden");
     const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
+    const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
     if(customTabActive) renderCustomTab();
     if(reTabActive) renderRealEstateTab();
+    if(asTabActive) renderASVABTab();
   }
 };
 
@@ -3296,12 +3673,42 @@ async function syncWithCloud(uid){
     window.FB.pushRealEstateStat(uid, en, merged);
   }
 
+  // --- ASVAB word stats, merged the same way ---
+  const cloudAS = await window.FB.fetchAllCloudASVAB(uid);
+  const localASKeys = listASKeys();
+  const localASMap = {};
+  for(const k of localASKeys){
+    const en = k.slice(AS_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localASMap[en] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allASEn = new Set([...Object.keys(localASMap), ...Object.keys(cloudAS)]);
+  for(const en of allASEn){
+    const l = localASMap[en], c = cloudAS[en];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveASWord(en, merged);
+    window.FB.pushASVABStat(uid, en, merged);
+  }
+
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
+  const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
   if(reTabActive) renderRealEstateTab();
+  if(asTabActive) renderASVABTab();
 }
 </script>
 <script type="module">
@@ -3371,6 +3778,12 @@ async function fetchAllCloudRealEstate(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudASVAB(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "asvab"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function pushWordStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
   catch(e){ console.error("Kelime buluta yazılamadı:", e); }
@@ -3378,6 +3791,10 @@ async function pushWordStat(uid, en, data){
 async function pushRealEstateStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "realestate", en), data); }
   catch(e){ console.error("Real Estate kelimesi buluta yazılamadı:", e); }
+}
+async function pushASVABStat(uid, en, data){
+  try{ await setDoc(doc(db, "users", uid, "asvab", en), data); }
+  catch(e){ console.error("ASVAB kelimesi buluta yazılamadı:", e); }
 }
 async function pushCustomWord(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "custom", id), {...data, deleted:false}); }
@@ -3390,8 +3807,8 @@ async function deleteCustomWordCloud(uid, id){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat
 };
 
 onAuthStateChanged(auth, (user) => {
