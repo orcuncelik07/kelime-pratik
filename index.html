@@ -428,6 +428,7 @@ body{
     <button class="tab-btn active" data-tab="setup">Pratik</button>
     <button class="tab-btn" data-tab="mistakes">En Çok Yanlışlar</button>
     <button class="tab-btn" data-tab="custom">Kelimelerim</button>
+    <button class="tab-btn" data-tab="realestate">Real Estate</button>
   </div>
 
   <!-- SETUP -->
@@ -457,6 +458,14 @@ body{
     <button class="start-btn hidden" id="customDrillBtn" style="margin:18px 0;">Bu Kelimelerle Çalış</button>
     <div id="customList"></div>
     <p class="mistake-empty" id="customEmpty">Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.</p>
+  </div>
+
+  <!-- REAL ESTATE -->
+  <div id="realestate" class="panel hidden">
+    <p class="section-label">Emlak Lisans Sınavı Kelimeleri</p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;">ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.</p>
+    <button class="start-btn" id="reDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
+    <div id="reList"></div>
   </div>
 
   <!-- QUIZ -->
@@ -2495,6 +2504,163 @@ const WORDS = [
 ["yield","n.","verim, getiri","C1"],
 ["youngster","n.","genç, çocuk","C1"],
 ];
+
+const REAL_ESTATE_WORDS = [
+["real property","gayrimenkul, taşınmaz mülk"],
+["personal property","taşınır mal (menkul)"],
+["fixture","mülke bağlı sabit eşya (demirbaş)"],
+["fee simple","tam mülkiyet hakkı"],
+["leasehold estate","kiracılık yoluyla mülkiyet hakkı"],
+["freehold estate","serbest (süresiz) mülkiyet hakkı"],
+["life estate","ömür boyu mülkiyet hakkı"],
+["remainderman","ömür boyu mülkiyet sonrası hak sahibi"],
+["easement","irtifak hakkı (geçiş/kullanım hakkı)"],
+["easement appurtenant","mülke bağlı irtifak hakkı"],
+["easement in gross","kişiye bağlı irtifak hakkı"],
+["encumbrance","mülkiyet üzerindeki kısıtlama/yük"],
+["lien","haciz/rehin hakkı"],
+["mechanic's lien","müteahhit hacki (ödenmemiş inşaat alacağı)"],
+["encroachment","komşu araziye taşma"],
+["riparian rights","akarsu kenarı mülkiyet hakları"],
+["littoral rights","göl/deniz kıyısı mülkiyet hakları"],
+["eminent domain","kamulaştırma hakkı"],
+["condemnation","kamulaştırma kararı"],
+["escheat","mirasçısız mülkün devlete geçmesi"],
+["adverse possession","zilyetlik yoluyla mülk edinme"],
+["deed","tapu senedi"],
+["title","mülkiyet hakkı, tapu"],
+["abstract of title","tapu geçmişi özeti"],
+["chain of title","tapu zinciri (mülkiyet geçmişi)"],
+["cloud on title","tapuda belirsizlik/sorun"],
+["quitclaim deed","hak feragat senedi"],
+["warranty deed","garanti senedi (tam tapu güvencesi)"],
+["general warranty deed","genel garanti senedi"],
+["special warranty deed","sınırlı garanti senedi"],
+["grantor","tapu devreden taraf"],
+["grantee","tapu devralan taraf"],
+["tenancy in common","müşterek mülkiyet (bağımsız paylı)"],
+["joint tenancy","halefiyetli ortak mülkiyet"],
+["right of survivorship","hayatta kalana geçiş hakkı"],
+["tenancy by the entirety","eşler arası ortak mülkiyet"],
+["community property","evlilik birliği malı"],
+["condominium","kat mülkiyeti"],
+["cooperative","kooperatif mülkiyeti"],
+["homestead","aile konutu (yasal korumalı ev)"],
+["metes and bounds","arazi sınır tarifi yöntemi"],
+["plat","parselleme planı"],
+["survey","arazi ölçümü"],
+["appurtenance","mülke bağlı ek hak/unsur"],
+["agency","vekalet ilişkisi (temsilcilik)"],
+["agent","emlak temsilcisi"],
+["broker","emlak komisyoncusu"],
+["principal","müvekkil (yetki veren taraf)"],
+["fiduciary duty","güven/sadakat yükümlülüğü"],
+["dual agency","çifte temsilcilik"],
+["designated agency","atanmış temsilcilik"],
+["listing agreement","satış yetki sözleşmesi"],
+["exclusive right to sell","münhasır satış yetkisi"],
+["exclusive agency listing","münhasır acentelik yetkisi"],
+["open listing","münhasır olmayan yetki sözleşmesi"],
+["net listing","net fiyat üzerinden yetki sözleşmesi"],
+["commission","komisyon"],
+["multiple listing service","ortak ilan sistemi (MLS)"],
+["buyer's agent","alıcı temsilcisi"],
+["listing agent","satıcı temsilcisi"],
+["subagency","alt temsilcilik"],
+["steering","ayrımcı yönlendirme"],
+["blockbusting","korku satışı taktiği"],
+["redlining","bölgesel kredi ayrımcılığı"],
+["puffing","abartılı övgü (satış taktiği)"],
+["offer","teklif"],
+["acceptance","kabul"],
+["counteroffer","karşı teklif"],
+["contingency","şarta bağlı madde (koşul)"],
+["earnest money","ciddiyet parası (kapora)"],
+["purchase agreement","satış sözleşmesi"],
+["option contract","opsiyon sözleşmesi"],
+["bilateral contract","iki taraflı sözleşme"],
+["unilateral contract","tek taraflı sözleşme"],
+["executory contract","ifası devam eden sözleşme"],
+["breach of contract","sözleşme ihlali"],
+["specific performance","aynen ifa (sözleşmenin yerine getirilmesi)"],
+["liquidated damages","önceden belirlenmiş tazminat"],
+["novation","sözleşmenin yenilenmesi"],
+["assignment","sözleşme hakkının devri"],
+["addendum","sözleşme eki"],
+["time is of the essence","sürenin kesin bağlayıcı olması şartı"],
+["mortgage","ipotek (konut kredisi)"],
+["amortization","taksitli geri ödeme (itfa) planı"],
+["principal (loan)","ana para"],
+["interest","faiz"],
+["adjustable-rate mortgage","değişken faizli ipotek"],
+["fixed-rate mortgage","sabit faizli ipotek"],
+["down payment","peşinat"],
+["equity","mülk üzerindeki net değer (öz sermaye)"],
+["foreclosure","ipoteğin icra yoluyla satışı"],
+["deed of trust","üçlü ipotek sözleşmesi (güven senedi)"],
+["promissory note","borç senedi"],
+["escrow","şartlı teslim hesabı (emanet hesabı)"],
+["private mortgage insurance","özel ipotek sigortası"],
+["loan-to-value ratio","kredi/değer oranı"],
+["debt-to-income ratio","borç/gelir oranı"],
+["underwriting","kredi değerlendirme süreci"],
+["pre-approval","ön onay"],
+["discount points","faiz indirim puanları"],
+["balloon payment","vade sonunda toplu ödeme"],
+["refinance","krediyi yeniden yapılandırma"],
+["subprime loan","yüksek riskli (düşük kredi notlu) kredi"],
+["appraisal","değerleme (ekspertiz)"],
+["market value","piyasa değeri"],
+["assessed value","vergi değeri"],
+["comparative market analysis","karşılaştırmalı piyasa analizi"],
+["comparable sales","emsal satışlar"],
+["depreciation","değer kaybı (amortisman)"],
+["capitalization rate","kapitalizasyon oranı"],
+["highest and best use","en yüksek ve en iyi kullanım"],
+["cost approach","maliyet yaklaşımı"],
+["income approach","gelir yaklaşımı"],
+["sales comparison approach","satış karşılaştırma yaklaşımı"],
+["gross rent multiplier","brüt kira çarpanı"],
+["functional obsolescence","işlevsel eskime"],
+["external obsolescence","dış etkenlerden kaynaklı eskime"],
+["closing","kapanış (tapu devri işlemi)"],
+["closing disclosure","kapanış açıklama belgesi"],
+["settlement statement","hesap kapanış belgesi"],
+["title insurance","tapu sigortası"],
+["title search","tapu kaydı araştırması"],
+["proration","masrafların orantılı bölüştürülmesi"],
+["recording","tapu siciline kaydetme"],
+["escrow account","emanet hesabı"],
+["conveyance","mülkiyet devri"],
+["zoning","imar planlaması"],
+["variance","imar istisnası (muafiyet)"],
+["nonconforming use","imara aykırı kullanım"],
+["special use permit","özel kullanım izni"],
+["building code","yapı yönetmeliği"],
+["subdivision","arazi parselasyonu"],
+["covenant","taahhüt / kısıtlayıcı şart"],
+["restrictive covenant","kısıtlayıcı taahhüt"],
+["planned unit development","planlı yerleşim projesi"],
+["lease","kira sözleşmesi"],
+["sublease","alt kiralama"],
+["gross lease","brüt kira (giderler kirada dahil)"],
+["net lease","net kira (giderler kiracıya ait)"],
+["tenant","kiracı"],
+["landlord","kiraya veren (ev sahibi)"],
+["eviction","tahliye"],
+["security deposit","depozito"],
+["fair housing act","adil konut yasası"],
+["discrimination","ayrımcılık"],
+["protected class","yasayla korunan grup"],
+["reasonable accommodation","makul uyarlama/düzenleme"],
+["square footage","metrekare alan"],
+["prorated taxes","orantılı bölüştürülmüş vergiler"],
+["due diligence","gerekli özenin gösterilmesi (durum tespiti)"],
+["disclosure statement","bilgilendirme beyanı"],
+["latent defect","gizli kusur"],
+["material fact","önemli/etkileyici gerçek"],
+];
+
 </script>
 <script>
 /* ===== Persistence helpers (per-word weight + stats) — uses localStorage, with in-memory fallback ===== */
@@ -2564,6 +2730,8 @@ let sessionCorrect = 0, sessionWrong = 0;
 let mistakeRowsCache = [];
 const MASTER_THRESHOLD = 1; // weight at/under this = considered "mastered" once seen correctly a couple times
 const ALL_WORDS = WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
+const ALL_RE_WORDS = REAL_ESTATE_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
+let currentDistractorPool = ALL_WORDS;
 let selectedLevels = new Set(["B2"]);
 
 const b2Count = WORDS.filter(w=>w[3]==="B2").length;
@@ -2612,6 +2780,7 @@ async function startSession(){
   const startBtn = document.getElementById("startBtn");
   startBtn.disabled = true;
   startBtn.textContent = "Yükleniyor…";
+  currentDistractorPool = ALL_WORDS;
 
   const chosen = WORDS.filter(w => selectedLevels.has(w[3]));
   pool = [];
@@ -2650,7 +2819,7 @@ function pickWord(){
 }
 
 function buildOptions(correctWord){
-  const others = ALL_WORDS.filter(w=>w.e!==correctWord.e);
+  const others = currentDistractorPool.filter(w=>w.e!==correctWord.e);
   const shuffled = others.sort(()=>Math.random()-0.5).slice(0,3);
   const opts = [correctWord, ...shuffled].sort(()=>Math.random()-0.5);
   return opts;
@@ -2721,6 +2890,9 @@ async function handleAnswer(chosenOpt, btnEl){
     }
     await saveCustomList(customWordsCache);
     if(window.currentUser && window.FB) window.FB.pushCustomWord(window.currentUser.uid, current.id, customWordsCache[idx] || {en:current.e, tr:current.t, pos:current.p, weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.re){
+    await saveREWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushRealEstateStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -2753,9 +2925,11 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     document.getElementById("setup").classList.toggle("hidden", tab!=="setup");
     document.getElementById("mistakes").classList.toggle("hidden", tab!=="mistakes");
     document.getElementById("custom").classList.toggle("hidden", tab!=="custom");
+    document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
     document.getElementById("quiz").classList.add("hidden");
     if(tab === "mistakes") loadMistakes();
     if(tab === "custom") renderCustomTab();
+    if(tab === "realestate") renderRealEstateTab();
   });
 });
 
@@ -2808,6 +2982,7 @@ async function loadMistakes(){
 
 document.getElementById("drillBtn").addEventListener("click", ()=>{
   if(!mistakeRowsCache.length) return;
+  currentDistractorPool = ALL_WORDS;
   pool = mistakeRowsCache.map(r => ({
     e:r.en, p:r.p, t:r.t, l:r.l,
     weight: Math.max(r.weight, 3),
@@ -2889,6 +3064,7 @@ document.getElementById("customForm").addEventListener("submit", async (e)=>{
 
 document.getElementById("customDrillBtn").addEventListener("click", async ()=>{
   if(!customWordsCache.length) return;
+  currentDistractorPool = ALL_WORDS;
   pool = customWordsCache.map(w => ({
     id:w.id, e:w.en, p:w.pos||"", t:w.tr, l:"Kelimelerim",
     weight: w.weight ?? 3,
@@ -2899,6 +3075,65 @@ document.getElementById("customDrillBtn").addEventListener("click", async ()=>{
   sessionCorrect = 0; sessionWrong = 0;
   document.getElementById("setup").classList.add("hidden");
   document.getElementById("custom").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
+/* ===== Real Estate tab (fixed curated list) ===== */
+const RE_STORE_PREFIX = "re5k:";
+
+function listREKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(RE_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(RE_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(RE_STORE_PREFIX)); }
+}
+async function loadREWord(en){
+  const raw = await rawGet(RE_STORE_PREFIX+en);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveREWord(en, val){
+  await rawSet(RE_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+async function renderRealEstateTab(){
+  const listEl = document.getElementById("reList");
+  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  const rows = [];
+  for(const w of REAL_ESTATE_WORDS){
+    const stat = await loadREWord(w[0]);
+    rows.push({en:w[0], tr:w[1], wrong: stat ? (stat.wrong||0) : 0, correct: stat ? (stat.correct||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <span class="mistake-en">${r.en}</span>
+        <div class="mistake-tr">${r.tr}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}× yanlış</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("reDrillBtn").addEventListener("click", async ()=>{
+  currentDistractorPool = ALL_RE_WORDS;
+  pool = [];
+  for(const w of REAL_ESTATE_WORDS){
+    const stat = await loadREWord(w[0]);
+    pool.push({
+      e:w[0], p:"", t:w[1], l:"Real Estate",
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      re: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("realestate").classList.add("hidden");
   document.getElementById("tabbar").classList.add("hidden");
   document.getElementById("quiz").classList.remove("hidden");
   document.getElementById("statTotal").textContent = pool.length;
@@ -2935,11 +3170,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -2970,8 +3205,10 @@ window.onAuthChanged = async function(user){
     clearLocalProgress();
     const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
     const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+    const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
     if(customTabActive) renderCustomTab();
+    if(reTabActive) renderRealEstateTab();
   }
 };
 
@@ -3031,10 +3268,40 @@ async function syncWithCloud(uid){
   }
   await saveCustomList(mergedList);
 
+  // --- Real Estate word stats, merged the same way as Oxford words ---
+  const cloudRE = await window.FB.fetchAllCloudRealEstate(uid);
+  const localREKeys = listREKeys();
+  const localREMap = {};
+  for(const k of localREKeys){
+    const en = k.slice(RE_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localREMap[en] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allREEn = new Set([...Object.keys(localREMap), ...Object.keys(cloudRE)]);
+  for(const en of allREEn){
+    const l = localREMap[en], c = cloudRE[en];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveREWord(en, merged);
+    window.FB.pushRealEstateStat(uid, en, merged);
+  }
+
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+  const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
+  if(reTabActive) renderRealEstateTab();
 }
 </script>
 <script type="module">
@@ -3098,9 +3365,19 @@ async function fetchAllCloudCustom(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudRealEstate(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "realestate"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function pushWordStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
   catch(e){ console.error("Kelime buluta yazılamadı:", e); }
+}
+async function pushRealEstateStat(uid, en, data){
+  try{ await setDoc(doc(db, "users", uid, "realestate", en), data); }
+  catch(e){ console.error("Real Estate kelimesi buluta yazılamadı:", e); }
 }
 async function pushCustomWord(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "custom", id), {...data, deleted:false}); }
@@ -3113,8 +3390,8 @@ async function deleteCustomWordCloud(uid, id){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat
 };
 
 onAuthStateChanged(auth, (user) => {
