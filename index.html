@@ -3288,7 +3288,7 @@ async function handleAnswer(chosenOpt, btnEl){
   const allBtns = Array.from(document.querySelectorAll(".opt"));
 
   allBtns.forEach(b=>{
-    b.disabled = true;
+    if(!current.finlit) b.disabled = true;
     const wasCorrectBtn = b.textContent === current.t;
     if(wasCorrectBtn) b.classList.add("correct");
     else if(b === btnEl && !isCorrect) b.classList.add("wrong");
