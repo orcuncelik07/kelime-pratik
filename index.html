@@ -3226,10 +3226,19 @@ function pickWord(){
   return pool[pool.length-1];
 }
 
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function buildOptions(correctWord){
   const others = currentDistractorPool.filter(w=>w.e!==correctWord.e);
-  const shuffled = others.sort(()=>Math.random()-0.5).slice(0,3);
-  const opts = [correctWord, ...shuffled].sort(()=>Math.random()-0.5);
+  const shuffled = shuffleArray(others).slice(0,3);
+  const opts = shuffleArray([correctWord, ...shuffled]);
   return opts;
 }
 
@@ -3238,7 +3247,7 @@ function buildFinlitOptions(correctWord){
     e: correctWord.id + "__wrong" + i,
     p: "", t: text, l: correctWord.l
   }));
-  const opts = [correctWord, ...wrongs].sort(()=>Math.random()-0.5);
+  const opts = shuffleArray([correctWord, ...wrongs]);
   return opts;
 }
 
@@ -3324,9 +3333,20 @@ async function handleAnswer(chosenOpt, btnEl){
   }
   updateStats();
 
-  document.getElementById("nextHint").textContent = "Sonraki kelime için tıkla →";
-  document.getElementById("options").style.cursor = "pointer";
-  setTimeout(()=>{ nextQuestion(); }, isCorrect ? 700 : 1600);
+  if(current.finlit){
+    document.getElementById("nextHint").textContent = "Devam etmek için ekrana dokun →";
+    document.getElementById("options").style.cursor = "pointer";
+    const cardEl = document.querySelector(".card");
+    const advanceOnTap = () => {
+      cardEl.removeEventListener("click", advanceOnTap);
+      nextQuestion();
+    };
+    setTimeout(()=>{ cardEl.addEventListener("click", advanceOnTap); }, 60);
+  } else {
+    document.getElementById("nextHint").textContent = "Sonraki kelime için tıkla →";
+    document.getElementById("options").style.cursor = "pointer";
+    setTimeout(()=>{ nextQuestion(); }, isCorrect ? 700 : 1600);
+  }
 }
 
 function updateStats(){
