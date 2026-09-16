@@ -367,6 +367,29 @@ body{
   flex-shrink:0;
 }
 .del-btn:hover{background:var(--wrong);color:#fff;}
+.lang-switch{
+  display:flex;
+  gap:4px;
+  align-items:center;
+}
+.flag-btn{
+  font-size:1.15rem;
+  line-height:1;
+  background:none;
+  border:1.5px solid transparent;
+  border-radius:6px;
+  cursor:pointer;
+  padding:3px 5px;
+  opacity:.45;
+  filter:grayscale(60%);
+  transition:opacity .12s ease, filter .12s ease, border-color .12s ease;
+}
+.flag-btn:hover{opacity:.8;}
+.flag-btn.active{
+  opacity:1;
+  filter:none;
+  border-color:var(--line);
+}
 .auth-box{
   display:flex;
   justify-content:flex-end;
@@ -439,77 +462,81 @@ body{
 
 
   <div class="masthead">
-    <h1>Aralıklı Tekrar</h1>
+    <h1 data-i18n="title">Aralıklı Tekrar</h1>
+    <div class="lang-switch" id="langSwitch">
+      <button class="flag-btn active" id="langTr" title="Türkçe" aria-label="Türkçe">🇹🇷</button>
+      <button class="flag-btn" id="langEn" title="English" aria-label="English">🇺🇸</button>
+    </div>
     <div id="authBox" class="auth-box"></div>
   </div>
 
   <div id="debugStatus" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:.7rem;color:#b5562f;text-align:right;margin-top:-10px;margin-bottom:10px;"></div>
 
   <div class="tabbar" id="tabbar">
-    <button class="tab-btn active" data-tab="setup">Oxford 5000</button>
-    <button class="tab-btn" data-tab="mistakes">Yanlışlarım</button>
-    <button class="tab-btn" data-tab="custom">Kelime Ekle</button>
+    <button class="tab-btn active" data-tab="setup" data-i18n="tab_oxford">Oxford 5000</button>
+    <button class="tab-btn" data-tab="mistakes" data-i18n="tab_mistakes">Yanlışlarım</button>
+    <button class="tab-btn" data-tab="custom" data-i18n="tab_custom">Kelime Ekle</button>
     <button class="tab-btn" data-tab="realestate">Real Estate</button>
     <button class="tab-btn" data-tab="asvab">ASVAB</button>
-    <button class="tab-btn" data-tab="finlit">Finansal Okuryazarlık</button>
+    <button class="tab-btn" data-tab="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</button>
   </div>
 
   <!-- SETUP -->
   <div id="setup" class="panel">
-    <p class="section-label">Seviye seç</p>
+    <p class="section-label" data-i18n="setup_label">Seviye seç</p>
     <p class="tab-count" id="oxfordCount"></p>
     <div class="level-grid" id="levelGrid"></div>
-    <button class="start-btn" id="startBtn">Teste Başla</button>
-    <p class="hint">Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.</p>
+    <button class="start-btn" id="startBtn" data-i18n="start_quiz">Teste Başla</button>
+    <p class="hint" data-i18n="setup_hint">Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.</p>
   </div>
 
   <!-- MISTAKES -->
   <div id="mistakes" class="panel hidden">
-    <p class="section-label">En Çok Yanlış Yaptıkların</p>
+    <p class="section-label" data-i18n="mistakes_label">En Çok Yanlış Yaptıkların</p>
     <p class="tab-count" id="mistakesCount"></p>
-    <button class="start-btn" id="drillBtn" style="margin-bottom:18px;">Bu Kelimelerle Çalış</button>
+    <button class="start-btn" id="drillBtn" style="margin-bottom:18px;" data-i18n="practice_these">Bu Kelimelerle Çalış</button>
     <div id="mistakesList"></div>
   </div>
 
   <!-- CUSTOM WORDS -->
   <div id="custom" class="panel hidden">
-    <p class="section-label">Kendi Kelimelerini Ekle</p>
+    <p class="section-label" data-i18n="custom_label">Kendi Kelimelerini Ekle</p>
     <p class="tab-count" id="customCount"></p>
     <form id="customForm" class="custom-form">
-      <input type="text" id="customEn" placeholder="İngilizce kelime" autocomplete="off" required>
-      <input type="text" id="customTr" placeholder="Türkçe karşılığı" autocomplete="off" required>
-      <input type="text" id="customPos" placeholder="tür (v., n., adj. — opsiyonel)" autocomplete="off">
-      <button type="submit" class="add-btn">Ekle</button>
+      <input type="text" id="customEn" placeholder="İngilizce kelime" data-i18n-ph="custom_en_ph" autocomplete="off" required>
+      <input type="text" id="customTr" placeholder="Türkçe karşılığı" data-i18n-ph="custom_tr_ph" autocomplete="off" required>
+      <input type="text" id="customPos" placeholder="tür (v., n., adj. — opsiyonel)" data-i18n-ph="custom_pos_ph" autocomplete="off">
+      <button type="submit" class="add-btn" data-i18n="add_btn">Ekle</button>
     </form>
-    <button class="start-btn hidden" id="customDrillBtn" style="margin:18px 0;">Bu Kelimelerle Çalış</button>
+    <button class="start-btn hidden" id="customDrillBtn" style="margin:18px 0;" data-i18n="practice_these">Bu Kelimelerle Çalış</button>
     <div id="customList"></div>
-    <p class="mistake-empty" id="customEmpty">Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.</p>
+    <p class="mistake-empty" id="customEmpty" data-i18n="custom_empty">Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.</p>
   </div>
 
   <!-- REAL ESTATE -->
   <div id="realestate" class="panel hidden">
-    <p class="section-label">Emlak Lisans Sınavı Kelimeleri</p>
+    <p class="section-label" data-i18n="re_label">Emlak Lisans Sınavı Kelimeleri</p>
     <p class="tab-count" id="reCount"></p>
-    <p class="hint" style="margin-top:0;margin-bottom:16px;">ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.</p>
-    <button class="start-btn" id="reDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="re_hint">ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.</p>
+    <button class="start-btn" id="reDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="reList"></div>
   </div>
 
   <!-- ASVAB -->
   <div id="asvab" class="panel hidden">
-    <p class="section-label">ASVAB Word Knowledge Kelimeleri</p>
+    <p class="section-label" data-i18n="as_label">ASVAB Word Knowledge Kelimeleri</p>
     <p class="tab-count" id="asCount"></p>
-    <p class="hint" style="margin-top:0;margin-bottom:16px;">ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.</p>
-    <button class="start-btn" id="asDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="as_hint">ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.</p>
+    <button class="start-btn" id="asDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="asList"></div>
   </div>
 
   <!-- FINANCIAL LITERACY -->
   <div id="finlit" class="panel hidden">
-    <p class="section-label">Finansal Okuryazarlık Soruları</p>
+    <p class="section-label" data-i18n="fl_label">Finansal Okuryazarlık Soruları</p>
     <p class="tab-count" id="flCount"></p>
-    <p class="hint" style="margin-top:0;margin-bottom:16px;">Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.</p>
-    <button class="start-btn" id="flDrillBtn" style="margin-bottom:18px;">Teste Başla</button>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="fl_hint">Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.</p>
+    <button class="start-btn" id="flDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="flList"></div>
   </div>
 
@@ -517,7 +544,7 @@ body{
   <div id="quiz" class="hidden">
     <div class="stats-bar">
       <button class="icon-btn" id="backBtn" title="Seviye seçimine dön" aria-label="Seviye seçimine dön">🏠</button>
-      <span>Doğru: <b id="statCorrect">0</b> &nbsp;·&nbsp; Yanlış: <b id="statWrong">0</b> &nbsp;·&nbsp; Öğrenildi: <b id="statMastered">0</b>/<span id="statTotal">0</span></span>
+      <span data-i18n-html="stats_line">Doğru: <b id="statCorrect">0</b> &nbsp;·&nbsp; Yanlış: <b id="statWrong">0</b> &nbsp;·&nbsp; Öğrenildi: <b id="statMastered">0</b>/<span id="statTotal">0</span></span>
       <button class="icon-btn" id="resetBtn" title="İlerlemeyi sıfırla" aria-label="İlerlemeyi sıfırla">🔄</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -3013,51 +3040,51 @@ const FINLIT_QUESTIONS = [
 ["Tek bir şirketin hissesine yatırım yapmak mı, yoksa birçok farklı şirket hissesinden oluşan bir yatırım fonuna (endeks fonu) yatırım yapmak mı genellikle daha risklidir?","Tek bir şirketin hissesi daha risklidir","İkisi de aynı risktedir","Yatırım fonu daha risklidir","Risk hisse senedinin fiyatına bağlı değildir"],
 ["'Bileşik faiz' ne demektir?","Hem ana paraya hem de önceki dönemlerde birikmiş faize yeniden faiz işlemesi","Sadece ana para üzerinden hesaplanan sabit faiz","Bankanın uyguladığı en düşük faiz oranı","Kredi kartı yıllık üyelik ücreti"],
 ["Kredi kartı borcunuzu her ay sadece asgari tutar kadar öderseniz ne olur?","Kalan borca yüksek faiz işlemeye devam eder, toplam maliyet artar","Borç faizsiz şekilde ertelenmiş olur","Kredi puanınız otomatik olarak yükselir","Borcunuz bir sonraki ay silinir"],
-["Acil durum fonu (emergency fund) neden önemlidir?","Beklenmedik bir gider çıktığında borca/krediye başvurmadan karşılamayı sağlar","Yatırım getirisini maksimize etmek içindir","Vergi ödememek için kullanılır","Sadece emeklilik için biriktirilir"],
+["Acil durum fonu neden önemlidir?","Beklenmedik bir gider çıktığında borca/krediye başvurmadan karşılamayı sağlar","Yatırım getirisini maksimize etmek içindir","Vergi ödememek için kullanılır","Sadece emeklilik için biriktirilir"],
 ["Kredi puanınızı (kredi notunuzu) en çok etkileyen faktör genellikle hangisidir?","Ödemelerinizi zamanında yapıp yapmadığınız (ödeme geçmişi)","Saçınızın rengi","Kaç tane sosyal medya hesabınız olduğu","Yaşadığınız şehir"],
-["'APR' (yıllık yüzde oran) bir kredi kartında neyi ifade eder?","Borç alma işleminin faiz ve ücretler dahil yıllık toplam maliyetini","Kartla yapabileceğiniz maksimum harcama tutarını","Her ay ödemeniz gereken minimum tutarı","Kart kullanımından kazanılan puan oranını"],
-["Aynı tutarda kredi için 15 yıllık ipotek (mortgage) ile 30 yıllık ipoteği karşılaştırırsak, hangisi ödenen toplam faiz açısından daha avantajlıdır?","15 yıllık kredi, çünkü daha kısa sürede daha az toplam faiz öder","30 yıllık kredi, çünkü aylık ödeme daha düşüktür","İkisi de tam olarak aynı toplam faizi öder","Bu, kredi kartı şirketine bağlıdır, ipotekle ilgisi yoktur"],
-["'Net değer' (net worth) nasıl hesaplanır?","Toplam varlıklardan toplam borçların çıkarılmasıyla","Sadece banka hesabındaki nakit miktarıyla","Aylık brüt maaşla","Sahip olunan kredi kartı sayısıyla"],
-["Yatırımda 'çeşitlendirme' (diversification) ne anlama gelir?","Parayı farklı varlık türlerine dağıtarak riski azaltmak","Tüm parayı tek bir hisseye yatırmak","Sadece nakit olarak tutmak","Yatırım yapmaktan tamamen kaçınmak"],
+["'Yıllık maliyet oranı' (APR) bir kredi kartında neyi ifade eder?","Borç alma işleminin faiz ve ücretler dahil yıllık toplam maliyetini","Kartla yapabileceğiniz maksimum harcama tutarını","Her ay ödemeniz gereken minimum tutarı","Kart kullanımından kazanılan puan oranını"],
+["Aynı tutarda kredi için 15 yıllık ipotek ile 30 yıllık ipoteği karşılaştırırsak, hangisi ödenen toplam faiz açısından daha avantajlıdır?","15 yıllık kredi, çünkü daha kısa sürede daha az toplam faiz öder","30 yıllık kredi, çünkü aylık ödeme daha düşüktür","İkisi de tam olarak aynı toplam faizi öder","Bu, kredi kartı şirketine bağlıdır, ipotekle ilgisi yoktur"],
+["'Net değer' nasıl hesaplanır?","Toplam varlıklardan toplam borçların çıkarılmasıyla","Sadece banka hesabındaki nakit miktarıyla","Aylık brüt maaşla","Sahip olunan kredi kartı sayısıyla"],
+["Yatırımda 'çeşitlendirme' ne anlama gelir?","Parayı farklı varlık türlerine dağıtarak riski azaltmak","Tüm parayı tek bir hisseye yatırmak","Sadece nakit olarak tutmak","Yatırım yapmaktan tamamen kaçınmak"],
 ["Enflasyon paranızın satın alma gücünü nasıl etkiler?","Fiyatlar yükseldiği için satın alma gücünü azaltır","Satın alma gücünü artırır","Hiçbir etkisi yoktur","Sadece borç alanları etkiler, tasarruf sahiplerini etkilemez"],
 ["'Likidite' (likit varlık) ne anlama gelir?","Bir varlığın hızlıca ve değer kaybetmeden nakde çevrilebilmesi","Bir varlığın yıllık getiri oranı","Bir kredinin vade süresi","Bir şirketin toplam çalışan sayısı"],
-["'Fırsat maliyeti' (opportunity cost) kavramı neyi ifade eder?","Bir seçim yaparken vazgeçilen bir sonraki en iyi alternatifin değerini","Bir ürünün mağazadaki etiket fiyatını","Yatırımdan elde edilen kesin kâr miktarını","Bankanın uyguladığı işlem ücretini"],
+["'Fırsat maliyeti' kavramı neyi ifade eder?","Bir seçim yaparken vazgeçilen bir sonraki en iyi alternatifin değerini","Bir ürünün mağazadaki etiket fiyatını","Yatırımdan elde edilen kesin kâr miktarını","Bankanın uyguladığı işlem ücretini"],
 ["Sabit faizli kredi ile değişken faizli kredi arasındaki temel fark nedir?","Sabit faizde oran kredi boyunca değişmez, değişkende piyasaya göre dalgalanır","Sabit faizli krediler her zaman daha pahalıdır","Değişken faizli krediler faizsizdir","İkisi arasında pratikte bir fark yoktur"],
-["'Amortisman' (amortization) bir kredi bağlamında ne anlama gelir?","Kredinin taksitlerle zaman içinde anapara ve faiz olarak geri ödenme planı","Kredinin tamamen silinmesi","Bir varlığın piyasa değerinin artması","Kredi başvurusunun reddedilmesi"],
-["Borç/gelir oranı (debt-to-income ratio) neyi gösterir?","Aylık gelirinizin ne kadarının borç ödemelerine gittiğini","Toplam varlıklarınızın toplam değerini","Kredi kartı limitinizin toplam tutarını","Vergi diliminizi"],
-["Sigortanın (insurance) temel amacı nedir?","Büyük ve beklenmedik bir mali kaybın riskini küçük, düzenli ödemelerle paylaşmak","Kesin olarak kâr elde etmek","Vergi ödememeyi sağlamak","Kredi puanını doğrudan yükseltmek"],
-["'Muafiyet payı' (deductible) bir sigorta poliçesinde ne anlama gelir?","Sigortanın ödeme yapmaya başlamadan önce sizin cepten ödediğiniz tutar","Sigorta şirketinin yıllık kârı","Poliçenin süresi","Sigortalının yaşı"],
-["Rule of 72 (72 kuralı) neyi tahmin etmek için kullanılır?","Bir yatırımın belirli bir faiz oranında yaklaşık kaç yılda ikiye katlanacağını","Bir kredinin toplam faizini","Vergi iadesinin ne zaman geleceğini","Bir hissenin bir sonraki fiyatını"],
+["'Amortisman' bir kredi bağlamında ne anlama gelir?","Kredinin taksitlerle zaman içinde anapara ve faiz olarak geri ödenme planı","Kredinin tamamen silinmesi","Bir varlığın piyasa değerinin artması","Kredi başvurusunun reddedilmesi"],
+["Borç/gelir oranı neyi gösterir?","Aylık gelirinizin ne kadarının borç ödemelerine gittiğini","Toplam varlıklarınızın toplam değerini","Kredi kartı limitinizin toplam tutarını","Vergi diliminizi"],
+["Sigortanın temel amacı nedir?","Büyük ve beklenmedik bir mali kaybın riskini küçük, düzenli ödemelerle paylaşmak","Kesin olarak kâr elde etmek","Vergi ödememeyi sağlamak","Kredi puanını doğrudan yükseltmek"],
+["'Muafiyet payı' bir sigorta poliçesinde ne anlama gelir?","Sigortanın ödeme yapmaya başlamadan önce sizin cepten ödediğiniz tutar","Sigorta şirketinin yıllık kârı","Poliçenin süresi","Sigortalının yaşı"],
+["72 kuralı neyi tahmin etmek için kullanılır?","Bir yatırımın belirli bir faiz oranında yaklaşık kaç yılda ikiye katlanacağını","Bir kredinin toplam faizini","Vergi iadesinin ne zaman geleceğini","Bir hissenin bir sonraki fiyatını"],
 ["Sabit faizli bir kredi borcunuz varken enflasyon yükselirse, bu borçlu (siz) için genellikle nasıl bir etki yaratır?","Borcu gerçek (enflasyondan arındırılmış) değer olarak geri ödemek görece kolaylaşır","Borcunuzun faizi otomatik olarak artar","Borç anında tamamen silinir","Hiçbir etkisi olmaz"],
-["'Ortalama maliyetleme' (dollar-cost averaging) stratejisi nedir?","Piyasanın zamanlamasını tahmin etmeye çalışmadan düzenli aralıklarla sabit tutarda yatırım yapmak","Tüm parayı tek seferde en düşük fiyattan yatırmaya çalışmak","Sadece fiyat düşerken yatırım yapmak","Yatırımı hiç yapmadan beklemek"],
-["Bir endeks fonu (index fund) genellikle ne yapar?","Belirli bir piyasa endeksinin (örn. S&P 500) performansını takip eder","Tek bir şirketin hissesine yatırım yapar","Sabit, garanti edilmiş bir getiri sunar","Sadece devlet tahvillerinden oluşur"],
-["Hisse senetleri ile tahviller (bonds) karşılaştırıldığında genel eğilim nedir?","Hisse senetleri genelde daha yüksek risk ve potansiyel getiri, tahviller daha düşük risk taşır","Tahviller her zaman hisse senetlerinden daha yüksek getiri sağlar","İkisi de risksizdir","Hisse senedi ve tahvil arasında fark yoktur"],
-["Kredi kartı 'kullanım oranı' (credit utilization) neyi ifade eder ve kredi puanını nasıl etkiler?","Kullanılan bakiyenin toplam limite oranıdır; düşük tutulması genelde kredi puanına iyi gelir","Kartın yıllık aidatıdır ve puanla ilgisi yoktur","Kart üzerindeki puan/mil oranıdır","Sadece bankanın belirlediği rastgele bir sayıdır"],
+["'Ortalama maliyetleme' stratejisi nedir?","Piyasanın zamanlamasını tahmin etmeye çalışmadan düzenli aralıklarla sabit tutarda yatırım yapmak","Tüm parayı tek seferde en düşük fiyattan yatırmaya çalışmak","Sadece fiyat düşerken yatırım yapmak","Yatırımı hiç yapmadan beklemek"],
+["Bir endeks fonu genellikle ne yapar?","Belirli bir piyasa endeksinin (örn. S&P 500) performansını takip eder","Tek bir şirketin hissesine yatırım yapar","Sabit, garanti edilmiş bir getiri sunar","Sadece devlet tahvillerinden oluşur"],
+["Hisse senetleri ile tahviller karşılaştırıldığında genel eğilim nedir?","Hisse senetleri genelde daha yüksek risk ve potansiyel getiri, tahviller daha düşük risk taşır","Tahviller her zaman hisse senetlerinden daha yüksek getiri sağlar","İkisi de risksizdir","Hisse senedi ve tahvil arasında fark yoktur"],
+["Kredi kartı 'kullanım oranı' neyi ifade eder ve kredi puanını nasıl etkiler?","Kullanılan bakiyenin toplam limite oranıdır; düşük tutulması genelde kredi puanına iyi gelir","Kartın yıllık aidatıdır ve puanla ilgisi yoktur","Kart üzerindeki puan/mil oranıdır","Sadece bankanın belirlediği rastgele bir sayıdır"],
 ["50/30/20 bütçeleme kuralına göre gelirin yaklaşık %20'si genellikle neye ayrılır?","Tasarruf ve borç ödemelerine","Sadece eğlenceye","Zorunlu ihtiyaçlara (kira, fatura)","Vergiye"],
-["ABD'de 401(k) gibi işveren emeklilik planlarında 'employer match' (işveren eşleştirmesi) ne anlama gelir?","İşverenin, çalışanın katkısına belirli bir orana kadar ek katkı yapması","İşverenin çalışana kredi vermesi","Devletin emeklilik vergisini iptal etmesi","Çalışanın maaşının otomatik olarak iki katına çıkması"],
-["'Varlık' (asset) ile 'borç/yükümlülük' (liability) arasındaki temel fark nedir?","Varlık cebinize para koyar veya değer taşır, yükümlülük cebinizden para çıkarır (borç yaratır)","İkisi de aynı anlama gelir","Varlık her zaman nakittir","Yükümlülük her zaman bir ev demektir"],
-["Bir krediyi 'refinanse etmek' (refinance) ne anlama gelir?","Mevcut krediyi genelde daha iyi şartlarla yeni bir kredi ile değiştirmek","Krediyi tamamen iptal etmek","Kredi kartı limitini artırmak","Vergi beyannamesi vermek"],
-["Pozitif nakit akışı (positive cash flow) bir yatırım gayrimenkulü için ne anlama gelir?","Kira geliri, tüm giderleri (kredi, vergi, bakım) aştığında kalan pozitif tutar","Gayrimenkulün piyasa değerinin artması","Kredi başvurusunun onaylanması","Kiracının depozito ödemesi"],
-["'Boğa piyasası' (bull market) ne anlama gelir?","Fiyatların genel olarak yükseliş eğiliminde olduğu piyasa dönemi","Fiyatların genel olarak düşüş eğiliminde olduğu dönem","Piyasanın tamamen kapalı olduğu dönem","Sadece tahvil fiyatlarının arttığı dönem"],
-["'Ayı piyasası' (bear market) genellikle nasıl tanımlanır?","Fiyatların zirveden yaklaşık %20 veya daha fazla düştüğü uzun süreli düşüş dönemi","Fiyatların sürekli yükseldiği dönem","Sadece bir günlük fiyat düşüşü","Piyasanın tatil nedeniyle kapalı olduğu gün"],
-["Kredi raporu (credit report) ile kredi puanı (credit score) arasındaki fark nedir?","Kredi raporu detaylı geçmiş bilgisidir, kredi puanı bu bilgiden türetilen tek bir sayıdır","İkisi birebir aynı şeydir","Kredi raporu sadece bankalar tarafından görülebilir, puan görülemez","Kredi puanı yıllık gelire göre hesaplanır"],
-["Değişken faizli bir krediyi (adjustable-rate) sabit faizli bir krediyle (fixed-rate) karşılaştırdığımızda temel risk farkı nedir?","Değişken faizde piyasa koşullarına göre ödemeniz artabilir veya azalabilir, sabitte ödeme sabit kalır","Sabit faizli kredilerde risk daha yüksektir","Değişken faizli krediler asla değişmez","İkisi arasında risk farkı yoktur"],
-["Bir kredi kartı borcunu öderken 'çığ yöntemi' (avalanche method) ne yapar?","Önce en yüksek faizli borcu önceliklendirerek öder, toplam faiz maliyetini azaltır","Önce en küçük borcu öder, motivasyon sağlar","Tüm borçları eşit oranda öder","Sadece asgari ödemeyi yapar"],
-["'Kartopu yöntemi' (snowball method) borç ödemede neyi önceliklendirir?","En küçük bakiyeli borcu önce kapatarak psikolojik motivasyon sağlamayı","En yüksek faizli borcu önce kapatmayı","Sadece kredi kartı borçlarını","Sadece ipotek borcunu"],
-["Bir hisse senedinin 'temettü' (dividend) ödemesi nedir?","Şirketin kârından hissedarlara düzenli olarak dağıttığı pay","Hisse senedinin alım komisyonu","Şirketin aldığı bir kredi türü","Borsanın uyguladığı bir vergi"],
+["ABD'de 401(k) gibi işveren emeklilik planlarında 'işveren eşleştirmesi' ne anlama gelir?","İşverenin, çalışanın katkısına belirli bir orana kadar ek katkı yapması","İşverenin çalışana kredi vermesi","Devletin emeklilik vergisini iptal etmesi","Çalışanın maaşının otomatik olarak iki katına çıkması"],
+["'Varlık' ile 'borç/yükümlülük' arasındaki temel fark nedir?","Varlık cebinize para koyar veya değer taşır, yükümlülük cebinizden para çıkarır (borç yaratır)","İkisi de aynı anlama gelir","Varlık her zaman nakittir","Yükümlülük her zaman bir ev demektir"],
+["Bir krediyi 'refinanse etmek' ne anlama gelir?","Mevcut krediyi genelde daha iyi şartlarla yeni bir kredi ile değiştirmek","Krediyi tamamen iptal etmek","Kredi kartı limitini artırmak","Vergi beyannamesi vermek"],
+["Pozitif nakit akışı bir yatırım gayrimenkulü için ne anlama gelir?","Kira geliri, tüm giderleri (kredi, vergi, bakım) aştığında kalan pozitif tutar","Gayrimenkulün piyasa değerinin artması","Kredi başvurusunun onaylanması","Kiracının depozito ödemesi"],
+["'Boğa piyasası' ne anlama gelir?","Fiyatların genel olarak yükseliş eğiliminde olduğu piyasa dönemi","Fiyatların genel olarak düşüş eğiliminde olduğu dönem","Piyasanın tamamen kapalı olduğu dönem","Sadece tahvil fiyatlarının arttığı dönem"],
+["'Ayı piyasası' genellikle nasıl tanımlanır?","Fiyatların zirveden yaklaşık %20 veya daha fazla düştüğü uzun süreli düşüş dönemi","Fiyatların sürekli yükseldiği dönem","Sadece bir günlük fiyat düşüşü","Piyasanın tatil nedeniyle kapalı olduğu gün"],
+["Kredi raporu ile kredi puanı arasındaki fark nedir?","Kredi raporu detaylı geçmiş bilgisidir, kredi puanı bu bilgiden türetilen tek bir sayıdır","İkisi birebir aynı şeydir","Kredi raporu sadece bankalar tarafından görülebilir, puan görülemez","Kredi puanı yıllık gelire göre hesaplanır"],
+["Değişken faizli bir krediyi sabit faizli bir krediyle karşılaştırdığımızda temel risk farkı nedir?","Değişken faizde piyasa koşullarına göre ödemeniz artabilir veya azalabilir, sabitte ödeme sabit kalır","Sabit faizli kredilerde risk daha yüksektir","Değişken faizli krediler asla değişmez","İkisi arasında risk farkı yoktur"],
+["Bir kredi kartı borcunu öderken 'çığ yöntemi' ne yapar?","Önce en yüksek faizli borcu önceliklendirerek öder, toplam faiz maliyetini azaltır","Önce en küçük borcu öder, motivasyon sağlar","Tüm borçları eşit oranda öder","Sadece asgari ödemeyi yapar"],
+["'Kartopu yöntemi' borç ödemede neyi önceliklendirir?","En küçük bakiyeli borcu önce kapatarak psikolojik motivasyon sağlamayı","En yüksek faizli borcu önce kapatmayı","Sadece kredi kartı borçlarını","Sadece ipotek borcunu"],
+["Bir hisse senedinin 'temettü' ödemesi nedir?","Şirketin kârından hissedarlara düzenli olarak dağıttığı pay","Hisse senedinin alım komisyonu","Şirketin aldığı bir kredi türü","Borsanın uyguladığı bir vergi"],
 ["'Enflasyona endeksli' (yani reel) getiri ile 'nominal' getiri arasındaki fark nedir?","Reel getiri enflasyon etkisi çıkarılmış getiridir, nominal getiri enflasyon dahil ham rakamdır","İkisi aynı şeydir","Nominal getiri her zaman reel getiriden düşüktür","Reel getiri sadece tahviller için geçerlidir"],
-["Kira geliri elde eden bir gayrimenkul yatırımcısı için 'boşluk oranı' (vacancy rate) neyi ifade eder?","Mülkün belirli bir dönemde kiracısız/boş kaldığı sürenin oranını","Kiracının ödediği depozito miktarını","Mülkün sigorta primini","Emlak vergisinin oranını"],
-["Kredi kartı şirketlerinin 'gecikme faizi/cezası' (late fee) uygulamasının temel sonucu nedir?","Zamanında ödenmeyen borca ek maliyet biner ve toplam borç artar","Kredi puanınız otomatik olarak yükselir","Borcunuz otomatik olarak silinir","Kart limitiniz otomatik olarak artar"],
-["Yatırımda 'zaman ufku' (time horizon) uzun olan biri genellikle hangi stratejiye daha uygun görülür?","Kısa vadeli dalgalanmalara nazaran daha yüksek risk/getiri potansiyeli olan yatırımlara (örn. hisse senedi)","Sadece nakit tutmaya","Her zaman en düşük riskli seçeneğe","Yatırım yapmamaya"],
-["Bir gayrimenkulün 'öz sermayesi' (equity) nasıl artar?","Kredi anaparası ödendikçe ve/veya mülkün piyasa değeri yükseldikçe","Sadece kira geliri arttıkça","Sadece sigorta primi düştükçe","Mülk sahibinin yaşı ilerledikçe"],
-["'Vergi ertelemeli' (tax-deferred) bir emeklilik hesabında (örn. geleneksel IRA/401k) vergi genellikle ne zaman ödenir?","Para hesaptan çekildiğinde (emeklilikte)","Para hesaba yatırıldığı anda","Hiçbir zaman ödenmez","Her ay otomatik olarak kesilir"],
-["Kredi başvurusunda 'ön onay' (pre-approval) almış olmak ne anlama gelir?","Finansal durumunuza göre bankanın size ne kadar kredi verebileceğine dair ön değerlendirme yapmış olması","Kredinin kesin olarak onaylandığı ve paranın hesaba geçtiği anlamına gelir","Kredi başvurusunun reddedildiği anlamına gelir","Sadece kredi kartı için geçerli bir kavramdır"],
+["Kira geliri elde eden bir gayrimenkul yatırımcısı için 'boşluk oranı' neyi ifade eder?","Mülkün belirli bir dönemde kiracısız/boş kaldığı sürenin oranını","Kiracının ödediği depozito miktarını","Mülkün sigorta primini","Emlak vergisinin oranını"],
+["Kredi kartı şirketlerinin 'gecikme faizi/cezası' uygulamasının temel sonucu nedir?","Zamanında ödenmeyen borca ek maliyet biner ve toplam borç artar","Kredi puanınız otomatik olarak yükselir","Borcunuz otomatik olarak silinir","Kart limitiniz otomatik olarak artar"],
+["Yatırımda 'zaman ufku' uzun olan biri genellikle hangi stratejiye daha uygun görülür?","Kısa vadeli dalgalanmalara nazaran daha yüksek risk/getiri potansiyeli olan yatırımlara (örn. hisse senedi)","Sadece nakit tutmaya","Her zaman en düşük riskli seçeneğe","Yatırım yapmamaya"],
+["Bir gayrimenkulün 'öz sermayesi' nasıl artar?","Kredi anaparası ödendikçe ve/veya mülkün piyasa değeri yükseldikçe","Sadece kira geliri arttıkça","Sadece sigorta primi düştükçe","Mülk sahibinin yaşı ilerledikçe"],
+["'Vergi ertelemeli' bir emeklilik hesabında (örn. geleneksel IRA/401k) vergi genellikle ne zaman ödenir?","Para hesaptan çekildiğinde (emeklilikte)","Para hesaba yatırıldığı anda","Hiçbir zaman ödenmez","Her ay otomatik olarak kesilir"],
+["Kredi başvurusunda 'ön onay' almış olmak ne anlama gelir?","Finansal durumunuza göre bankanın size ne kadar kredi verebileceğine dair ön değerlendirme yapmış olması","Kredinin kesin olarak onaylandığı ve paranın hesaba geçtiği anlamına gelir","Kredi başvurusunun reddedildiği anlamına gelir","Sadece kredi kartı için geçerli bir kavramdır"],
 ["Bir uzmanın televizyonda herkesten bağımsız bir şekilde \"Bu hafta için önerimiz %30 hisse senedi, %30 tahvil, %40 nakit\" şeklinde spesifik yüzdeler vererek varlık dağılımı tavsiyesi vermesi neden anlamsızdır?","Varlık dağılımı bireyin yaşına, risk toleransına, hedeflerine ve ihtiyaçlarına göre kişiye özel şekillenmesi gerektiği için.","Haftalık tahminler genellikle hatalı çıktığı için.","Sermaye piyasası mevzuatına göre televizyonda tavsiye vermek yasak olduğu için.","Mevduat faizlerinin haftalık olarak sürekli değişmesi nedeniyle."],
-["Ünlü bilim insanı Isaac Newton'ın da tüm servetini kaybetmesine neden olan, 1700'lü yıllarda İngiltere'de yaşanan ünlü sürü psikolojisi ve piyasa balonu olayı aşağıdakilerden hangisidir?","Güney Deniz Balonu (South Sea Bubble)","Lale Çılgınlığı (Tulip Mania)","Büyük Buhran (Great Depression)","Dot-com Balonu"],
+["Ünlü bilim insanı Isaac Newton'ın da tüm servetini kaybetmesine neden olan, 1700'lü yıllarda İngiltere'de yaşanan ünlü sürü psikolojisi ve piyasa balonu olayı aşağıdakilerden hangisidir?","Güney Deniz Balonu","Lale Çılgınlığı","Büyük Buhran","Dot-com Balonu"],
 ["Davranışsal müdahale tasarımlarında kullanılan EAST modelinin açılımını oluşturan dört temel ilkeler bütünü hangisidir?","Kolay, Dikkat Çekici, Sosyal, Uygun Zamanlı","Esnek, Akılcı, Sürdürülebilir, Taktiksel","Etkili, Analitik, Stratejik, Toplumsal","Ekonomik, Avantajlı, Sistemli, Tutarlı"],
 ["Finansal varlıklar ile finansal olmayan varlıklar arasındaki temel farklar dikkate alındığında, aşağıdakilerden hangisi bir finansal varlıktır?","Bankadaki Nakit Mevduat ve Emeklilik Fonları","Gayrimenkul ve konut","Şirkete ait patentler ve ticari markalar","Fabrika üretim makineleri ve ekipmanları"],
 ["ABD'de özellikle emeklilik ve uzun vadeli yatırımlar için kullanılan \"120 Eksi Yatırımcı Yaşı\" yöntemi, portföydeki hisse senedi oranını nasıl belirler?","Genç yaşlarda risk ve getiri potansiyeli yüksek hisse senetlerine ağırlık verir, yaş ilerledikçe bu oranı düşürür.","Yatırımcının yaşı arttıkça hisse senedi oranını artırır.","Yaş ne olursa olsun portföyü sürekli sabit %50 hisse %50 tahvil yapar.","Portföyün tamamını yatırımcının yaşına göre gayrimenkule yönlendirir."],
-["Portföy dengeleme (rebalancing) süreci ile ilgili olarak aşağıda verilen ifadelerden hangisi doğrudur?","Dengelemenin temel amacı portföyün getirisini katlamak değil, risk seviyesini yatırımcının tolerans seviyesinde tutmaktır.","Portföy dengelemesi sadece piyasalar yükselirken yapılmalıdır.","Dengeleme yaparken sadece değer kazanan varlıklar satın alınır.","Dengeleme işlemi yatırımcıların risklerini sıfıra indirir."],
+["Portföy dengeleme süreci ile ilgili olarak aşağıda verilen ifadelerden hangisi doğrudur?","Dengelemenin temel amacı portföyün getirisini katlamak değil, risk seviyesini yatırımcının tolerans seviyesinde tutmaktır.","Portföy dengelemesi sadece piyasalar yükselirken yapılmalıdır.","Dengeleme yaparken sadece değer kazanan varlıklar satın alınır.","Dengeleme işlemi yatırımcıların risklerini sıfıra indirir."],
 ["İki farklı varlığın getirilerinin aynı yönde mi yoksa ters yönde mi hareket ettiğini gösteren ve -1 ile +1 arasında değer alan finansal istatistik kavramı hangisidir?","Korelasyon","Standart Sapma","Likidite Oranı","Bilanço Özkaynağı"],
 ["Gelecek yıl yeni bir araba alacak kişinin birikimini kısa vadeli mevduat/altında tutması, 20-30 yıl sonraki emekliliğini planlayan birinin ise hisse/tahvil fonlarına yatırım yapması hangi varlık dağılımı yaklaşımına örnektir?","Hedef Bazlı Varlık Dağılımı","1/N Yöntemi","Yüzdesel Sapma Yöntemi","60/40 Kuralı"],
 ["Bireysel bilanço oluşturulurken, \"Varlıklar\" ve \"Kaynaklar\" bölümlerine ilişkin olarak aşağıdakilerden hangisi yanlıştır?","Kredi kartı borçları uzun vadeli varlıklar altında sınıflandırılır.","Nakit, mevduat ve gayrimenkuller Varlıklar kısmında yer alır.","Vadesi 1 yıldan uzun olan borçlar Uzun Vadeli Borçlar başlığında gösterilir.","Net Servet, varlıklar ile borçlar arasındaki dengeyi/farkı ifade eder."],
@@ -3066,39 +3093,38 @@ const FINLIT_QUESTIONS = [
 ["Aşina olmadığınız veya yeni önerilen finansal bir ürünü değerlendirirken metne göre sorulması gereken temel sorulardan biri değildir?","Bu ürünü satan kişinin geçmişte kaç adet satış yaptığı?","Bu ürünün içerdiği riskler ve maliyetler nelerdir?","İstediğim anda bu ürünü elden çıkarabilir miyim (likidite durumu)?","Üründen elde edeceğim kazanç nasıl vergilendirilecektir?"],
 ["Dave Ramsey'in bütçe yapmakla ilgili ifade ettiği ünlü yaklaşım aşağıdakilerden hangisidir?","\"Bütçe yapmak, paranın nereye gittiğini anlamaya çalışmak yerine nereye gideceğine karar vermektir.\"","\"Bütçe yapmak sadece ne kadar tasarruf edeceğini hesaplamaktır.\"","\"Bütçe yapmak borçlanmayı tamamen engellemenin tek yoludur.\"","\"Bütçe yapmak yalnızca yüksek gelirli bireyler için gereklidir.\""],
 ["Portföy oluştururken kullanılan 1/N Yöntemi'nin temel mantığı nedir?","Belirlenen N sayıdaki varlık sınıfına birikimi eşit oranda dağıtmak ve belirli dönemlerde oranları tekrar eşitlemek.","Portföyün sadece 1/3'ünü yatırıma yönlendirip kalanını harcamak.","Her yıl yatırım yapılan şirket sayısını 1 azaltmak.","Portföydeki en düşük getirili 1 varlığı her ay satmak."],
-["Finansal Standartları Planlama Kurulu'na (FPS","göre \"Finansal Planlama\" hizmetinin kapsamı aşağıdakilerden hangisinde doğru tanımlanmıştır?","Sadece borsada hangi hissenin alınacağını tahmin etme hizmetidir.","Bankaların müşterilerine zorunlu olarak sunduğu standart mevduat paketidir.","Yalnızca vergi beyannamesi hazırlama sürecidir."],
 ["Takasbank verilerine göre borsadaki elde tutma süreleri incelendiğinde, yabancı yatırımcılar bir hisseyi ortalama 1 yıl tutarken, yerli yatırımcıların ortalama elde tutma süresi ne kadardır?","Ortalama 1 Ay","Ortalama 1 Hafta","Ortalama 6 Ay","Ortalama 2 Yıl"],
 ["Finansal danışmanlık veya tavsiye alırken dikkat edilmesi gereken hususlar arasında hangisi yer almaz?","Danışmanın sadece en çok kazandıracağını iddia ettiği tek bir hisseye tüm parayı yatırmasını kabul etmek","Tavsiyeyi veren kişinin bir yatırım uzmanı mı yoksa satış elemanı mı olduğunu sorgulamak","Tavsiyenin araştırma raporlarına mı yoksa piyasa söylentilerine mi dayandığına bakmak","Danışmanın sizin risk toleransınızı ve hedeflerinizi bilip bilmediğini kontrol etmek"],
 ["Davranışsal finans çalışmalarına göre, kredi kartı kullanımı harcama davranışları üzerinde nasıl bir psikolojik etki yaratmaktadır?","Nakit ödemeye göre daha az harcama yapıldığı algısı/hissi yaratır.","İnsanların alışveriş yapmasını zorlaştırır.","Bireyleri anında bütçe yapmaya teşvik eder.","Harcama miktarını sürekli zihinde hesaplatarak stresi artırır."],
 ["Sadece takvime bağlı olarak (örneğin 6 ayda bir) yapılan \"Dönemsel Portföy Dengeleme\" yönteminin en belirgin dezavantajı nedir?","Dönem aralarında yaşanan sert piyasa dalgalanmalarından ve fırsatlardan yararlanamaması.","Hesaplamasının çok karmaşık olması.","Yalnızca yabancı para birimlerinde geçerli olması.","Portföydeki varlık sayısını sürekli artırmak zorunda bırakması."],
 ["Doğrudan tekil hisse senedi seçmek yerine, uzmanlarca yönetilen Hisse Senedi Yatırım Fonları'nı tercih etmenin en önemli avantajı nedir?","Profesyonel yönetim, araştırma desteği ve kolay risk dağılımı (çeşitlendirme) sağlaması.","Fonların hiçbir zaman değer kaybetmeme garantisi vermesi.","Fonların vergiden tamamen muaf olması.","Piyasadaki tüm şirketleri satın alma zorunluluğu getirmesi."],
-["Bir çalışanın aylık brüt maaşı $5,000'dır. Bordrodaki vergi, sosyal güvenlik (Social Security) ve diğer zorunlu yasal kesintilerden sonra çalışanın banka hesabına yatan tutar (net gelir) için aşağıdakilerden hangisi doğrudur?","Net gelir, yapılan yasal kesintiler nedeniyle brüt gelirden daha düşüktür.","Net gelir, eklenen yasal primler nedeniyle brüt gelirden daha yüksektir.","Net gelir ile brüt gelir her zaman birbirine eşittir.","Net gelir sadece yıl sonunda hesaplanır, aylık ödenmez."],
+["Bir çalışanın aylık brüt maaşı $5,000'dır. Bordrodaki vergi, sosyal güvenlik ve diğer zorunlu yasal kesintilerden sonra çalışanın banka hesabına yatan tutar (net gelir) için aşağıdakilerden hangisi doğrudur?","Net gelir, yapılan yasal kesintiler nedeniyle brüt gelirden daha düşüktür.","Net gelir, eklenen yasal primler nedeniyle brüt gelirden daha yüksektir.","Net gelir ile brüt gelir her zaman birbirine eşittir.","Net gelir sadece yıl sonunda hesaplanır, aylık ödenmez."],
 ["Düzenli maaş gelirinin yanı sıra elde edilen performans primi, ek mesai veya ikramiye gibi değişken ödemelerin vergilendirilmesi ve net gelire etkisi hakkında ne söylenebilir?","Bu tür ek ödemeler de gelir vergisi dilimlerine tabi olarak net geliri artırır.","Bu ödemeler tamamen vergiden muaftır ve doğrudan net gelire eklenir.","Ek ödemeler sadece bir sonraki yılın net gelirine dahil edilebilir.","Prim ve ikramiyeler şirket tarafından vergilendirilemez."],
 ["Aylık bütçesini dengelemek isteyen bir birey, harcamalarını azaltmak için öncelikle hangi tür gider kategorisinde kesinti yapmalıdır?","Değişken ve İsteğe Bağlı Giderler (Dışarıda yemek, eğlence, lüks alışveriş vb.)","Sabit Giderler (Ev kirası, konut kredisi taksiti vb.)","Yasal Giderler (Gelir vergisi, sosyal güvenlik primleri)","Zorunlu Faturalar (Elektrik, su, doğalgaz vb.)"],
 ["Markette bir zeytinyağının 500 ml'lik şişesi $15'e, aynı markanın 2 litrelik (2.000 ml) tenekesi ise $52'ye satılmaktadır. Hangi seçenek birim fiyat açısından daha ekonomiktir?","2 litrelik teneke (Litre fiyatı $26)","500 ml'lik şişe (Litre fiyatı $30)","İki seçeneğin birim fiyatı da tamamen eşittir.","Birim fiyat ürün miktarına göre hesaplanamaz."],
 ["Bir cep telefonunu 12 ay taksitle toplam $1,200'e satın almak ile aynı telefonu peşin $1,000'e satın almak arasındaki $200'lük fark finansal olarak nasıl adlandırılır?","Borçlanma / Vade maliyeti (Finansman maliyeti)","Fırsat maliyeti","Sermaye kazancı","Amortisman gideri"],
 ["Yıllık enflasyon oranının %30 olduğu bir ekonomide, bir çalışanın yıllık maaşı %15 oranında artmıştır. Bu durum karşısında çalışanın alım gücü nasıl değişmiştir?","Alım gücü azalmıştır.","Alım gücü artmıştır.","Alım gücü değişmemiştir.","Enflasyon ile alım gücü arasında ilişki yoktur."],
 ["Finansal planlama standartlarına göre, beklenmedik işsizlik veya acil sağlık giderlerine karşı oluşturulacak bir \"Acil Durum Fonu\" en az ne kadarlık zorunlu yaşam giderini karşılayacak büyüklükte olmalıdır?","3 ila 6 aylık gider","1 haftalık gider","1 aylık gider","5 yıllık gider"],
-["Finansal literatürde \"Önce Kendine Öde\" (Pay Yourself First) olarak bilinen birikim yöntemi neyi ifade eder?","Gelir elde edildiğinde, harcamalardan önce belirlenen bir oranın doğrudan birikim hesabına aktarılması.","Gelir elde edilir edilmez önce kişisel lüks harcamaların yapılması.","Ay sonunda tüm harcamalar bittikten sonra kalan küsuratın biriktirilmesi.","Borçların ödenmeyip paranın kişisel harcamalarda kullanılması."],
+["Finansal literatürde \"Önce Kendine Öde\" olarak bilinen birikim yöntemi neyi ifade eder?","Gelir elde edildiğinde, harcamalardan önce belirlenen bir oranın doğrudan birikim hesabına aktarılması.","Gelir elde edilir edilmez önce kişisel lüks harcamaların yapılması.","Ay sonunda tüm harcamalar bittikten sonra kalan küsuratın biriktirilmesi.","Borçların ödenmeyip paranın kişisel harcamalarda kullanılması."],
 ["Bir tasarruf veya birikim aracının \"Likidite\" derecesi neyi ifade eder?","Varlığın değer kaybına uğramadan ne kadar hızlı ve kolay nakde dönüştürülebileceğini.","Yatırım aracının yıllık sunduğu faiz getirisini.","Yatırımın vergi avantajı sağlama kapasitesini.","Varlığın fiziki büyüklüğünü ve hacmini."],
 ["Önümüzdeki 3 ay içinde ev alımı için peşinat olarak kullanılacak bir paranın değerlendirilmesi için aşağıdakilerden hangisi en uygun araçtır?","Kısa vadeli mevduat veya para piyasası fonları gibi sermaye korumalı araçlar","Yüksek dalgalanmaya sahip hisse senetleri","Uzun vadeli gayrimenkul yatırımları","Kripto varlıklar"],
 ["Aşağıdaki yatırım araçları en yüksek risk/getiri beklentisinden en düşük olana doğru nasıl sıralanır?","Hisse Senedi > Devlet Tahvili > Banka Mevduatı","Banka Mevduatı > Devlet Tahvili > Hisse Senedi","Devlet Tahvili > Hisse Senedi > Banka Mevduatı","Banka Mevduatı > Hisse Senedi > Devlet Tahvili"],
 ["Finans teorisinde risk ve getiri arasındaki temel ilişki aşağıdakilerden hangisidir?","Bir yatırımın potansiyel getirisi arttıkça, taşıdığı risk seviyesi de genellikle artar.","Yüksek getiri vaat eden yatırımlar her zaman en düşük riske sahiptir.","Risk ile getiri arasında hiçbir korelasyon bulunmamaktadır.","Anapara kaybetme riski sıfır olan yatırımlar her zaman en yüksek getiriyi sunar."],
-["Portföy yönetiminde \"Çeşitlendirme\" (Diversification) stratejisi hakkında verilen ifadelerden hangisi DOĞRUDUR?","Birikimleri farklı sektör ve varlık sınıflarına yaymak, portföyün genel oynaklığını ve riskini düşürür.","Tüm birikimi tek bir başarılı şirketin hisse senedine yatırmak riskleri tamamen yok eder.","Çeşitlendirme yapmak yatırımların getiri potansiyelini her zaman sıfırlar.","Çeşitlendirme sadece gayrimenkul yatırımlarında uygulanabilen bir yöntemdir."],
+["Portföy yönetiminde \"Çeşitlendirme\" stratejisi hakkında verilen ifadelerden hangisi DOĞRUDUR?","Birikimleri farklı sektör ve varlık sınıflarına yaymak, portföyün genel oynaklığını ve riskini düşürür.","Tüm birikimi tek bir başarılı şirketin hisse senedine yatırmak riskleri tamamen yok eder.","Çeşitlendirme yapmak yatırımların getiri potansiyelini her zaman sıfırlar.","Çeşitlendirme sadece gayrimenkul yatırımlarında uygulanabilen bir yöntemdir."],
 ["Aşağıdakilerden hangisi küçük yatırımcıların bireysel hisse seçmek yerine \"Yatırım Fonları\" tercih etmesinin sağladığı temel avantajlardan biridir?","Profesyonel portföy yöneticileri tarafından yönetilmesi ve tek hamlede geniş çeşitlendirme sağlaması.","Yatırım fonlarında zarar etme riskinin kanunen imkansız olması.","Yatırım fonlarının hiçbir yönetim ücreti kesintisi yapmaması.","Fonların sadece devlet garantili varlıklardan oluşması."],
 ["Albert Einstein'ın \"Dünyanın 8. harikası\" olarak tanımladığı, yatırılan anaparanın getirisinin de tekrar yatırıma dönüşerek zamanla katlanarak büyümesini sağlayan mekanizma nedir?","Bileşik Faiz / Bileşik Getiri","Basit Faiz","Cari Açık","Enflasyon Oranı"],
 ["$5,000 kredi kartı borcu bulunan bir birey, her ay ekstredeki sadece \"asgari ödeme tutarını\" yatırıp kartı kullanmaya devam etmezse bu borcun durumu ne olur?","Kalan anaparaya yüksek faiz işlemeye devam edeceği için borcun kapanması yıllar alır ve toplam maliyeti çok yüksek olur.","Borç 2-3 ay içerisinde tamamen sıfırlanır.","Borç 1 yılın sonunda kendiliğinden silinir.","Asgari ödeme yapıldığı sürece borca hiçbir faiz uygulanmaz."],
 ["Kredi Notu (Kredi Skoru) yüksek olan bir birey, bankaya kredi başvurusunda bulunduğunda nasıl bir finansal avantaj elde eder?","Düşük riskli görüldüğü için daha uygun faiz oranları ve yüksek limitlerle kredi kullanabilir.","Aldığı krediyi geri ödeme yükümlülüğü tamamen ortadan kalkar.","Kredi notu yüksek olanlardan bankalar ekstra ceza faizi tahsil eder.","Kredi skoru sadece mevduat hesaplarında faiz oranını belirler, kredileri etkilemez."],
 ["\"Sabit Faizli Konut Kredisi\" kullanan bir borçlu için aşağıdakilerden hangisi geçerlidir?","Piyasa faizleri yükselse veya düşse bile aylık kredi taksit tutarı vade sonuna kadar değişmez.","Piyasadaki enflasyon arttıkça aylık taksit ödemeleri de otomatik olarak artar.","Banka dilediği ay taksit tutarını tek taraflı olarak artırabilir.","Sabit faizli kredilerde borç sadece döviz cinsinden ödenebilir."],
-["Finansal sağlık göstergesi olarak kabul edilen \"Borç / Gelir Oranı\" (Debt-to-Income Ratio) hesaplanırken hangisi dikkate alınır?","Aylık toplam borç ödemelerinin, aylık net gelire oranı","Toplam birikimlerin, yıllık harcamalara oranı","Kredi kartı limitinin, brüt maaşa oranı","Evin değerinin, yıllık kira gelirine oranı"],
+["Finansal sağlık göstergesi olarak kabul edilen \"Borç / Gelir Oranı\" hesaplanırken hangisi dikkate alınır?","Aylık toplam borç ödemelerinin, aylık net gelire oranı","Toplam birikimlerin, yıllık harcamalara oranı","Kredi kartı limitinin, brüt maaşa oranı","Evin değerinin, yıllık kira gelirine oranı"],
 ["Kredi veya kredi kartı borçlarının zamanında ödenmemesi durumunda uygulanan \"Gecikme Faizi\" ile ilgili aşağıdakilerden hangisi doğrudur?","Zamanında ödenmeyen borçlara standart faize ek olarak yasal gecikme faizi işler ve toplam borç yükünü hızla artırır.","Gecikme faizi normal akdi faizden daha düşüktür.","Borç 30 gün geciktiğinde faiz uygulaması tamamen durdurulur.","Gecikme faizleri sadece ticari işletmeler için geçerlidir, bireyler ödemez."],
 ["Bir bireyin konut, kasko veya sağlık sigortası yaptırmasının temel finansal amacı nedir?","Oluşabilecek büyük ve yıkıcı finansal kayıp risklerini küçük bir prim karşılığında sigorta şirketine devretmek.","Sigorta şirketinden aylık düzenli faiz geliri elde etmek.","Devletin sunduğu teşvik ödemelerini nakit olarak çekmek.","Gayrimenkulün piyasa değerini derhal iki katına çıkarmak."],
-["Bir sigorta poliçesinde \"Muafiyet Tutarı\" (Deductible - Hasara Katılım Payı) artırıldığında, poliçe için ödenecek sigorta primi nasıl değişir?","Sigorta primi azalır.","Sigorta primi artar.","Sigorta primi hiçbir şekilde değişmez.","Muafiyet tutarı ile prim arasında bir ilişki yoktur."],
-["Ailenin ana gelir getiren bireyinin vefatı veya kalıcı sakatlığı durumunda geride kalanların yaşam standardını ve finansal geleceğini korumayı amaçlayan sigorta türü hangisidir?","Hayat Sigortası","Zorunlu Trafik Sigortası","DASK (Doğal Afet Sigortası)","İşyeri Sigortası"],
-["Aşağıdakilerden hangisi standart bir Kasko / Araç Sigortasının kapsadığı risklerden biridir?","Aracın kaza, hırsızlık veya yangın sonucu uğradığı maddi hasarlar","Aracın periyodik yağ ve filtre değişim bakımları","Aracın yıllık motorlu taşıtlar vergisi (MTV) ödemeleri","Sürücünün aldığı trafik para cezaları"],
+["Bir sigorta poliçesinde \"Muafiyet Tutarı\" artırıldığında, poliçe için ödenecek sigorta primi nasıl değişir?","Sigorta primi azalır.","Sigorta primi artar.","Sigorta primi hiçbir şekilde değişmez.","Muafiyet tutarı ile prim arasında bir ilişki yoktur."],
+["Ailenin ana gelir getiren bireyinin vefatı veya kalıcı sakatlığı durumunda geride kalanların yaşam standardını ve finansal geleceğini korumayı amaçlayan sigorta türü hangisidir?","Hayat Sigortası","Araç Sorumluluk Sigortası","Ev / Sel Sigortası","İşyeri Sigortası"],
+["Aşağıdakilerden hangisi standart bir Kapsamlı (Comprehensive) Araç Sigortasının kapsadığı risklerden biridir?","Aracın kaza, hırsızlık veya yangın sonucu uğradığı maddi hasarlar","Aracın periyodik yağ ve filtre değişim bakımları","Aracın yıllık ruhsat/kayıt ücretleri","Sürücünün aldığı trafik para cezaları"],
 ["Finansal bir danışmanlık alırken, tavsiye veren kişinin \"Bağımsız Danışman\" mı yoksa \"Komisyon Bazlı Satış Elemanı\" mı olduğunu bilmek neden kritik önem taşır?","Komisyon bazlı çalışanlar çıkar çatışması nedeniyle yatırımcıya en uygun ürün yerine kendisine en yüksek komisyonu getiren ürünü önerebilir.","Satış elemanları yatırımcının hedeflerine odaklanırken, bağımsız danışmanlar sadece kendi şirket ürünlerini satar.","Bağımsız danışmanlar hiçbir zaman ücret talep etmez.","İki rol arasında hiçbir nitelik veya çıkar farkı bulunmamaktadır."],
 ["Yatırım kararları alırken sosyal mecralardaki tüyo ve söylentiler yerine yetkili kurumların \"Araştırma Raporları\"na dayanmanın temel gerekçesi nedir?","Araştırma raporlarının nesnel verilere, finansal tablolara ve analitik yöntemlere dayanması; tüyoların ise manipülasyon riski taşıması.","Söylentilerin her zaman %100 doğru çıkması.","Şirket bilançolarının yatırımlarla hiçbir ilgisinin bulunmaması.","Araştırma raporlarının sadece kısa vadeli günlük al-sat işlemleri için hazırlanması."],
-["İşveren destekli 401(k) emeklilik planında, işverenin sunduğu 'eşleştirme katkısının' (employer match) katılımcıya sağladığı temel avantaj nedir?","Anaparaya doğrudan ek katkı sağlayarak birikimlerin bileşik getiri ile çok daha hızlı büyümesini sağlamak.","Emeklilik birikimlerinin tamamını vergisiz nakde çevirme imkanı sunması.","Sistemdeki fonların hisse senedi alma zorunluluğunu kaldırması.","Katılımcının istediği an tüm parayı cezasız çekmesini sağlaması."],
+["İşveren destekli 401(k) emeklilik planında, işverenin sunduğu 'eşleştirme katkısının' katılımcıya sağladığı temel avantaj nedir?","Anaparaya doğrudan ek katkı sağlayarak birikimlerin bileşik getiri ile çok daha hızlı büyümesini sağlamak.","Emeklilik birikimlerinin tamamını vergisiz nakde çevirme imkanı sunması.","Sistemdeki fonların hisse senedi alma zorunluluğunu kaldırması.","Katılımcının istediği an tüm parayı cezasız çekmesini sağlaması."],
 ["Emeklilik dönemi planlamasında, emekli olduktan sonra mevcut yaşam standardını koruyabilmek için hedeflenen aylık gelir düzeyi (İkame Oranı) genel olarak ne kadar olmalıdır?","Çalışırken kazanılan son gelirin %70-%80'i","Çalışırken kazanılan son gelirin %10-%20'si","Çalışırken kazanılan son gelirin %200'ü","Sadece asgari ücret seviyesi"],
 ["Bir tasarruf hesabınızda 100 dolar olduğunu ve yıllık faiz oranının %2 olduğunu düşünün. Parayı hesaptan çekmeden 5 yıl boyunca bırakırsanız, hesabınızda ne kadar para olur?","102 dolardan fazla","Tam olarak 102 dolar","102 dolardan az","Bilmiyorum"],
 ["Tasarruf hesabınızın yıllık faiz oranının %1, enflasyonun ise %2 olduğunu düşünün. Bir yıl sonra, bu hesaptaki paranızla bugün karşılaştırıldığında ne kadar mal ve hizmet satın alabilirsiniz?","Bugünkünden daha az","Bugünkünden daha fazla","Bugünküyle aynı miktarda","Bilmiyorum"],
@@ -3110,11 +3136,11 @@ const FINLIT_QUESTIONS = [
 ["100 dolar borç almanız gerektiğini düşünün. Aşağıdakilerden hangisi geri ödemek için daha düşük bir tutardır?","100 dolar + %3","105 dolar","Bilmiyorum","Cevap vermek istemiyorum"],
 ["Bankaya paranızı iki yıllığına yatırdığınızı ve bankanın hesabınıza her yıl %15 eklediğini düşünün. Banka ikinci yıl hesabınıza ilk yıldan daha fazla mı, aynı miktarda mı para ekler?","İkinci yıl daha fazla ekler","Her iki yıl aynı miktarda ekler","Bilmiyorum","Cevap vermek istemiyorum"],
 ["Bir tasarruf hesabınızda 100 dolar olduğunu ve bankanın hesabınıza yıllık %10 faiz eklediğini düşünün. Hiç para çekmezseniz, 5 yıl sonra hesabınızda ne kadar para olur?","150 dolardan fazla","Tam olarak 150 dolar","150 dolardan az","Bilmiyorum E) Cevap vermek istemiyorum"],
-["Jane'in maaş bordrosunda aşağıdaki bilgiler yer almaktadır:\nGross pay (Brüt ücret): $2,800\nFederal income tax: $200\nSocial Security tax: $173.60\nMedicare tax: $40.60\nOther deductions: $ -?\nNet pay (Net ücret): $2,385.80\n\nJane'in işvereni 31 Temmuz'da banka hesabına ne kadar para yatırmıştır?","$2,385.80","$300","$2,800","$19,600"],
+["Jane'in maaş bordrosunda aşağıdaki bilgiler yer almaktadır:\nBrüt ücret: $2,800\nFederal gelir vergisi: $200\nSosyal Güvenlik vergisi: $173.60\nMedicare vergisi: $40.60\nDiğer kesintiler: $ -?\nNet ücret: $2,385.80\n\nJane'in işvereni 31 Temmuz'da banka hesabına ne kadar para yatırmıştır?","$2,385.80","$300","$2,800","$19,600"],
 ["Greg'in almak istediği bisikletin nakit fiyatı $600'dır. Greg bisikleti mağazanın finansman seçeneğini kullanarak satın alıyor. Greg'in toplamda ödeyeceği tutar için hangisi doğrudur?","$600'den fazla","$600'den az","Tam olarak $600","Bilmiyorum"],
-["Greg'in $600 değerindeki bisikleti garajından çalınırsa, aşağıdakilerden hangisi finansal kaybının karşılanmasına yardımcı olabilir?","Ev sahibi veya kiracı sigortası (homeowners/renters insurance)","Seyahat sigortası","ABD Hazine tahvili","Mortgage"],
+["Greg'in $600 değerindeki bisikleti garajından çalınırsa, aşağıdakilerden hangisi finansal kaybının karşılanmasına yardımcı olabilir?","Ev sahibi veya kiracı sigortası","Seyahat sigortası","ABD Hazine tahvili","Mortgage"],
 ["Kasım ayında bankanın hesabınızdan tahsil ettiği toplam ücret $6.00 ise aşağıdakilerden hangisi doğrudur?","$6.00","$1.50","$3.00","$7.50"],
-["Jane'in maaş bordrosunda aşağıdaki bilgiler yer almaktadır:\nGross pay (Brüt ücret): $2,800\nFederal income tax: $200\nSocial Security tax: $173.60\nMedicare tax: $40.60\nOther deductions: $ -?\nNet pay (Net ücret): $2,385.80\n\nAy sonunda banka ekstresindeki işlemler tamamlandıktan sonra hesabın bakiyesi ne kadar olacaktır?","$2,458.85","$2,460.35","$2,590.35","$3,035.35"],
+["Jane'in maaş bordrosunda aşağıdaki bilgiler yer almaktadır:\nBrüt ücret: $2,800\nFederal gelir vergisi: $200\nSosyal Güvenlik vergisi: $173.60\nMedicare vergisi: $40.60\nDiğer kesintiler: $ -?\nNet ücret: $2,385.80\n\nAy sonunda banka ekstresindeki işlemler tamamlandıktan sonra hesabın bakiyesi ne kadar olacaktır?","$2,458.85","$2,460.35","$2,590.35","$3,035.35"],
 ["Bir kişi aynı tutarda ve aynı faiz oranında iki farklı kredi teklifini değerlendirmektedir: 2 yıllık kredi mi yoksa 3 yıllık kredi mi? 3 yıllık kredinin aylık ödemesi, 2 yıllık krediye göre daha yüksek olur mu?","Hayır, çünkü borç tutarı daha uzun bir süreye bölündüğü için aylık taksit tutarı daha düşük olur.","Evet, çünkü süre uzadıkça aylık ödemeler her zaman artar.","Evet, çünkü faiz oranı iki seçenekte de tamamen aynıdır.","Hayır, çünkü aylık ödemeler süreye bakılmaksızın sabit tutulur."],
 ["Aynı faiz oranına sahip 2 yıllık ve 3 yıllık iki farklı kredi seçeneğinde, 3 yıllık kredide toplamda ödenen toplam faiz miktarı 2 yıllık krediden daha fazla olur mu?","Evet, çünkü borç daha uzun süre boyunca faiz işlediği için toplam faiz maliyeti artar.","Hayır, çünkü taksitler daha uzun süreye yayıldıkça faiz maliyeti düşer.","Hayır, faiz oranları eşit olduğu için ödenen toplam faiz de eşit olur.","Evet, ancak sadece faiz oranları değişken olduğunda bu durum geçerlidir."],
 ["Bir anne, reşit olmayan çocuğu için aylık faturalı bir telefon sözleşmesini kendi adına imzalamıştır. Çocuk aylık faturaları ödemezse, iletişim şirketine karşı bu sözleşmeden doğan yasal ve finansal sorumluluk kimdedir?","Sözleşmeyi resmi olarak imzalayan anne","Telefonu fiilen kullanan çocuk","Telefonu satan mağaza yetkilisi","Hem anne hem çocuk eşit oranda sorumludur."],
@@ -3122,27 +3148,307 @@ const FINLIT_QUESTIONS = [
 ["Mark'ın bir şirketteki maaşı son iki yılda gözle görülür şekilde artmıştır. Bu durum için aşağıdakilerden hangisi en makul nedendir?","Mark'ın iş deneyiminin, bilgi birikiminin ve verimliliğinin artması","İşverenin şirkete yeni ekipmanlar satın alması","Mark'ın bankadaki tasarruf hesabına daha fazla para yatırması","Ülkedeki genel tüketici harcamalarının düşmesi"],
 ["Bireysel bir bütçe oluşturmanın ve bu bütçeyi takip etmenin temel amacı nedir?","Gelir ve giderleri dengeleyerek finansal hedeflere ulaşmayı ve kontrolü sağlamak","Gelirin tamamını yatırım fonlarında değerlendirmek","Kredi kartı kullanmayı tamamen hayatımızdan çıkarmak","Sadece zorunlu ihtiyaç harcaması yapıp tüm eğlence harcamalarını durdurmak"],
 ["Birikimlerinizin zaman içinde büyümesini sağlayan faktörlerden hangisi en kritik role sahiptir?","Paranın çekilmeden kalma süresi ve uygulanan bileşik faiz oranı","Paranızı tuttuğunuz bankanın şube sayısı","Yatırılan tutarların nakit olarak evde saklanması","Tasarruf hesabının hangi gün açıldığı"],
-["Yatırım dünyasındaki Risk ve Getiri (Risk/Return) ilişkisi göz önüne alındığında aşağıdaki ifadelerden hangisi doğrudur?","Risk ne kadar yüksek olursa, potansiyel getiri beklentisi de o kadar yüksek olur.","Risk arttıkça yatırımın vadeli faiz getirisi garanti altına alınır.","Düşük riskli yatırım araçları her zaman yüksek risklilerden daha fazla kazandırır.","Yatırımın riski ile getiri beklentisi arasında hiçbir bağlantı yoktur."],
+["Yatırım dünyasındaki Risk ve Getiri ilişkisi göz önüne alındığında aşağıdaki ifadelerden hangisi doğrudur?","Risk ne kadar yüksek olursa, potansiyel getiri beklentisi de o kadar yüksek olur.","Risk arttıkça yatırımın vadeli faiz getirisi garanti altına alınır.","Düşük riskli yatırım araçları her zaman yüksek risklilerden daha fazla kazandırır.","Yatırımın riski ile getiri beklentisi arasında hiçbir bağlantı yoktur."],
 ["José'nin kredi kartında 1.000 Dolar borcu vardır. Kredi kartı borcuna yıllık %20 bileşik faiz uygulanmaktadır. José 1 yıl boyunca hiçbir ödeme yapmazsa ve yeni harcama eklemezse, 1 yılın sonundaki toplam borcu ne kadar olur?","1.200 Dolar'dan daha fazla (Bileşik faiz etkisiyle)","Tam olarak 1.000 Dolar","Tam olarak 1.200 Dolar","1.200 Dolar'dan daha az"],
 ["25 yaşında, tamamen sağlıklı, bekar ve düzenli bir işte çalışan bir birey için yakın vadede en çok ihtiyaç duyulabilecek sigorta türü hangisidir?","Sağlık veya Gelir Koruma (Maluliyet) Sigortası","Bireysel Hayat Sigortası (Yüksek teminatlı)","Özel Emeklilik Sigortası","Seyahat İptal Sigortası"],
-["Aşağıdaki iki çekiliş seçeneği sunulmaktadır: Lottery A: %5 kazanma olasılığı, $200 ödül (Beklenen Getiri: 0.05 × 200 = $10) Lottery B: %0.01 kazanma olasılığı, $90,000 ödül (Beklenen Getiri: 0.0001 × 90,000 = $9) Bu verilere göre matematiksel olarak beklenen getiri (Expected Value) hangi seçenekte daha yüksektir?","Lottery A'nın beklenen getirisi ($10) daha yüksektir.","Lottery B'nin beklenen getirisi ($9) daha yüksektir.","İki seçeneğin de beklenen getirisi eşittir.","Olasılıklar kıyaslanamaz."],
+["Aşağıdaki iki çekiliş seçeneği sunulmaktadır: Lottery A: %5 kazanma olasılığı, $200 ödül (Beklenen Getiri: 0.05 × 200 = $10) Lottery B: %0.01 kazanma olasılığı, $90,000 ödül (Beklenen Getiri: 0.0001 × 90,000 = $9) Bu verilere göre matematiksel olarak beklenen getiri hangi seçenekte daha yüksektir?","Lottery A'nın beklenen getirisi ($10) daha yüksektir.","Lottery B'nin beklenen getirisi ($9) daha yüksektir.","İki seçeneğin de beklenen getirisi eşittir.","Olasılıklar kıyaslanamaz."],
 ["Bir finans danışmanının 75 yaşındaki bir emekliye, tüm birikimini yeni kurulan küçük startup şirketlerine yatırım yapan riskli bir hisse senedi fonuna yatırmasını önermesi neden uygunsuz (uygunsuz tavsiye) bir yönlendirmedir?","Bu yaştaki yatırımcıların zaman ufku kısa olduğundan risk toleransı düşüktür ve öncelikleri anaparayı korumak olmalıdır.","Emeklilerin hisse senedi piyasasına girmesi yasak olduğu için.","Startup şirketleri sadece genç yatırımcılara kar payı dağıttığı için.","Startup fonları enflasyondan etkilenmeyen yatırım araçları olduğu için."],
 ["José'nin yıllık %20 bileşik faizli $1,000 borcu var. Hiç ödeme yapmazsa borcunun iki katına çıkması yaklaşık kaç yıl sürer?","5 yıldan az","2 yıldan az","5--10 yıl","Bilmiyorum"],
 ["Investment A belirli bir getiri sağlıyor. Investment B ise %50 olasılıkla %12, %50 olasılıkla %4 getiri sağlıyor. Hangisine yatırım yapıldığında beklenen getiri daha yüksektir?","İkisinin beklenen getirisi aynıdır","Investment A","Investment B","Bilmiyorum"],
 ["Mark'ın maaşı son iki yılda artmıştır. Bunun en makul nedeni aşağıdakilerden hangisi olabilir?","Mark'ın yerel bir üniversitede/kolejde birkaç eğitim kursunu başarıyla tamamlamış olması","Mark'ın yaşadığı ve çalıştığı yerde onun yeteneklerine sahip çalışan sayısının artması","Gelişen yeni teknolojilerin Mark'ın yeteneklerine olan talebi azaltması","Bilmiyorum"],
 ["Bir ev/hanehalkı bütçesi aşağıdakilerden hangisi için kullanılamaz?","Hanehalkının finansal varlıklarının performansını anlık piyasa bazlı takip etmek için","Zorunlu ev giderlerini planlamak için","İsteğe bağlı (keyfi) ev harcamalarını planlamak için","Bilmiyorum"],
 ["Akiko'nun tasarruf hesabında 1.000 doları vardır ve bu para yıl boyunca %2 getiri oranı kazanmaktadır. Aynı yıl boyunca enflasyon oranı ise %3'tür. Bu durumda aşağıdaki ifadelerden hangisi doğrudur?","Yıl sonunda alım gücü düşer, yani daha az şey satın alabilir.","Yıl sonunda alım gücü artar, yani daha fazla şey satın alabilir.","Yıl sonunda daha fazla mı yoksa daha az mı şey satın alabileceği net değildir.","Bilmiyorum"],
-["Yatırım hakkında aşağıda verilen ifadelerden hangisi doğrudur?","Farklı sektörlerdeki birçok şirketin hissesini tutan bir yatırım fonuna yatırım yapmak, genellikle tek bir şirketin hisse senedine yatırım yapmaktan daha güvenlidir.","Tek bir şirketin hisse senedine yatırım yapmak, genellikle farklı sektörlerdeki birçok şirketin hissesini tutan bir yatırım fonuna (mutual fund) yatırım yapmaktan daha güvenlidir.","Tek bir şirketin hissesine yatırım yapmak ile farklı şirketlerin hisselerini tutan bir yatırım fonuna yatırım yapmak genellikle eşit derecede güvenlidir.","Bilmiyorum"],
+["Yatırım hakkında aşağıda verilen ifadelerden hangisi doğrudur?","Farklı sektörlerdeki birçok şirketin hissesini tutan bir yatırım fonuna yatırım yapmak, genellikle tek bir şirketin hisse senedine yatırım yapmaktan daha güvenlidir.","Tek bir şirketin hisse senedine yatırım yapmak, genellikle farklı sektörlerdeki birçok şirketin hissesini tutan bir yatırım fonuna yatırım yapmaktan daha güvenlidir.","Tek bir şirketin hissesine yatırım yapmak ile farklı şirketlerin hisselerini tutan bir yatırım fonuna yatırım yapmak genellikle eşit derecede güvenlidir.","Bilmiyorum"],
 ["José'nin yıllık %20 bileşik faiz oranı olan bir kredi borcu olarak 1.000 dolar borcu bulunmaktadır. Eğer kredisine hiçbir ödeme yapmazsa, bu faiz oranıyla borcunun iki katına çıkması (2.000 dolar olması) kaç yıl sürer?","5 yıldan az","5 ile 10 yıl arası","10 yıldan fazla","Bilmiyorum"],
 ["Katherine, sağlık durumu iyi olan 25 yaşında bekar bir çalışandır. Yakın vadede aşağıdaki sigorta türlerinden hangisine en çok ihtiyaç duyması muhtemeldir?","Maluliyet / Çalışamazlık (Gelir Koruma) sigortası","Hayat sigortası","Uzun süreli bakım sigortası","Bilmiyorum"],
 ["Piyango A'nın ödülü 200 dolardır ve kazanma şansı %5'tir. Piyango B'nin ödülü 90.000 dolardır ve kazanma şansı %0,01'dir. Beklenen kazanç (matematiksel getiri) hangi piyangoda daha yüksektir?","Piyango A","Piyango B","İkisinin beklenen kazancı eşittir","Bilmiyorum"],
 ["Aşağıdakilerden hangisi ilgili birey için uygunsuz bir yatırım tavsiyesi olarak değerlendirilir?","75 yaşındaki bir emekliye yeni kurulan küçük startup şirketlerine yatırım yapan bir hisse senedi fonu önerilmesi","Emeklilik için birikim yapan 30 yaşındaki bir çalışana hisse senedi endeks fonu önerilmesi","Emeklilik birikimlerinin bir kısmı için 60 yaşındaki bir çalışana tahvil/borçlanma aracı fonu önerilmesi","Bilmiyorum"],
 ];
 
+const FINLIT_QUESTIONS_EN = [
+["Suppose you had $100 in a savings account and the interest rate was 2% per year. After 5 years, how much would you have in the account?","More than $102","Exactly $102","Less than $102","No change"],
+["Imagine the interest rate on your savings account is 1% per year and inflation is 2% per year. After one year, how would the amount of goods/services you could buy with the money in this account change?","You would be able to buy less than today","You would be able to buy exactly the same amount","You would be able to buy more than today","Interest and inflation have no effect on each other"],
+["Which is generally riskier: buying a single company's stock, or investing in a fund made up of many different companies' stocks (an index fund)?","A single company's stock is riskier","Both carry the same risk","The fund is riskier","Risk doesn't depend on the stock's price"],
+["What does 'compound interest' mean?","Interest that accrues on both the principal and the interest already earned in previous periods","A fixed interest rate calculated only on the principal","The lowest interest rate a bank offers","A credit card's annual membership fee"],
+["What happens if you only pay the minimum amount due on your credit card balance each month?","High interest keeps accruing on the remaining balance, so the total cost keeps growing","The debt is deferred interest-free","Your credit score automatically goes up","Your balance is wiped out the following month"],
+["Why is an emergency fund important?","It lets you cover an unexpected expense without resorting to debt or a loan","It's meant to maximize investment returns","It's used to avoid paying taxes","It's only meant to be saved for retirement"],
+["Which factor usually has the biggest impact on your credit score?","Whether you pay your bills on time (payment history)","The color of your hair","How many social media accounts you have","The city you live in"],
+["What does the 'yıllık maliyet oranı' (APR) represent on a credit card?","The total yearly cost of borrowing, including interest and fees","The maximum amount you can spend on the card","The minimum amount you must pay each month","The rewards rate earned from using the card"],
+["Comparing a 15-year mortgage to a 30-year mortgage for the same loan amount, which one is better in terms of total interest paid?","The 15-year loan, because it pays less total interest over a shorter period","The 30-year loan, because the monthly payment is lower","Both pay exactly the same total interest","It depends on the credit card company, not the mortgage"],
+["How is 'net worth' calculated?","Total assets minus total liabilities","Just the amount of cash in your bank account","Your monthly gross salary","The number of credit cards you own"],
+["What does 'diversification' mean in investing?","Spreading your money across different types of assets to reduce risk","Putting all your money into one stock","Holding only cash","Avoiding investing altogether"],
+["How does inflation affect your money's purchasing power?","It reduces purchasing power because prices rise","It increases purchasing power","It has no effect","It only affects borrowers, not savers"],
+["What does 'liquidity' mean?","How quickly an asset can be converted to cash without losing value","An asset's annual rate of return","A loan's term length","A company's total number of employees"],
+["What does the concept of 'opportunity cost' refer to?","The value of the next-best alternative you give up when making a choice","A product's price tag in the store","The exact amount of profit earned from an investment","A fee charged by a bank for a transaction"],
+["What's the key difference between a fixed-rate loan and a variable-rate loan?","A fixed rate stays the same for the life of the loan; a variable rate fluctuates with the market","Fixed-rate loans are always more expensive","Variable-rate loans never charge interest","There's no practical difference between the two"],
+["What does 'amortization' mean in the context of a loan?","The schedule by which a loan is paid off over time through principal and interest installments","Having the loan fully forgiven","An increase in an asset's market value","Having a loan application rejected"],
+["What does the debt-to-income ratio show?","How much of your monthly income goes toward debt payments","The total value of all your assets","The total amount of your credit card limit","Your tax bracket"],
+["What's the basic purpose of insurance?","To spread the risk of a large, unexpected financial loss across small, regular payments","To guarantee a profit","To avoid paying taxes","To directly raise your credit score"],
+["What does a 'deductible' mean on an insurance policy?","The amount you pay out of pocket before the insurance starts covering costs","The insurance company's annual profit","The length of the policy","The policyholder's age"],
+["What is the 'rule of 72' used to estimate?","Roughly how many years it takes an investment to double at a given interest rate","A loan's total interest","When a tax refund will arrive","A stock's next price"],
+["If inflation rises while you're carrying a fixed-rate loan, what's the general effect on you as the borrower?","It becomes relatively easier to pay back the debt in real (inflation-adjusted) terms","Your interest rate automatically increases","The debt is instantly wiped out","There's no effect at all"],
+["What is the 'dollar-cost averaging' strategy?","Investing a fixed amount at regular intervals without trying to time the market","Trying to put all your money in at once at the lowest price","Only investing when prices fall","Waiting and never investing at all"],
+["What does an index fund generally do?","Track the performance of a specific market index (e.g. the S&P 500)","Invest in a single company's stock","Offer a fixed, guaranteed return","Consist only of government bonds"],
+["When comparing stocks to bonds, what's the general tendency?","Stocks generally carry higher risk and potential return; bonds carry lower risk","Bonds always yield more than stocks","Both are risk-free","There's no difference between stocks and bonds"],
+["What does credit card 'utilization ratio' mean, and how does it affect your credit score?","It's the ratio of your used balance to your total limit; keeping it low generally helps your score","It's the card's annual fee and has nothing to do with your score","It's the points/miles ratio on the card","It's just a random number the bank assigns"],
+["Under the 50/30/20 budgeting rule, what is the roughly 20% of income typically allocated to?","Savings and debt payments","Entertainment only","Essential needs (rent, bills)","Taxes"],
+["What does an 'employer match' mean in an employer-sponsored retirement plan like a 401(k)?","The employer adds extra contributions matching the employee's contribution, up to a certain rate","The employer lends the employee money","The government cancels the retirement tax","The employee's salary is automatically doubled"],
+["What's the key difference between an 'asset' and a 'liability'?","An asset puts money in your pocket or holds value; a liability takes money out of your pocket (creates debt)","They mean the same thing","An asset is always cash","A liability is always a house"],
+["What does it mean to 'refinance' a loan?","Replacing an existing loan with a new one, usually on better terms","Cancelling the loan entirely","Increasing your credit card limit","Filing a tax return"],
+["What does positive cash flow mean for an investment property?","The amount left over when rental income exceeds all expenses (loan, taxes, maintenance)","An increase in the property's market value","A loan application getting approved","The tenant paying a deposit"],
+["What does a 'bull market' mean?","A market period when prices are generally trending upward","A period when prices are generally trending downward","A period when the market is completely closed","A period when only bond prices rise"],
+["How is a 'bear market' generally defined?","An extended downturn in which prices fall roughly 20% or more from their peak","A period of continuously rising prices","A single day's price drop","A day the market is closed for a holiday"],
+["What's the difference between a credit report and a credit score?","A credit report is detailed historical information; a credit score is a single number derived from that information","They're exactly the same thing","A credit report can only be seen by banks, not the score","The credit score is calculated from annual income"],
+["When comparing a variable-rate loan to a fixed-rate loan, what's the main risk difference?","With a variable rate your payment can rise or fall with market conditions; with a fixed rate the payment stays the same","Fixed-rate loans carry higher risk","Variable-rate loans never change","There's no risk difference between them"],
+["What does the 'avalanche method' do when paying off credit card debt?","Prioritizes paying off the highest-interest debt first, reducing total interest cost","Pays off the smallest debt first for motivation","Pays all debts at an equal rate","Only makes the minimum payment"],
+["What does the 'snowball method' prioritize when paying off debt?","Paying off the smallest balance first for psychological motivation","Paying off the highest-interest debt first","Only credit card debts","Only the mortgage"],
+["What is a stock's 'dividend' payment?","A share of the company's profit distributed regularly to shareholders","The commission for buying the stock","A type of loan the company takes out","A tax charged by the stock exchange"],
+["What's the difference between an inflation-adjusted (i.e. real) return and a 'nominal' return?","Real return is the return after removing the effect of inflation; nominal return is the raw figure including inflation","They're the same thing","Nominal return is always lower than real return","Real return only applies to bonds"],
+["For a real-estate investor earning rental income, what does the 'vacancy rate' refer to?","The proportion of time a property sits without a tenant during a given period","The amount of deposit the tenant pays","The property's insurance premium","The property tax rate"],
+["What's the main consequence of credit card companies applying a 'late fee'?","Extra cost accrues on debt not paid on time, and the total balance grows","Your credit score automatically goes up","Your debt is automatically wiped out","Your card limit automatically increases"],
+["Someone with a long 'time horizon' for investing is generally considered better suited to which strategy?","Investments with higher risk/return potential relative to short-term swings (e.g. stocks)","Holding only cash","Always the lowest-risk option","Not investing at all"],
+["How does a property's 'equity' increase?","As the loan principal is paid down and/or the property's market value rises","Only as rental income rises","Only as the insurance premium falls","As the owner's age increases"],
+["In a tax-deferred retirement account (e.g. a traditional IRA/401k), when is tax generally paid?","When the money is withdrawn (in retirement)","The moment the money is deposited","Never","Automatically every month"],
+["What does having 'pre-approval' on a loan application mean?","The bank has done a preliminary assessment of how much it could lend you based on your finances","The loan is definitively approved and the money has hit your account","The loan application has been rejected","It's a concept that only applies to credit cards"],
+["Why is it meaningless for an expert on TV to give specific percentage asset-allocation advice independent of anyone, like \"our recommendation this week is 30% stocks, 30% bonds, 40% cash\"?","Because asset allocation needs to be tailored to a person's age, risk tolerance, goals, and needs","Because weekly forecasts are usually wrong","Because giving advice on TV is prohibited by securities regulations","Because deposit rates change constantly on a weekly basis"],
+["Which famous herd-mentality and market-bubble event, which took place in England in the 1700s and cost even the famous scientist Isaac Newton his fortune, is being described here?","South Sea Bubble","Tulip Mania","Great Depression","Dot-com Bubble"],
+["What are the four core principles that make up the EAST model used in behavioral-intervention design?","Easy, Attractive, Social, Timely","Flexible, Rational, Sustainable, Tactical","Effective, Analytical, Strategic, Communal","Economic, Advantageous, Systematic, Consistent"],
+["Given the key differences between financial and non-financial assets, which of the following is a financial asset?","Cash deposits at a bank and retirement funds","Real estate and housing","A company's patents and trademarks","Factory production machinery and equipment"],
+["The '120 Minus Investor Age' method, commonly used in the U.S. especially for retirement and long-term investing, determines the stock allocation in a portfolio how?","It weights toward higher-risk, higher-return stocks at a young age and lowers that share as age increases","It increases the stock share as the investor's age increases","It keeps the portfolio fixed at 50% stocks/50% bonds regardless of age","It directs the entire portfolio into real estate based on the investor's age"],
+["Regarding the portfolio rebalancing process, which of the following statements is true?","The main goal of rebalancing isn't to multiply returns but to keep the risk level within the investor's tolerance","Rebalancing should only be done while markets are rising","When rebalancing, only assets that have gained value are purchased","Rebalancing reduces an investor's risk to zero"],
+["What is the financial-statistics concept, taking a value between -1 and +1, that shows whether two different assets' returns move in the same direction or opposite directions?","Correlation","Standard deviation","Liquidity ratio","Balance-sheet equity"],
+["Someone who's buying a new car next year keeping their savings in short-term deposits/cash, while someone planning retirement 20-30 years out invests in stock/bond funds, is an example of which asset-allocation approach?","Goal-based asset allocation","The 1/N method","The percentage-deviation method","The 60/40 rule"],
+["When building a personal balance sheet, regarding the 'Assets' and 'Liabilities' sections, which of the following is incorrect?","Credit card debt is classified under long-term assets","Cash, deposits, and real estate belong in the Assets section","Debts with a maturity longer than 1 year are shown under Long-Term Liabilities","Net worth refers to the balance/difference between assets and liabilities"],
+["The 'don't put all your eggs in one basket' principle recommended to reduce risk in financial markets refers to which strategy?","Diversifying the portfolio (asset allocation)","Trading with leverage","Putting all savings into a single stock","Only using short-term deposits"],
+["According to Credit Suisse and Kerim Rota data, while the ratio of non-financial assets (real estate, vehicles, etc.) to financial assets (deposits, stocks, funds, etc.) is about 83% worldwide, what is this ratio in Turkey?","410%","36%","92%","130%"],
+["When evaluating an unfamiliar or newly recommended financial product, which of the following is NOT one of the key questions you should ask, per the text?","How many past sales has the person selling this product made?","What risks and costs does this product carry?","Can I cash out of this product whenever I want (liquidity)?","How will the gains from this product be taxed?"],
+["Which of the following is Dave Ramsey's well-known statement about budgeting?","\"A budget is telling your money where to go instead of wondering where it went.\"","\"Budgeting is just calculating how much you'll save.\"","\"Budgeting is the only way to completely prevent borrowing.\"","\"Budgeting is only necessary for high-income individuals.\""],
+["What's the basic logic behind the 1/N method used when building a portfolio?","Splitting savings equally across a chosen N asset classes and periodically re-equalizing the proportions","Investing only 1/3 of the portfolio and spending the rest","Reducing the number of companies invested in by 1 each year","Selling the single lowest-returning asset in the portfolio every month"],
+["Takasbank data shows that, when looking at holding periods on the stock exchange, foreign investors hold a stock for an average of 1 year — how long, on average, do local investors hold a stock?","About 1 month","About 1 week","About 6 months","About 2 years"],
+["Which of the following is NOT something to watch out for when getting financial advice or counseling?","Accepting that the advisor puts your entire portfolio into a single stock they claim will earn the most","Checking whether the person giving advice is an investment professional or a salesperson","Checking whether the advice is based on research reports or market rumors","Checking whether the advisor knows your risk tolerance and goals"],
+["According to behavioral-finance research, what kind of psychological effect does using a credit card tend to have on spending behavior?","It creates the perception/feeling of spending less than you would with cash","It makes shopping harder for people","It encourages people to budget instantly","It increases stress by forcing people to constantly calculate what they've spent"],
+["What is the most notable disadvantage of 'periodic portfolio rebalancing' done purely on a calendar basis (e.g. every 6 months)?","It can't take advantage of, or protect against, sharp market swings that happen between periods","The calculation is very complex","It only applies to foreign-currency accounts","It forces you to keep increasing the number of assets in the portfolio"],
+["What's the most important advantage of choosing professionally managed stock funds instead of picking individual stocks yourself?","It provides professional management, research support, and easy diversification","Funds guarantee they'll never lose value","Funds are completely tax-exempt","It requires buying every company on the market"],
+["An employee's monthly gross salary is $5,000. Which of the following is true about the amount that lands in the employee's bank account (net income) after tax, social security, and other mandatory legal deductions from the paycheck?","Net income is lower than gross income because of the mandatory deductions","Net income is higher than gross income because of added legal contributions","Net income and gross income are always equal","Net income is only calculated at year-end, not paid monthly"],
+["Additional variable payments such as a performance bonus, overtime, or a year-end bonus received on top of a regular salary — what can be said about how they're taxed and how they affect net income?","These payments are fully tax-exempt and are added directly to net income","These extra payments are also subject to income tax brackets and increase net income","Extra payments are only included in next year's net income","They're taxed at a flat rate regardless of income level"],
+["Which category do 'utility bills like electricity, water, and natural gas' belong to in a household budget?","Mandatory Bills (electricity, water, natural gas, etc.)","Fixed Expenses (rent, mortgage payment, etc.)","Variable/Discretionary Expenses (dining out, entertainment, luxury shopping, etc.)","Statutory Expenses (income tax, social security contributions)"],
+["A 500 ml bottle of olive oil sells for $15 at the store, while the same brand's 2-liter (2,000 ml) tin sells for $52. Which option is more economical on a per-unit basis?","The 2-liter tin (price per liter: $26)","The 500 ml bottle (price per liter: $30)","Both options have exactly the same unit price","Unit price can't be calculated based on quantity"],
+["What is the $200 difference, financially speaking, between buying a phone for a total of $1,200 over 12 monthly installments versus buying the same phone outright for $1,000?","Financing/carrying cost (cost of financing)","Opportunity cost","Capital gain","Depreciation expense"],
+["In an economy with 30% annual inflation, an employee's annual salary rose by 15%. How has the employee's purchasing power changed as a result?","Purchasing power has decreased","Purchasing power has increased","Purchasing power hasn't changed","There's no relationship between inflation and purchasing power"],
+["Per financial planning standards, an 'Emergency Fund' meant to cover unexpected unemployment or medical expenses should be large enough to cover at least how much in essential living expenses?","3 to 6 months of expenses","1 week of expenses","1 month of expenses","5 years of expenses"],
+["What does the savings method known in financial literature as 'Pay Yourself First' refer to?","Automatically transferring a set percentage of income into savings before any spending happens","Spending on personal luxuries first as soon as income is received","Saving whatever small change is left over after all spending is done at month-end","Not paying off debts and using the money for personal spending instead"],
+["What does the 'liquidity' of a savings or investment vehicle refer to?","How quickly and easily the asset can be converted to cash without losing value","The annual interest return the investment offers","The investment's capacity to provide tax advantages","The asset's physical size and volume"],
+["Which of the following is the most suitable vehicle for money that will be used as a down payment on a house purchase within the next 3 months?","Capital-protected instruments like short-term deposits or money market funds","Highly volatile stocks","Long-term real estate investments","Crypto assets"],
+["How are the following investment vehicles ranked from highest to lowest expected risk/return?","Stocks > Government bonds > Bank deposits","Bank deposits > Government bonds > Stocks","Government bonds > Stocks > Bank deposits","Bank deposits > Stocks > Government bonds"],
+["What is the fundamental relationship between risk and return in financial theory?","As an investment's potential return increases, the risk it carries generally increases too","Investments promising high returns always carry the lowest risk","There's no correlation at all between risk and return","Investments with zero risk of losing principal always offer the highest return"],
+["Regarding the 'diversification' strategy in portfolio management, which of the following statements is TRUE?","Spreading savings across different sectors and asset classes lowers the portfolio's overall volatility and risk","Putting all savings into a single successful company's stock eliminates risk entirely","Diversifying always zeroes out an investment's return potential","Diversification is a method that only applies to real estate investments"],
+["Which of the following is a key advantage that leads small investors to prefer 'mutual funds' over picking individual stocks themselves?","They're managed by professional portfolio managers and provide broad diversification in a single move","It's legally impossible for mutual funds to lose money","Mutual funds never deduct any management fees","Funds are made up only of government-guaranteed assets"],
+["What is the mechanism, which Albert Einstein described as the 'eighth wonder of the world,' where the return on invested principal is reinvested and grows exponentially over time?","Compound interest / compound return","Simple interest","Current account deficit","Inflation rate"],
+["If someone with $5,000 in credit card debt only pays the \"minimum payment\" each month on their statement and keeps using the card, what happens to this debt?","High interest keeps accruing on the remaining principal, so it takes years to pay off and the total cost is very high","The debt is fully zeroed out within 2-3 months","The debt is automatically wiped out after 1 year","No interest applies at all as long as the minimum payment is made"],
+["What financial advantage does someone with a high credit score gain when applying for a loan at a bank?","Being seen as low-risk, they can get more favorable interest rates and higher credit limits","Their obligation to repay the loan is completely removed","Banks charge people with high credit scores extra penalty interest","Credit score only determines the interest rate on deposit accounts, not loans"],
+["Which of the following is true for a borrower using a \"Fixed-Rate Mortgage\"?","The monthly loan payment stays the same until the end of the term, even if market rates rise or fall","Monthly payments automatically rise as inflation in the market increases","The bank can unilaterally raise the payment amount in any given month","On fixed-rate loans, the debt can only be repaid in foreign currency"],
+["When calculating the \"Debt-to-Income Ratio,\" considered a key indicator of financial health, what is taken into account?","Total monthly debt payments as a ratio of monthly net income","Total savings as a ratio of annual spending","The credit card limit as a ratio of gross salary","The home's value as a ratio of annual rental income"],
+["Regarding the \"late fee\" charged when a loan or credit card payment isn't made on time, which of the following is true?","A legal late fee accrues on top of the standard interest for unpaid debt, quickly increasing the total debt burden","Late fees are lower than the standard contractual interest rate","Interest charges stop entirely once a debt is 30 days late","Late fees only apply to businesses, not individuals"],
+["What's the main financial purpose of someone taking out homeowners, auto, or health insurance?","Transferring the risk of a large, potentially devastating financial loss to an insurance company in exchange for a small premium","Earning a regular monthly interest income from the insurance company","Withdrawing government incentive payments in cash","Immediately doubling the real estate's market value"],
+["When the \"Deductible\" on an insurance policy is increased, how does the premium paid for the policy typically change?","The premium decreases","The premium increases","The premium doesn't change at all","There's no relationship between the deductible and the premium"],
+["Which type of insurance is designed to protect the standard of living and financial future of surviving family members if the household's primary breadwinner dies or becomes permanently disabled?","Life insurance","Auto liability insurance","Homeowners / flood insurance","Business/commercial property insurance"],
+["Which of the following is a risk typically covered by a standard Comprehensive auto insurance policy?","Physical damage to the vehicle from an accident, theft, or fire","Routine oil and filter changes for the vehicle","The vehicle's annual registration fees","Traffic tickets received by the driver"],
+["When getting financial advice, why is it critical to know whether the person giving the advice is an \"Independent Advisor\" or a \"Commission-Based Salesperson\"?","A commission-based person may, due to a conflict of interest, recommend whichever product pays them the highest commission rather than what's genuinely best for the investor","Salespeople focus on the investor's goals, while independent advisors only sell their own company's products","Independent advisors never charge a fee","There's no difference in qualifications or interests between the two roles"],
+["What's the core reason for basing investment decisions on \"research reports\" from authoritative institutions rather than tips and rumors on social media?","Research reports are based on objective data, financial statements, and analytical methods, while tips carry a risk of manipulation","Rumors always turn out to be 100% true","A company's financial statements have nothing to do with investing","Research reports are only prepared for short-term day trading"],
+["What's the main advantage the 'matching contribution' offered by an employer provides to a participant in an employer-sponsored 401(k) retirement plan?","It directly adds to the principal, letting savings grow much faster through compound returns","It lets you cash out all retirement savings tax-free","It removes the requirement for the plan's funds to hold stocks","It lets the participant withdraw all the money penalty-free whenever they want"],
+["When planning for retirement, what should the targeted monthly income level (replacement ratio) generally be, in order to maintain your current standard of living after you retire?","70%-80% of your final working income","10%-20% of your final working income","200% of your final working income","Just the minimum wage level"],
+["Suppose you had $100 in a savings account and the interest rate was 2% per year. If you left the money in the account for 5 years without withdrawing it, how much would you have?","More than $102","Exactly $102","Less than $102","I don't know"],
+["Suppose your savings account's annual interest rate is 1% and inflation is 2%. After one year, would the money in this account buy more, the same, or less than it would today?","Less than today","More than today","The same amount as today","I don't know"],
+["True or false: Buying a single company's stock usually provides a safer return than investing in a mutual fund.","False","True","I don't know","It depends"],
+["If interest rates rise, what generally happens to bond prices?","They fall","They rise","They don't change","There's no relationship between interest rates and bond prices"],
+["A 15-year mortgage generally requires a higher monthly payment than a 30-year mortgage, but the total interest paid over the life of the loan is lower.","True","False","I don't know","It depends"],
+["Suppose you had some money. Is it safer to put it into a single business or investment, or to spread it across multiple businesses or investments?","Multiple businesses or investments","A single business or investment","I don't know","I prefer not to answer"],
+["Suppose that over the next 10 years the prices of the things you buy double. If your income also doubles, will you be able to buy less than, the same as, or more than you can buy today?","The same amount","Less","More","I don't know / I prefer not to answer"],
+["Suppose you needed to borrow $100. Which of the following is a lower amount to pay back?","$100 + 3%","$105","I don't know","I prefer not to answer"],
+["Suppose you deposit money in the bank for two years and the bank adds 15% to your account each year. Does the bank add more money to your account in the second year than in the first, or the same amount?","It adds more in the second year","It adds the same amount both years","I don't know","I prefer not to answer"],
+["Suppose you had $100 in a savings account and the bank adds 10% interest per year to the account. If you never withdraw money or interest payments, how much would you have in the account after 5 years?","More than $150","Exactly $150","Less than $150","I don't know / I prefer not to answer"],
+["Jane's pay stub shows the following information:\nGross pay: $2,800\nFederal income tax: $200\nSocial Security tax: $173.60\nMedicare tax: $40.60\nOther deductions: $ -?\nNet pay: $2,385.80\n\nHow much did Jane's employer deposit into her bank account on July 31st?","$2,385.80","$300","$2,800","$19,600"],
+["Greg wants to buy a bike whose cash price is $600. Greg buys the bike using the store's financing option. Which of the following is true about the total amount Greg will end up paying?","More than $600","Less than $600","Exactly $600","I don't know"],
+["If Greg's $600 bike is stolen from his garage, which of the following could help cover his financial loss?","Homeowners or renters insurance","Travel insurance","A U.S. Treasury bond","A mortgage"],
+["If the bank charged a total of $6.00 in fees from your account in November, which of the following is true?","$6.00","$1.50","$3.00","$7.50"],
+["Jane's pay stub shows the following information:\nGross pay: $2,800\nFederal income tax: $200\nSocial Security tax: $173.60\nMedicare tax: $40.60\nOther deductions: $ -?\nNet pay: $2,385.80\n\nOnce all the transactions on the bank statement are settled at the end of the month, what will the account balance be?","$2,458.85","$2,460.35","$2,590.35","$3,035.35"],
+["Someone is comparing two loan offers for the same amount at the same interest rate: a 2-year loan or a 3-year loan. Will the 3-year loan's monthly payment be higher than the 2-year loan's?","No, because spreading the debt over a longer period makes the monthly installment lower","Yes, because monthly payments always increase as the term gets longer","Yes, because the interest rate is exactly the same in both options","No, because monthly payments stay fixed regardless of the term"],
+["For two loan options with the same interest rate — one 2 years, one 3 years — will the total interest paid on the 3-year loan be more than on the 2-year loan?","Yes, because the debt accrues interest over a longer period, increasing the total interest cost","No, because spreading installments over a longer period lowers the interest cost","No, since the interest rates are equal, the total interest paid will also be equal","Yes, but only if the interest rates are variable"],
+["A mother signs a monthly phone contract in her own name for her minor child. If the child doesn't pay the monthly bills, who bears the legal and financial responsibility to the phone company for this contract?","The mother, who officially signed the contract","The child, who actually uses the phone","The store representative who sold the phone","Both the mother and the child are equally responsible"],
+["Someone got a device as part of a phone contract, used it, then changed their mind and returned the device to the store. Does returning the device automatically erase any unpaid bills that had accrued?","No, returning the device doesn't cancel unpaid bills for service already used in the past","Yes, since the device was returned, all past debts are automatically wiped out","Yes, but only the device's wear-and-tear cost up to that point is added to the bill","No, but the debts are automatically transferred to another user"],
+["Mark's salary at a company has risen noticeably over the past two years. What's the most reasonable explanation for this?","An increase in Mark's work experience, knowledge, and productivity","The employer purchasing new equipment for the company","Mark putting more money into his bank savings account","A decline in overall consumer spending in the country"],
+["What's the basic purpose of creating a personal budget and tracking it?","Balancing income and expenses to achieve financial goals and maintain control","Putting all income into investment funds","Eliminating credit card use from our lives entirely","Only spending on essential needs and stopping all entertainment spending"],
+["Which factor plays the most critical role in growing your savings over time?","How long the money stays untouched and the compound interest rate applied","The number of branches the bank you use has","Keeping the money invested as cash at home","Which day of the week the savings account was opened"],
+["Given the relationship between Risk and Return in investing, which of the following statements is true?","The higher the risk, the higher the expected potential return tends to be","As risk increases, the investment's fixed-rate return becomes guaranteed","Low-risk investment vehicles always earn more than high-risk ones","There's no connection at all between an investment's risk and its expected return"],
+["José has a $1,000 credit card balance. The card charges 20% annual compound interest. If José makes no payments and adds no new charges for 1 year, what will his total balance be at the end of the year?","More than $1,200 (due to the compounding effect)","Exactly $1,000","Exactly $1,200","Less than $1,200"],
+["For a 25-year-old, perfectly healthy, single individual with a steady job, which type of insurance is likely to be most needed in the near term?","Health or income-protection (disability) insurance","Individual life insurance (high coverage)","Private retirement insurance","Trip cancellation insurance"],
+["You're offered two lottery options: Lottery A: 5% chance of winning, $200 prize (Expected value: 0.05 × 200 = $10). Lottery B: 0.01% chance of winning, $90,000 prize (Expected value: 0.0001 × 90,000 = $9). Based on this data, which option has the mathematically higher expected return?","Lottery A's expected value ($10) is higher","Lottery B's expected value ($9) is higher","Both options have equal expected value","The probabilities can't be compared"],
+["Why would it be inappropriate advice for a financial advisor to recommend that a 75-year-old retiree put all their savings into a risky stock fund invested in newly founded small startups?","Investors at this age have a short time horizon, so their risk tolerance is low and their priority should be preserving principal","Because retirees are legally banned from entering the stock market","Because startups only distribute dividends to young investors","Because startup funds are investment vehicles unaffected by inflation"],
+["José has a $1,000 debt at 20% annual compound interest. If he makes no payments, roughly how long will it take for his debt to double?","Less than 5 years","Less than 2 years","5-10 years","I don't know"],
+["Investment A offers a certain, guaranteed return. Investment B offers a 12% return with 50% probability and a 4% return with 50% probability. Which one has the higher expected return?","Both have the same expected return","Investment A","Investment B","I don't know"],
+["Mark's salary has increased over the past two years. What is the most reasonable explanation for this?","Mark successfully completed several training courses at a local university/college","An increase in the number of workers with Mark's skills where he lives and works","New emerging technologies reducing demand for Mark's skills","I don't know"],
+["Which of the following can a household budget NOT be used for?","Tracking the real-time, market-based performance of the household's financial assets","Planning essential household expenses","Planning discretionary (optional) household spending","I don't know"],
+["Akiko has $1,000 in a savings account earning a 2% return over the year. During that same year, the inflation rate is 3%. Which of the following statements is true?","By year-end her purchasing power has fallen — she can buy less","By year-end her purchasing power has risen — she can buy more","It's unclear whether she can buy more or less by year-end","I don't know"],
+["Which of the following statements about investing is true?","Investing in a fund that holds shares of many companies across different sectors is generally safer than investing in a single company's stock","Investing in a single company's stock is generally safer than investing in a fund holding shares of many companies across different sectors","Investing in a single company's stock and investing in a fund holding many companies' shares are generally equally safe","I don't know"],
+["José has a $1,000 loan balance at 20% annual compound interest. If he makes no payments at all on the loan, how many years will it take for the balance to double (reach $2,000) at this rate?","Less than 5 years","5 to 10 years","More than 10 years","I don't know"],
+["Katherine is a 25-year-old single employee in good health. Which of the following types of insurance is she most likely to need in the near term?","Disability / income-protection insurance","Life insurance","Long-term care insurance","I don't know"],
+["Lottery A's prize is $200 with a 5% chance of winning. Lottery B's prize is $90,000 with a 0.01% chance of winning. Which lottery has the higher expected value (mathematical return)?","Lottery A","Lottery B","Both have the same expected value","I don't know"],
+["Which of the following would be considered inappropriate investment advice for the individual involved?","Recommending a stock fund invested in newly founded small startups to a 75-year-old retiree","Recommending a stock index fund to a 30-year-old employee saving for retirement","Recommending a bond/fixed-income fund to a 60-year-old employee for part of their retirement savings","I don't know"],
+];
 </script>
 <script>
+/* ===== Language toggle (TR/EN) ===== */
+const UI_STRINGS = {
+  tr: {
+    title: "Aralıklı Tekrar",
+    tab_oxford: "Oxford 5000",
+    tab_mistakes: "Yanlışlarım",
+    tab_custom: "Kelime Ekle",
+    tab_finlit: "Finansal Okuryazarlık",
+    setup_label: "Seviye seç",
+    start_quiz: "Teste Başla",
+    setup_hint: "Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.",
+    mistakes_label: "En Çok Yanlış Yaptıkların",
+    practice_these: "Bu Kelimelerle Çalış",
+    custom_label: "Kendi Kelimelerini Ekle",
+    custom_en_ph: "İngilizce kelime",
+    custom_tr_ph: "Türkçe karşılığı",
+    custom_pos_ph: "tür (v., n., adj. — opsiyonel)",
+    add_btn: "Ekle",
+    custom_empty: "Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.",
+    re_label: "Emlak Lisans Sınavı Kelimeleri",
+    re_hint: "ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.",
+    as_label: "ASVAB Word Knowledge Kelimeleri",
+    as_hint: "ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.",
+    fl_label: "Finansal Okuryazarlık Soruları",
+    fl_hint: "Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.",
+    stat_correct: "Doğru", stat_wrong: "Yanlış", stat_mastered: "Öğrenildi",
+    feedback_correct: "Doğru!",
+    feedback_wrong: "Yanlış",
+    feedback_wrong_prefix: "Yanlış — doğrusu: ",
+    next_hint: "Devam etmek için ekrana dokun →",
+    reset_confirm: "Bu seviyedeki tüm ilerleme sıfırlansın mı?",
+    auth_login: "Google ile Giriş Yap",
+    auth_logout: "Çıkış",
+    auth_sync_progress: "senkronize ediliyor…",
+    auth_sync_done: "senkronize edildi ✓",
+    auth_sync_fail: "senkronizasyon başarısız",
+    total_words: "Toplam {n} kelime",
+    total_words_oxford: "Toplam {n} kelime (B2: {b2} · C1: {c1})",
+    total_questions: "Toplam {n} soru",
+    mistakes_empty_none: "Henüz hiç soru cevaplamadın.<br>Oxford 5000 sekmesinden başla, yanlış yaptıkların burada listelenecek.",
+    mistakes_empty_clean: "Harika — henüz yanlış yaptığın bir kelime yok.",
+    practice_these_n: "Bu {n} Kelimeyle Çalış",
+    load_error: "Liste yüklenemedi.",
+    loading: "Yükleniyor…",
+    wrong_suffix: "× yanlış",
+    not_enough_words: "Bu seviyede yeterli kelime yok",
+  },
+  en: {
+    title: "Spaced Repetition",
+    tab_oxford: "Oxford 5000",
+    tab_mistakes: "My Mistakes",
+    tab_custom: "Add Words",
+    tab_finlit: "Financial Literacy",
+    setup_label: "Choose a level",
+    start_quiz: "Start Quiz",
+    setup_hint: "Words you get right show up less often, words you get wrong show up more. Your progress is saved in this browser.",
+    mistakes_label: "Your Most Missed Words",
+    practice_these: "Practice These Words",
+    custom_label: "Add Your Own Words",
+    custom_en_ph: "English word",
+    custom_tr_ph: "Turkish meaning",
+    custom_pos_ph: "type (v., n., adj. — optional)",
+    add_btn: "Add",
+    custom_empty: "You haven't added any words yet. Add some above and practice with just those.",
+    re_label: "Real Estate License Exam Terms",
+    re_hint: "About 150 of the most common terms on U.S. real estate licensing exams — covering property, agency, contracts, financing, appraisal, closing, zoning, and leasing.",
+    as_label: "ASVAB Word Knowledge Terms",
+    as_hint: "About 300 of the most common words on the ASVAB Word Knowledge section — this section counts double toward your AFQT score.",
+    fl_label: "Financial Literacy Questions",
+    fl_hint: "Multiple-choice questions testing core finance concepts like compound interest, inflation, credit scores, budgeting, investing, and insurance.",
+    stat_correct: "Correct", stat_wrong: "Wrong", stat_mastered: "Mastered",
+    feedback_correct: "Correct!",
+    feedback_wrong: "Wrong",
+    feedback_wrong_prefix: "Wrong — correct answer: ",
+    next_hint: "Tap anywhere to continue →",
+    reset_confirm: "Reset all progress for this level?",
+    auth_login: "Sign in with Google",
+    auth_logout: "Sign out",
+    auth_sync_progress: "syncing…",
+    auth_sync_done: "synced ✓",
+    auth_sync_fail: "sync failed",
+    total_words: "Total {n} words",
+    total_words_oxford: "Total {n} words (B2: {b2} · C1: {c1})",
+    total_questions: "Total {n} questions",
+    mistakes_empty_none: "You haven't answered any questions yet.<br>Start from the Oxford 5000 tab — your mistakes will show up here.",
+    mistakes_empty_clean: "Great — you haven't gotten anything wrong yet.",
+    practice_these_n: "Practice These {n} Words",
+    load_error: "Couldn't load the list.",
+    loading: "Loading…",
+    wrong_suffix: "× wrong",
+    not_enough_words: "Not enough words at this level",
+  }
+};
+
+let LANG = "tr";
+function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
+
+function applyLanguage(lang){
+  LANG = lang;
+  try{ localStorage.setItem("w5k:lang", lang); }catch(e){}
+
+  document.getElementById("langTr").classList.toggle("active", lang === "tr");
+  document.getElementById("langEn").classList.toggle("active", lang === "en");
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    el.textContent = t(key);
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+    const key = el.getAttribute("data-i18n-ph");
+    el.placeholder = t(key);
+  });
+
+  const statsSpan = document.querySelector('[data-i18n-html="stats_line"]');
+  if(statsSpan){
+    statsSpan.innerHTML = `${t("stat_correct")}: <b id="statCorrect">${sessionCorrect}</b> &nbsp;·&nbsp; ${t("stat_wrong")}: <b id="statWrong">${sessionWrong}</b> &nbsp;·&nbsp; ${t("stat_mastered")}: <b id="statMastered">0</b>/<span id="statTotal">${pool.length}</span>`;
+    updateStats();
+  }
+
+  document.getElementById("backBtn").title = lang === "tr" ? "Seviye seçimine dön" : "Back to level selection";
+  document.getElementById("backBtn").setAttribute("aria-label", document.getElementById("backBtn").title);
+  document.getElementById("resetBtn").title = lang === "tr" ? "İlerlemeyi sıfırla" : "Reset progress";
+  document.getElementById("resetBtn").setAttribute("aria-label", document.getElementById("resetBtn").title);
+
+  document.getElementById("oxfordCount").textContent = t("total_words_oxford")
+    .replace("{n}", b2Count + c1Count).replace("{b2}", b2Count).replace("{c1}", c1Count);
+  document.getElementById("reCount").textContent = t("total_words").replace("{n}", REAL_ESTATE_WORDS.length);
+  document.getElementById("asCount").textContent = t("total_words").replace("{n}", ASVAB_WORDS.length);
+  document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
+
+  renderAuthUI(window.currentUser || null);
+
+  const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
+  const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+  const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
+  const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
+  const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
+  if(mistakesTabActive) loadMistakes();
+  if(customTabActive) renderCustomTab();
+  if(reTabActive) renderRealEstateTab();
+  if(asTabActive) renderASVABTab();
+  if(flTabActive) renderFinlitTab();
+}
+
+document.getElementById("langTr").addEventListener("click", ()=> applyLanguage("tr"));
+document.getElementById("langEn").addEventListener("click", ()=> applyLanguage("en"));
+
 /* ===== Persistence helpers (per-word weight + stats) — uses localStorage, with in-memory fallback ===== */
 const STORE_PREFIX = "w5k:";
+
+
 const memoryStore = {}; // fallback if localStorage is unavailable/blocked
 let storageWorks = true;
 try{
@@ -3249,7 +3555,7 @@ document.getElementById("backBtn").addEventListener("click", ()=>{
   document.querySelector('.tab-btn[data-tab="setup"]').classList.add("active");
 });
 document.getElementById("resetBtn").addEventListener("click", async ()=>{
-  if(!confirm("Bu seviyedeki tüm ilerleme sıfırlansın mı?")) return;
+  if(!confirm(t("reset_confirm"))) return;
   for(const w of pool){
     await saveWord(w.e, {weight:1, correct:0, wrong:0});
     w.weight = 1; w.correct = 0; w.wrong = 0;
@@ -3328,7 +3634,7 @@ function buildFinlitOptions(correctWord){
 
 function nextQuestion(){
   if(pool.length < 1){
-    document.getElementById("wordEn").textContent = "Bu seviyede yeterli kelime yok";
+    document.getElementById("wordEn").textContent = t("not_enough_words");
     document.getElementById("options").innerHTML = "";
     return;
   }
@@ -3374,13 +3680,13 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = Math.max(1, current.weight - 2);
     current.correct += 1;
     sessionCorrect += 1;
-    fb.textContent = "Doğru!";
+    fb.textContent = t("feedback_correct");
     fb.className = "feedback right";
   } else {
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = current.finlit ? "Yanlış" : `Yanlış — doğrusu: ${current.t}`;
+    fb.textContent = current.finlit ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -3407,7 +3713,7 @@ async function handleAnswer(chosenOpt, btnEl){
   }
   updateStats();
 
-  document.getElementById("nextHint").textContent = "Devam etmek için ekrana dokun →";
+  document.getElementById("nextHint").textContent = t("next_hint");
   document.getElementById("options").style.cursor = "pointer";
   const advanceOnTap = (ev) => {
     if(ev.target.closest("#backBtn") || ev.target.closest("#resetBtn")) return;
@@ -3455,12 +3761,12 @@ async function loadMistakes(){
   const drillBtn = document.getElementById("drillBtn");
   const countEl = document.getElementById("mistakesCount");
   drillBtn.classList.add("hidden");
-  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
   try{
     const keys = listWordKeys();
     if(keys.length === 0){
-      countEl.textContent = "Toplam 0 kelime";
-      listEl.innerHTML = '<p class="mistake-empty">Henüz hiç soru cevaplamadın.<br>Pratik sekmesinden başla, yanlış yaptıkların burada listelenecek.</p>';
+      countEl.textContent = t("total_words").replace("{n}", 0);
+      listEl.innerHTML = `<p class="mistake-empty">${t("mistakes_empty_none")}</p>`;
       return;
     }
     const rows = [];
@@ -3477,15 +3783,15 @@ async function loadMistakes(){
       }catch(e){}
     }
     if(rows.length === 0){
-      countEl.textContent = "Toplam 0 kelime";
-      listEl.innerHTML = '<p class="mistake-empty">Harika — henüz yanlış yaptığın bir kelime yok.</p>';
+      countEl.textContent = t("total_words").replace("{n}", 0);
+      listEl.innerHTML = `<p class="mistake-empty">${t("mistakes_empty_clean")}</p>`;
       return;
     }
     rows.sort((a,b)=> b.wrong - a.wrong);
     mistakeRowsCache = rows;
-    countEl.textContent = `Toplam ${rows.length} kelime`;
+    countEl.textContent = t("total_words").replace("{n}", rows.length);
     drillBtn.classList.remove("hidden");
-    drillBtn.textContent = `Bu ${rows.length} Kelimeyle Çalış`;
+    drillBtn.textContent = t("practice_these_n").replace("{n}", rows.length);
     const top = rows.slice(0, 50);
     listEl.innerHTML = top.map(r => `
       <div class="mistake-row">
@@ -3493,11 +3799,11 @@ async function loadMistakes(){
           <span class="mistake-en">${r.en}</span><span class="mistake-pos">${r.p}</span>
           <div class="mistake-tr">${r.t} <span style="opacity:.5">· ${r.l}</span></div>
         </div>
-        <div class="mistake-badge">${r.wrong}× yanlış</div>
+        <div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>
       </div>
     `).join("");
   }catch(e){
-    listEl.innerHTML = '<p class="mistake-empty">Liste yüklenemedi.</p>';
+    listEl.innerHTML = `<p class="mistake-empty">${t("load_error")}</p>`;
   }
 }
 
@@ -3528,7 +3834,7 @@ async function renderCustomTab(){
   const emptyEl = document.getElementById("customEmpty");
   const drillBtn = document.getElementById("customDrillBtn");
   const countEl = document.getElementById("customCount");
-  countEl.textContent = `Toplam ${customWordsCache.length} kelime`;
+  countEl.textContent = t("total_words").replace("{n}", customWordsCache.length);
 
   if(customWordsCache.length === 0){
     listEl.innerHTML = "";
@@ -3538,7 +3844,7 @@ async function renderCustomTab(){
   }
   emptyEl.classList.add("hidden");
   drillBtn.classList.remove("hidden");
-  drillBtn.textContent = `Bu ${customWordsCache.length} Kelimeyle Çalış`;
+  drillBtn.textContent = t("practice_these_n").replace("{n}", customWordsCache.length);
 
   listEl.innerHTML = customWordsCache.map(w => `
     <div class="custom-row" data-id="${w.id}">
@@ -3624,7 +3930,7 @@ async function saveREWord(en, val){
 
 async function renderRealEstateTab(){
   const listEl = document.getElementById("reList");
-  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
   const rows = [];
   for(const w of REAL_ESTATE_WORDS){
     const stat = await loadREWord(w[0]);
@@ -3636,7 +3942,7 @@ async function renderRealEstateTab(){
         <span class="mistake-en">${r.en}</span>
         <div class="mistake-tr">${r.tr}</div>
       </div>
-      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}× yanlış</div>` : ''}
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
     </div>
   `).join("");
 }
@@ -3683,7 +3989,7 @@ async function saveASWord(en, val){
 
 async function renderASVABTab(){
   const listEl = document.getElementById("asList");
-  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
   const rows = [];
   for(const w of ASVAB_WORDS){
     const stat = await loadASWord(w[0]);
@@ -3695,7 +4001,7 @@ async function renderASVABTab(){
         <span class="mistake-en">${r.en}</span>
         <div class="mistake-tr">${r.tr}</div>
       </div>
-      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}× yanlış</div>` : ''}
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
     </div>
   `).join("");
 }
@@ -3742,31 +4048,33 @@ async function saveFLQuestion(id, val){
 
 async function renderFinlitTab(){
   const listEl = document.getElementById("flList");
-  listEl.innerHTML = '<p class="mistake-loading">Yükleniyor…</p>';
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const src = LANG === "en" ? FINLIT_QUESTIONS_EN : FINLIT_QUESTIONS;
   const rows = [];
-  for(let i=0; i<FINLIT_QUESTIONS.length; i++){
+  for(let i=0; i<src.length; i++){
     const id = "fl"+i;
     const stat = await loadFLQuestion(id);
-    rows.push({q:FINLIT_QUESTIONS[i][0], wrong: stat ? (stat.wrong||0) : 0});
+    rows.push({q:src[i][0], wrong: stat ? (stat.wrong||0) : 0});
   }
   listEl.innerHTML = rows.map(r => `
     <div class="mistake-row">
       <div class="mistake-main">
         <div class="mistake-tr">${r.q}</div>
       </div>
-      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}× yanlış</div>` : ''}
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
     </div>
   `).join("");
 }
 
 document.getElementById("flDrillBtn").addEventListener("click", async ()=>{
+  const src = LANG === "en" ? FINLIT_QUESTIONS_EN : FINLIT_QUESTIONS;
   pool = [];
-  for(let i=0; i<FINLIT_QUESTIONS.length; i++){
-    const [q, correct, w1, w2, w3] = FINLIT_QUESTIONS[i];
+  for(let i=0; i<src.length; i++){
+    const [q, correct, w1, w2, w3] = src[i];
     const id = "fl"+i;
     const stat = await loadFLQuestion(id);
     pool.push({
-      id, e:q, p:"", t:correct, l:"Finansal Okuryazarlık",
+      id, e:q, p:"", t:correct, l: t("tab_finlit"),
       wrongOpts:[w1,w2,w3],
       weight: stat ? stat.weight : 3,
       correct: stat ? stat.correct : 0,
@@ -3795,17 +4103,17 @@ function renderAuthUI(user){
     box.innerHTML = `
       <div class="auth-user">
         ${photo}
-        <span class="auth-name">${user.displayName || user.email || "Hesap"}</span>
-        <button class="auth-btn" id="logoutBtn">Çıkış</button>
+        <span class="auth-name">${user.displayName || user.email || "Account"}</span>
+        <button class="auth-btn" id="logoutBtn">${t("auth_logout")}</button>
       </div>`;
     document.getElementById("logoutBtn").addEventListener("click", ()=>{
       if(window.FB) window.FB.signOutUser();
     });
   } else {
-    box.innerHTML = `<button class="auth-btn google" id="loginBtn">Google ile Giriş Yap</button>`;
+    box.innerHTML = `<button class="auth-btn google" id="loginBtn">${t("auth_login")}</button>`;
     document.getElementById("loginBtn").addEventListener("click", ()=>{
       if(window.FB) window.FB.signIn();
-      else alert("Bulut bağlantısı yüklenemedi. Sayfayı yenile.");
+      else alert(LANG === "tr" ? "Bulut bağlantısı yüklenemedi. Sayfayı yenile." : "Couldn't load the cloud connection. Refresh the page.");
     });
   }
 }
@@ -3831,16 +4139,16 @@ window.onAuthChanged = async function(user){
 
   if(user){
     const box = document.getElementById("authBox");
-    box.insertAdjacentHTML("beforeend", '<span class="auth-status" id="syncStatus">senkronize ediliyor…</span>');
+    box.insertAdjacentHTML("beforeend", `<span class="auth-status" id="syncStatus">${t("auth_sync_progress")}</span>`);
     try{
       await syncWithCloud(user.uid);
       const st = document.getElementById("syncStatus");
-      if(st) st.textContent = "senkronize edildi ✓";
+      if(st) st.textContent = t("auth_sync_done");
       setTimeout(()=>{ const s=document.getElementById("syncStatus"); if(s) s.remove(); }, 2500);
     }catch(e){
       console.error("Senkronizasyon hatası:", e);
       const st = document.getElementById("syncStatus");
-      if(st) st.textContent = "senkronizasyon başarısız";
+      if(st) st.textContent = t("auth_sync_fail");
     }
   } else if(wasSignedIn){
     // Signed out: wipe this browser's local progress so a different Google
@@ -4010,6 +4318,13 @@ async function syncWithCloud(uid){
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
 }
+
+/* Apply saved language preference now that all functions/consts above are defined */
+(function initLanguage(){
+  let savedLang = "tr";
+  try{ savedLang = localStorage.getItem("w5k:lang") || "tr"; }catch(e){}
+  applyLanguage(savedLang);
+})();
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
