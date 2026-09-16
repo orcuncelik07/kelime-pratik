@@ -3394,6 +3394,47 @@ const UI_STRINGS = {
 let LANG = "tr";
 function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
 
+function refreshCurrentQuestionLanguage(){
+  if(!current || !current.finlit) return;
+  const idx = parseInt(current.id.replace("fl",""), 10);
+  const src = LANG === "en" ? FINLIT_QUESTIONS_EN : FINLIT_QUESTIONS;
+  const entry = src[idx];
+  if(!entry) return;
+  const [q, correct, w1, w2, w3] = entry;
+
+  const wasCorrectText = current.t; // before update, to detect which button was marked correct
+  current.e = q;
+  current.t = correct;
+  current.wrongOpts = [w1, w2, w3];
+  current.l = t("tab_finlit");
+
+  currentOptions.forEach(opt=>{
+    if(opt === current) return; // same object as current, already updated above
+    const m = /__wrong(\d)$/.exec(opt.e || "");
+    if(m){
+      const wi = parseInt(m[1], 10);
+      opt.t = current.wrongOpts[wi];
+    }
+  });
+
+  const wordEnEl = document.getElementById("wordEn");
+  wordEnEl.textContent = current.e;
+  wordEnEl.classList.toggle("small-text", current.e.length > 40);
+  document.getElementById("levelBadge").textContent = current.l;
+
+  const optBtns = Array.from(document.querySelectorAll(".opt"));
+  optBtns.forEach((btn, i)=>{
+    if(currentOptions[i]) btn.textContent = currentOptions[i].t;
+  });
+
+  if(answered){
+    const fb = document.getElementById("feedback");
+    const wasRight = fb.classList.contains("right");
+    fb.textContent = wasRight ? t("feedback_correct") : (current.finlit ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
+    document.getElementById("nextHint").textContent = t("next_hint");
+  }
+}
+
 function applyLanguage(lang){
   LANG = lang;
   try{ localStorage.setItem("w5k:lang", lang); }catch(e){}
@@ -3429,6 +3470,9 @@ function applyLanguage(lang){
   document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
 
   renderAuthUI(window.currentUser || null);
+
+  const quizVisible = !document.getElementById("quiz").classList.contains("hidden");
+  if(quizVisible) refreshCurrentQuestionLanguage();
 
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
