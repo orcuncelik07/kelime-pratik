@@ -43,6 +43,13 @@ body{
   padding-bottom:10px;
   margin-bottom:22px;
 }
+.masthead-right{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
 .masthead h1{
   font-family:"Iowan Old Style","Georgia",serif;
   font-weight:700;
@@ -465,11 +472,13 @@ body{
 
   <div class="masthead">
     <h1 data-i18n="title">Aralıklı Tekrar</h1>
-    <div class="lang-switch" id="langSwitch">
-      <button class="flag-btn active" id="langTr" title="Türkçe" aria-label="Türkçe">🇹🇷</button>
-      <button class="flag-btn" id="langEn" title="English" aria-label="English">🇺🇸</button>
+    <div class="masthead-right">
+      <div class="lang-switch" id="langSwitch">
+        <button class="flag-btn active" id="langTr" title="Türkçe" aria-label="Türkçe">🇹🇷</button>
+        <button class="flag-btn" id="langEn" title="English" aria-label="English">🇺🇸</button>
+      </div>
+      <div id="authBox" class="auth-box"></div>
     </div>
-    <div id="authBox" class="auth-box"></div>
   </div>
 
   <div id="debugStatus" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:.7rem;color:#b5562f;text-align:right;margin-top:-10px;margin-bottom:10px;"></div>
