@@ -3363,7 +3363,6 @@ async function handleAnswer(chosenOpt, btnEl){
   const allBtns = Array.from(document.querySelectorAll(".opt"));
 
   allBtns.forEach(b=>{
-    if(!current.finlit) b.disabled = true;
     const wasCorrectBtn = b.textContent === current.t;
     if(wasCorrectBtn) b.classList.add("correct");
     else if(b === btnEl && !isCorrect) b.classList.add("wrong");
@@ -3408,20 +3407,14 @@ async function handleAnswer(chosenOpt, btnEl){
   }
   updateStats();
 
-  if(current.finlit){
-    document.getElementById("nextHint").textContent = "Devam etmek için ekrana dokun →";
-    document.getElementById("options").style.cursor = "pointer";
-    const advanceOnTap = (ev) => {
-      if(ev.target.closest("#backBtn") || ev.target.closest("#resetBtn")) return;
-      document.removeEventListener("click", advanceOnTap);
-      nextQuestion();
-    };
-    setTimeout(()=>{ document.addEventListener("click", advanceOnTap); }, 60);
-  } else {
-    document.getElementById("nextHint").textContent = "Sonraki kelime için tıkla →";
-    document.getElementById("options").style.cursor = "pointer";
-    setTimeout(()=>{ nextQuestion(); }, isCorrect ? 700 : 1600);
-  }
+  document.getElementById("nextHint").textContent = "Devam etmek için ekrana dokun →";
+  document.getElementById("options").style.cursor = "pointer";
+  const advanceOnTap = (ev) => {
+    if(ev.target.closest("#backBtn") || ev.target.closest("#resetBtn")) return;
+    document.removeEventListener("click", advanceOnTap);
+    nextQuestion();
+  };
+  setTimeout(()=>{ document.addEventListener("click", advanceOnTap); }, 60);
 }
 
 function updateStats(){
