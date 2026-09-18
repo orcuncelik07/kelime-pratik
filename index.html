@@ -491,6 +491,7 @@ body{
     <button class="tab-btn" data-tab="asvab">ASVAB</button>
     <button class="tab-btn" data-tab="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</button>
     <button class="tab-btn" data-tab="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</button>
+    <button class="tab-btn" data-tab="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</button>
   </div>
 
   <!-- SETUP -->
@@ -559,6 +560,15 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="wealth_hint">Servet oluşturma, net değer, çeşitlendirme, bileşik getiri ve davranışsal finans (kayıptan kaçınma, çapa etkisi, batık maliyet gibi) kavramlarını test eden senaryo bazlı sorular.</p>
     <button class="start-btn" id="wealthDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="wealthList"></div>
+  </div>
+
+  <!-- FOOLED BY RANDOMNESS -->
+  <div id="fbr" class="panel hidden">
+    <p class="section-label" data-i18n="fbr_label">Fooled by Randomness Kelimeleri</p>
+    <p class="tab-count" id="fbrCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="fbr_hint">Nassim Taleb'in Fooled by Randomness kitabından seçilmiş ~280 ileri düzey (C1/C2) kelime ve deyim — şans, olasılık, piyasalar ve insan davranışı üzerine.</p>
+    <button class="start-btn" id="fbrDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="fbrList"></div>
   </div>
 
   <!-- QUIZ -->
@@ -3055,6 +3065,285 @@ const ASVAB_WORDS = [
 ["zealous","hevesli, gayretli (aşırı istekli)"],
 ];
 
+const FBR_WORDS = [
+["lucky fool","talihin payını göz ardı edip başarısını kendi becerisine bağlayan kişi"],
+["fooled by randomness","rastlantısallığın kişiyi yanıltması, tesadüfi başarıyı beceri sanmak"],
+["endemic","yaygın, bir alana özgü (kötü bir şey için)"],
+["fraught with","dolu, (bir sorunla) yüklü"],
+["coincidental","rastlantısal, tesadüfi"],
+["palatable","kabul edilebilir, hazmedilir (fikir/gerçek için)"],
+["gangrene","kangren"],
+["irreversible","geri döndürülemez"],
+["disturbingly","rahatsız edici biçimde"],
+["tragicomical","trajikomik"],
+["endowed with","doğuştan sahip, bahşedilmiş"],
+["charlatanism","şarlatanlık, sahtekârca uzmanlık taslama"],
+["outburst","patlama, ani duygusal tepki"],
+["dignity","haysiyet, onur"],
+["irked","canı sıkılmış, rahatsız olmuş"],
+["splendor","görkem, ihtişam"],
+["prodded","dürtülmüş, zorlanmış (bir tepki vermeye)"],
+["insolent","küstah, saygısız"],
+["vernacular","günlük konuşma dili, yerel dil"],
+["dignified","onurlu, ağırbaşlı"],
+["infatuation","ani ve yoğun tutku, geçici hayranlık"],
+["perfunctorily","gelişigüzel, isteksizce (görev icabı)"],
+["deportment","tavır, duruş (davranış biçimi)"],
+["prerequisite","ön koşul"],
+["futile","boşuna, sonuçsuz"],
+["arcane","gizemli, ancak uzmanlarca bilinen (esoterik)"],
+["frenetically","çılgınca, telaşla"],
+["aloofness","mesafeli tavır, soğukluk"],
+["inelegant","kaba, zarafetten yoksun"],
+["hackneyed","basmakalıp, beylik (söz için)"],
+["mundane","sıradan, gündelik"],
+["modus operandi","çalışma yöntemi, iş yapış tarzı"],
+["disbarred","meslekten men edilmiş (avukat için)"],
+["blow up","(trader'ın) büyük zarar ederek batması"],
+["longevity","uzun ömürlülük"],
+["comfortably settled","maddi açıdan rahata ermiş"],
+["voraciously","doymak bilmeyen bir iştahla (okumak vb.)"],
+["inured","alışkın hale gelmiş, duyarsızlaşmış"],
+["indigence","yoksulluk, yokluk"],
+["ineffectual","etkisiz, sonuç vermeyen"],
+["gnaw away at","içini kemirmek, rahatsız etmek (sürekli)"],
+["pecking order","hiyerarşi, kimin kime üstün olduğu düzeni"],
+["soothe","yatıştırmak, rahatlatmak"],
+["exact respect","(zorla/hak ederek) saygı görmek"],
+["obsessively","saplantılı biçimde"],
+["vulnerability","kırılganlık, savunmasızlık"],
+["coarse","kaba, kültürsüz"],
+["schadenfreude","başkasının talihsizliğinden duyulan gizli sevinç"],
+["vindicated","haklı çıkmış"],
+["elation","büyük sevinç, coşku"],
+["dominant posture","baskın, kendinden emin duruş"],
+["virtuous circle","erdemli döngü, kendini besleyen olumlu süreç"],
+["gait","yürüyüş biçimi"],
+["disposition","huy, mizaç; eğilim"],
+["obituary","ölüm ilanı"],
+["fatuous","budala, aptalca kendini beğenmiş"],
+["thoughtfulness","derin düşünce yeteneği, ihtiyatlılık"],
+["catch up with","er ya da geç yakalamak, sonuçlarıyla yüzleştirmek"],
+["counterintuitive","sezgilere aykırı"],
+["stochastic process","rastlantısal süreç"],
+["dispersion","dağılım, saçılma"],
+["intractable","çözülmesi çok zor, ele avuca sığmaz"],
+["hoary","kır saçlı; çok eski, köklü"],
+["decorum","edep, uygun davranış kuralları"],
+["opportunity cost","fırsat maliyeti"],
+["minuscule","çok küçük, önemsiz"],
+["babbling","boş boş konuşma, gevezelik"],
+["gerontocracy","yaşlılar iktidarı, kıdemlilerin yönetimi"],
+["fallow","işlenmemiş, atıl (arazi/dönem için)"],
+["rephrasing","yeniden ifade etme"],
+["hogwash","saçmalık, zırva"],
+["unadulterated","katışıksız, saf haliyle"],
+["rhetoric","hitabet sanatı, boş söz sanatı"],
+["buzzword","moda tabir, havalı görünen jargon kelimesi"],
+["dumping the kitchen sink","gereksiz her şeyi bir araya yığmak (mecazi)"],
+["grandiose","gösterişli, abartılı büyüklükte"],
+["fuzziness","bulanıklık, belirsizlik"],
+["ambiguity","çok anlamlılık, belirsizlik"],
+["chic","havalı, şık (entelektüel çevre için de kullanılır)"],
+["reviled","ağır biçimde eleştirilmiş, kötülenmiş"],
+["dissolute","sefih, ahlaki açıdan gevşek yaşayan"],
+["ravishing","büyüleyici derecede güzel"],
+["abstruse","anlaşılması güç, çapraşık"],
+["holy language","kutsal dil"],
+["peche mignon","küçük zevk, ufak kaçamak (Fransızca ifade)"],
+["patrician","aristokrat, soylu (aile için)"],
+["nascent","yeni doğmuş, filizlenmekte olan"],
+["urbane","kibar ve dünya görmüş (şehirli inceliği)"],
+["thrived","gelişip serpildi, başarılı oldu"],
+["appreciating (in price)","fiyatının artması, değer kazanması"],
+["invincible","yenilmez, mağlup edilemez"],
+["battle fatigue","savaş yorgunluğu (mecazi: bitkinlik)"],
+["self-incriminating","kendi aleyhine delil oluşturan"],
+["bellwether","öncü gösterge, yön belirleyici (piyasa için)"],
+["ludicrous","gülünç derecede saçma"],
+["nerdy","inek, aşırı meraklı ve toplumdan kopuk"],
+["captured soldier","esir alınmış asker"],
+["hedged","riskten korunmuş (finansal işlemle)"],
+["quantum leap","büyük ve ani sıçrama"],
+["shellshock","şok hali, sarsılmış ruh durumu"],
+["compounded","katlanarak büyümüş, bileşik etkiyle artmış"],
+["overestimation","olduğundan fazla değerlendirme"],
+["denial","inkâr, gerçeği kabul etmeme"],
+["proffered","ileri sürülmüş, sunulmuş (bahane/öneri)"],
+["reproductive fitness","üreme uygunluğu (evrimsel anlamda)"],
+["temporal aggregation","zaman içinde toplulaştırma"],
+["nature does not make jumps","doğa sıçrama yapmaz (süreklilik ilkesi, Latince özdeyiş)"],
+["over-fitness","aşırı uyum sağlamışlık (tek bir duruma özgü uyum)"],
+["skewness","çarpıklık (istatistiksel dağılımda)"],
+["median","medyan, ortanca değer"],
+["asymmetric odds","eşit olmayan olasılıklar"],
+["hollow words","içi boş sözler"],
+["pronouncement","resmi/kesin beyanat"],
+["boasted","övünmüş, böbürlenmiş"],
+["outliers","aykırı değerler (istatistikte)"],
+["harbinger","işaret, öncü belirti (kötü bir şeyin)"],
+["lax","gevşek, kuralsız"],
+["naive empiricism","saf deneycilik, dikkatsizce genelleme yapma"],
+["moody behavior","dengesiz, kararsız davranış"],
+["thwarting","engelleyen, boşa çıkaran"],
+["rampage","çılgınca saldırganlık, cinnet hali"],
+["transgression","kural/ahlak ihlali, günah"],
+["astrophysics","astrofizik"],
+["stationarity","durağanlık (istatistiksel süreçte)"],
+["shaky","sağlam olmayan, güvenilmez (bilgi/temel için)"],
+["scientism","bilimcilik, bilimin her şeye uygulanabileceği yanılgısı"],
+["financial engineering","finansal mühendislik"],
+["black swan problem","kara kuğu sorunu (beklenmedik/nadir olay sorunu)"],
+["refute","çürütmek, yanlışlığını kanıtlamak"],
+["falsified","yanlışlanmış (bilimsel teori için)"],
+["demarcation problem","sınır çizme sorunu (bilim ile sahte bilim arasında)"],
+["auxiliary hypothesis","yardımcı/ek varsayım"],
+["utopia","ütopya, hayali kusursuz toplum düzeni"],
+["totalitarian","totaliter, baskıcı-bütüncül yönetim biçiminde"],
+["irascible","çabuk sinirlenen, huysuz"],
+["self-righteous","kendini haklı gören, kibirli ahlakçı"],
+["Pascal's wager","Pascal'ın bahsi (Tanrı'ya inanmanın mantıksal gerekçesi)"],
+["stop loss","zarar durdur emri (belirlenen kayıpta pozisyonu kapatma)"],
+["track record","geçmiş performans kaydı"],
+["stellar","göz kamaştırıcı, olağanüstü başarılı"],
+["flimsy","zayıf, dayanaksız (kanıt/kumaş için)"],
+["accumulator","biriktiren kişi (tüketimi erteleyip para biriktiren)"],
+["miserly","cimri, pinti"],
+["extol","göklere çıkarmak, övmek"],
+["greed","açgözlülük, hırs"],
+["overstated","abartılmış, olduğundan fazla gösterilmiş"],
+["august (adj.)","saygın, görkemli (zaman/dönem için)"],
+["chronic mistake","süregelen, kronik hata"],
+["hitch","pürüz, aksaklık"],
+["pinpoint","tam olarak tespit etmek, işaret etmek"],
+["call it quits","bırakmak, vazgeçmek (işten/mücadeleden)"],
+["cavity","diş çürüğü, oyuk"],
+["cacophonous","kulak tırmalayan, ahenksiz (ses için)"],
+["finesse","incelik, ustalık"],
+["self-doubt","kendinden şüphe duyma"],
+["bravura","cesaret gösterisi, ustaca cüret"],
+["overfitting","aşırı uydurma (veriye fazlasıyla uyarlanmış model)"],
+["regression to the mean","ortalamaya dönüş (istatistiksel eğilim)"],
+["placebo","plasebo, yalancı ilaç/etken"],
+["unblemished record","lekesiz, kusursuz sicil"],
+["incompetent","yetersiz, beceriksiz"],
+["with replacement","(örneklemede) çekilenin geri konularak tekrar çekilmesi"],
+["break even","başa baş kapatmak, ne kâr ne zarar etmek"],
+["adverse selection","ters seçim (bilgi asimetrisinden doğan olumsuz seçilim)"],
+["spurious","sahte, yanıltıcı biçimde gerçek görünen"],
+["birthday paradox","doğum günü paradoksu"],
+["entrails","iç organlar, bağırsaklar"],
+["exegesis","yorumlama, tefsir (metin çözümlemesi)"],
+["tepid","ılık, hevessiz (tepki için)"],
+["endorsement","onay, destekleme"],
+["backtester","geçmiş veri üzerinde test eden yazılım"],
+["hypothetical","varsayımsal, kurgusal"],
+["mound","yığın, tepecik"],
+["fortuitous","tesadüfi, şans eseri olan"],
+["strong buy","güçlü al tavsiyesi (yatırımda)"],
+["medium-quality wallpaper","değersiz kâğıt (mecazi: değersizleşmiş tahvil)"],
+["eradicate","kökünü kazımak, yok etmek"],
+["devoted promoter","adanmış destekçi/savunucu"],
+["minutiae","ayrıntılar, teferruat"],
+["reference case problem","referans durum sorunu (istatistikte)"],
+["overlay","üzerine bindirmek, kaplamak"],
+["screaming headline","göz alıcı/bağırtılı manşet"],
+["sandpile effect","kum yığını etkisi (küçük etkenin ani çöküşe yol açması)"],
+["strenuous","yorucu, zahmetli"],
+["topple","devrilmek, yıkılmak"],
+["chaos theory","kaos teorisi"],
+["audition","seçme sınavı (oyunculuk/müzik için)"],
+["substance abuse","madde bağımlılığı, kötüye kullanım"],
+["path dependent","yol bağımlı (geçmişin sonucu belirlediği süreç)"],
+["network externality","ağ dışsallığı (ürünün değerinin kullanıcı sayısına bağlı artması)"],
+["stalemate","çıkmaz, taraflar arasında kilitlenme"],
+["Buridan's donkey","Buridan'ın eşeği (karasızlık paradoksu)"],
+["linear combination","doğrusal bileşim"],
+["mutually exclusive","birbirini dışlayan (aynı anda gerçekleşemeyen)"],
+["actuarially adjusted","aktüeryal olarak düzeltilmiş (sigortacılık hesaplaması)"],
+["cumbersome","hantal, külfetli"],
+["contrarian","çoğunluğun tersini yapan yatırımcı"],
+["momentum player","eğilimi izleyerek işlem yapan yatırımcı"],
+["prowling","sinsice dolaşan, avını arayan (yırtıcı hayvan gibi)"],
+["adrenaline rush","adrenalin patlaması"],
+["famine","kıtlık, açlık"],
+["dislodge","yerinden etmek, çıkarmak"],
+["conditional on","...koşuluna bağlı olarak"],
+["untrained person","eğitimsiz/uzman olmayan kişi"],
+["specious argument","yanıltıcı ama makul görünen argüman"],
+["warped notion","çarpıtılmış görüş/algı"],
+["sophistry","safsata, yanıltıcı akıl yürütme"],
+["self-feeding bureaucracy","kendi kendini besleyen bürokrasi"],
+["glib lawyer","laf ebesi, kaypak avukat"],
+["multidimensional","çok boyutlu"],
+["neoclassical economics","neoklasik iktisat"],
+["normative science","kuralcı/olması gerekeni anlatan bilim"],
+["terra firma","sağlam zemin (mecazi: kanıtlanmış temel)"],
+["overstate","olduğundan fazla göstermek, abartmak"],
+["damning example","çok çarpıcı/kesin kanıt niteliğinde örnek"],
+["false positive","yanlış pozitif (test sonucu hatası)"],
+["decaying asset","değeri zamanla azalan varlık"],
+["wasting asset","zamanla tükenen/erozyona uğrayan varlık"],
+["long volatility position","oynaklık artışından kâr eden pozisyon"],
+["premium seller","opsiyon primi satan yatırımcı"],
+["plumb the depth","derinlemesine anlamak, işin özüne inmek"],
+["multivariate analysis","çok değişkenli analiz"],
+["smoothing kernel","yumuşatma çekirdeği (istatistiksel filtreleme yöntemi)"],
+["auditory system","işitme sistemi"],
+["epiphany","ani aydınlanma anı, kavrayış"],
+["predisposition","yatkınlık, eğilim"],
+["nanosecond","nanosaniye (çok kısa an)"],
+["self-destructive","kendine zarar veren"],
+["surreptitiously","gizlice, sinsice"],
+["spurious association","sahte/anlamsız ilişki"],
+["derogatory term","aşağılayıcı/küçük düşürücü terim"],
+["thrill","heyecan, ürperti veren zevk"],
+["fortune teller","falcı, kahin"],
+["nurture vs nature","çevre mi doğa mı tartışması (huy oluşumunda)"],
+["ingrained","kökleşmiş, derinden yerleşmiş"],
+["rhythmically","ritmik bir biçimde"],
+["spurious inference","yanlış/sahte çıkarım"],
+["equanimity","iç huzuru, sarsılmaz sükunet"],
+["threshold","eşik, sınır değer"],
+["floss daily","her gün diş ipi kullanmak"],
+["dialectician","diyalektikçi, karşıt görüşleri tartıştıran kişi"],
+["harangue","uzun ve ateşli konuşma, nutuk"],
+["muddle","karıştırmak, bulandırmak"],
+["rigorous skepticism","sıkı/tutarlı kuşkuculuk"],
+["garrulous","geveze, çok konuşan"],
+["hew to an opinion","bir görüşe sıkı sıkıya bağlı kalmak"],
+["rapprochement","(iki taraf arasında) yakınlaşma"],
+["reviles (verb)","ağır biçimde eleştirir, aşağılar"],
+["path dependence of beliefs","inançların yol bağımlılığı (ilk fikre saplanıp kalma)"],
+["married to a position","bir fikre/pozisyona duygusal olarak bağlanmış"],
+["amygdala","amigdala (beyinde duygularla ilgili bölge)"],
+["psychopath","psikopat"],
+["renegade","dönek, saf değiştiren kişi"],
+["apostate","dininden/inancından dönen kişi"],
+["Nobel Memorial Prize","Nobel Anı Ödülü"],
+["near collapse","neredeyse çöküş"],
+["pounced on","üzerine atlandı, saldırıya uğradı"],
+["exacerbating","kötüleştiren, şiddetlendiren"],
+["mistake prone","hataya yatkın"],
+["Herculean task","dev/çok zorlu görev (Herkül'e atfen)"],
+["stoic","stoacı, duygularına hakim ve kadere razı kişi"],
+["destiny","kader, alınyazısı"],
+["courtship","kur yapma, evlilik öncesi yakınlaşma süreci"],
+["toady up to someone","birine yağ çekmek, yalakalık yapmak"],
+["stern","sert, hoşgörüsüz"],
+["tenet","ilke, temel görüş"],
+["sermon","vaaz, nasihat"],
+["self-help book","kişisel gelişim kitabı"],
+["wiring (mecazi)","doğuştan gelen yapı, iç işleyiş"],
+["execution (of a task)","bir işi yerine getirme, icra etme"],
+["huddling smoking crowd","büzülüp bir arada duran sigara içen kalabalık"],
+["exhilarating","coşku veren, heyecan dolu"],
+["extravagance","savurganlık, aşırı harcama"],
+["pet extravagance","kişisel hoşnutluk için yapılan lüks harcama"],
+["cottage","küçük kırsal ev, yazlık"],
+["commuting","işe/eve gidip gelme (ulaşım)"],
+];
+
 const FINLIT_QUESTIONS = [
 ["$100'ünüz olsa ve yıllık faiz oranı %2 olsa, parayı 5 yıl hesapta bıraksanız sonunda ne kadar paranız olur?","$102'den fazla","Tam olarak $102","$102'den az","Hiç değişmez"],
 ["Tasarruf hesabınızın faizi yıllık %1, enflasyon yıllık %2 ise, bir yıl sonra bu parayla alabildiğiniz mal/hizmet miktarı nasıl değişir?","Bugünkünden daha azını alabilirsiniz","Tam olarak aynısını alabilirsiniz","Bugünkünden daha fazlasını alabilirsiniz","Faiz ve enflasyonun birbirine etkisi yoktur"],
@@ -3580,6 +3869,9 @@ const UI_STRINGS = {
     fl_hint: "Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.",
     wealth_label: "Zenginlik, Servet ve Davranışsal Finans",
     wealth_hint: "Servet oluşturma, net değer, çeşitlendirme, bileşik getiri ve davranışsal finans (kayıptan kaçınma, çapa etkisi, batık maliyet gibi) kavramlarını test eden senaryo bazlı sorular.",
+    tab_fbr: "Fooled by Randomness - Nassim Taleb",
+    fbr_label: "Fooled by Randomness Kelimeleri",
+    fbr_hint: "Nassim Taleb'in Fooled by Randomness kitabından seçilmiş ~280 ileri düzey (C1/C2) kelime ve deyim — şans, olasılık, piyasalar ve insan davranışı üzerine.",
     stat_correct: "Doğru", stat_wrong: "Yanlış", stat_mastered: "Öğrenildi",
     feedback_correct: "Doğru!",
     feedback_wrong: "Yanlış",
@@ -3628,6 +3920,9 @@ const UI_STRINGS = {
     fl_hint: "Multiple-choice questions testing core finance concepts like compound interest, inflation, credit scores, budgeting, investing, and insurance.",
     wealth_label: "Wealth, Net Worth & Behavioral Finance Questions",
     wealth_hint: "Scenario-based questions testing wealth-building, net worth, diversification, compound returns, and behavioral finance concepts like loss aversion, anchoring, and sunk cost.",
+    tab_fbr: "Fooled by Randomness - Nassim Taleb",
+    fbr_label: "Fooled by Randomness Vocabulary",
+    fbr_hint: "About 280 advanced (C1/C2) words and phrases curated from Nassim Taleb's Fooled by Randomness — on luck, probability, markets, and human behavior.",
     stat_correct: "Correct", stat_wrong: "Wrong", stat_mastered: "Mastered",
     feedback_correct: "Correct!",
     feedback_wrong: "Wrong",
@@ -3738,6 +4033,7 @@ function applyLanguage(lang){
   document.getElementById("asCount").textContent = t("total_words").replace("{n}", ASVAB_WORDS.length);
   document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
   document.getElementById("wealthCount").textContent = t("total_questions").replace("{n}", WEALTH_QUESTIONS.length);
+  document.getElementById("fbrCount").textContent = t("total_words").replace("{n}", FBR_WORDS.length);
 
   renderAuthUI(window.currentUser || null);
 
@@ -3750,12 +4046,14 @@ function applyLanguage(lang){
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
+  const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
+  if(fbrTabActive) renderFBRTab();
 }
 
 document.getElementById("langTr").addEventListener("click", ()=> applyLanguage("tr"));
@@ -3832,6 +4130,7 @@ const MASTER_THRESHOLD = 1; // weight at/under this = considered "mastered" once
 const ALL_WORDS = WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
 const ALL_RE_WORDS = REAL_ESTATE_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_AS_WORDS = ASVAB_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"ASVAB"}));
+const ALL_FBR_WORDS = FBR_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Fooled by Randomness"}));
 let currentDistractorPool = ALL_WORDS;
 let selectedLevels = new Set(["B2"]);
 
@@ -3842,6 +4141,7 @@ document.getElementById("reCount").textContent = `Toplam ${REAL_ESTATE_WORDS.len
 document.getElementById("asCount").textContent = `Toplam ${ASVAB_WORDS.length} kelime`;
 document.getElementById("flCount").textContent = `Toplam ${FINLIT_QUESTIONS.length} soru`;
 document.getElementById("wealthCount").textContent = `Toplam ${WEALTH_QUESTIONS.length} soru`;
+document.getElementById("fbrCount").textContent = `Toplam ${FBR_WORDS.length} kelime`;
 
 /* ===== Setup screen ===== */
 const levelGrid = document.getElementById("levelGrid");
@@ -4021,6 +4321,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.asv){
     await saveASWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushASVABStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.fbr){
+    await saveFBRWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushFBRStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.finlit){
     await saveFLQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushFinlitStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -4068,6 +4371,7 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
     document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
     document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
+    document.getElementById("fbr").classList.toggle("hidden", tab!=="fbr");
     document.getElementById("quiz").classList.add("hidden");
     if(tab === "mistakes") loadMistakes();
     if(tab === "custom") renderCustomTab();
@@ -4075,6 +4379,7 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     if(tab === "asvab") renderASVABTab();
     if(tab === "finlit") renderFinlitTab();
     if(tab === "wealth") renderWealthTab();
+    if(tab === "fbr") renderFBRTab();
   });
 });
 
@@ -4351,6 +4656,65 @@ document.getElementById("asDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== Fooled by Randomness tab (fixed curated list, mirrors Real Estate / ASVAB) ===== */
+const FBR_STORE_PREFIX = "fbr5k:";
+
+function listFBRKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(FBR_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(FBR_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(FBR_STORE_PREFIX)); }
+}
+async function loadFBRWord(en){
+  const raw = await rawGet(FBR_STORE_PREFIX+en);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveFBRWord(en, val){
+  await rawSet(FBR_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+async function renderFBRTab(){
+  const listEl = document.getElementById("fbrList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const rows = [];
+  for(const w of FBR_WORDS){
+    const stat = await loadFBRWord(w[0]);
+    rows.push({en:w[0], tr:w[1], wrong: stat ? (stat.wrong||0) : 0, correct: stat ? (stat.correct||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <span class="mistake-en">${r.en}</span>
+        <div class="mistake-tr">${r.tr}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("fbrDrillBtn").addEventListener("click", async ()=>{
+  currentDistractorPool = ALL_FBR_WORDS;
+  pool = [];
+  for(const w of FBR_WORDS){
+    const stat = await loadFBRWord(w[0]);
+    pool.push({
+      e:w[0], p:"", t:w[1], l:"Fooled by Randomness",
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      fbr: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("fbr").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* ===== Financial Literacy tab (fixed curated question bank, own options per question) ===== */
 const FL_STORE_PREFIX = "fl5k:";
 
@@ -4506,11 +4870,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -4545,12 +4909,14 @@ window.onAuthChanged = async function(user){
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
     const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
+    const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
     if(customTabActive) renderCustomTab();
     if(reTabActive) renderRealEstateTab();
     if(asTabActive) renderASVABTab();
     if(flTabActive) renderFinlitTab();
     if(wealthTabActive) renderWealthTab();
+    if(fbrTabActive) renderFBRTab();
   }
 };
 
@@ -4722,18 +5088,48 @@ async function syncWithCloud(uid){
     window.FB.pushWealthStat(uid, id, merged);
   }
 
+  // --- Fooled by Randomness word stats, merged the same way as Oxford/RE/ASVAB words ---
+  const cloudFBR = await window.FB.fetchAllCloudFBR(uid);
+  const localFBRKeys = listFBRKeys();
+  const localFBRMap = {};
+  for(const k of localFBRKeys){
+    const en = k.slice(FBR_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localFBRMap[en] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allFBREn = new Set([...Object.keys(localFBRMap), ...Object.keys(cloudFBR)]);
+  for(const en of allFBREn){
+    const l = localFBRMap[en], c = cloudFBR[en];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveFBRWord(en, merged);
+    window.FB.pushFBRStat(uid, en, merged);
+  }
+
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
+  const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
+  if(fbrTabActive) renderFBRTab();
 }
 
 /* Apply saved language preference now that all functions/consts above are defined */
@@ -4828,6 +5224,12 @@ async function fetchAllCloudWealth(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudFBR(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "fbr"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function pushWordStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
   catch(e){ console.error("Kelime buluta yazılamadı:", e); }
@@ -4848,6 +5250,10 @@ async function pushWealthStat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "wealth", id), data); }
   catch(e){ console.error("Zenginlik/davranışsal finans sorusu buluta yazılamadı:", e); }
 }
+async function pushFBRStat(uid, en, data){
+  try{ await setDoc(doc(db, "users", uid, "fbr", en), data); }
+  catch(e){ console.error("Fooled by Randomness kelimesi buluta yazılamadı:", e); }
+}
 async function pushCustomWord(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "custom", id), {...data, deleted:false}); }
   catch(e){ console.error("Özel kelime buluta yazılamadı:", e); }
@@ -4859,8 +5265,8 @@ async function deleteCustomWordCloud(uid, id){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudFBR,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushFBRStat
 };
 
 onAuthStateChanged(auth, (user) => {
