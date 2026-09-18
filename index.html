@@ -490,6 +490,7 @@ body{
     <button class="tab-btn" data-tab="realestate">Real Estate</button>
     <button class="tab-btn" data-tab="asvab">ASVAB</button>
     <button class="tab-btn" data-tab="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</button>
+    <button class="tab-btn" data-tab="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</button>
   </div>
 
   <!-- SETUP -->
@@ -549,6 +550,15 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="fl_hint">Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.</p>
     <button class="start-btn" id="flDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="flList"></div>
+  </div>
+
+  <!-- WEALTH & BEHAVIORAL FINANCE -->
+  <div id="wealth" class="panel hidden">
+    <p class="section-label" data-i18n="wealth_label">Zenginlik, Servet ve Davranışsal Finans</p>
+    <p class="tab-count" id="wealthCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="wealth_hint">Servet oluşturma, net değer, çeşitlendirme, bileşik getiri ve davranışsal finans (kayıptan kaçınma, çapa etkisi, batık maliyet gibi) kavramlarını test eden senaryo bazlı sorular.</p>
+    <button class="start-btn" id="wealthDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="wealthList"></div>
   </div>
 
   <!-- QUIZ -->
@@ -3220,6 +3230,152 @@ const FINLIT_QUESTIONS = [
 ["Otomobil uzmanlarına göre aşağıdakilerden hangisi genellikle otomobil sahibi olma açısından en iyi değeri sunar?", "Görece yeni bir ikinci el araba satın alıp uzun süre kullanmak", "Her zaman yeni bir araba satın almak ve yalnızca birkaç yıl kullanmak", "Bulunabilecek en ucuz ikinci el arabayı satın almak", "Bilmiyorum"],
 ];
 
+const WEALTH_QUESTIONS = [
+["Servet oluşturmak isteyen bir kişinin gelirinden düzenli olarak para ayırmasının temel amacı nedir?", "Yatırım yapılabilecek sermaye oluşturmak", "Daha fazla tüketim yapmak", "Vergi ödememek", "Borçlanma kapasitesini artırmak"],
+["Yüksek gelir elde eden bir kişinin servetini artırmasını en çok destekleyen davranış hangisidir?", "Gelir artışlarının bir bölümünü tasarruf ve yatırımlara yönlendirmek", "Geliri arttıkça yaşam tarzı harcamalarını sürekli artırmak", "Tüm parasını nakit olarak tutmak", "Daha pahalı kredi kartları kullanmak"],
+["Bileşik getirinin servet oluşturmadaki en önemli avantajlarından biri nedir?", "Yatırımın zaman içinde önceki getiriler üzerinden de getiri üretmesi", "Yatırımın hiçbir zaman değer kaybetmemesi", "Vergileri tamamen ortadan kaldırması", "Kısa sürede kesin olarak yüksek kazanç sağlaması"],
+["Uzun vadeli servet oluşturmak isteyen bir yatırımcı için çeşitlendirme neden önemlidir?", "Tek bir yatırımın kötü performansının toplam portföy üzerindeki etkisini azaltabilir.", "Her yatırımın aynı getiriyi sağlamasını garanti eder.", "Vergi ödemeyi ortadan kaldırır.", "Yalnızca yüksek getirili yatırımlara yatırım yapmayı sağlar."],
+["Servet oluşturma açısından \"önce kendine ödeme yapmak\" ne anlama gelir?", "Maaş geldikten sonra belirlenen miktarı tasarruf veya yatırıma ayırmak", "Önce lüks harcamaları yapmak", "Tüm gelirle borçlanarak yatırım yapmak", "Tasarrufu yalnızca ay sonunda kalan paraya bırakmak"],
+["Bir kişinin geliri arttığında servet oluşturma açısından aşağıdakilerden hangisi daha sağlıklı bir yaklaşım olabilir?", "Gelir artışının bir kısmını tasarruf ve yatırımlara yönlendirmek", "Tüm gelir artışını yaşam tarzına harcamak", "Gelir artışının tamamını nakit olarak tutmak", "Daha büyük tüketici kredileri kullanmak"],
+["Servet oluşturma açısından yüksek faizli borçları erken ödemek neden önemlidir?", "Borcun gelecekteki faiz maliyetini azaltabilir.", "Her zaman yatırım getirisinden daha yüksek kazanç sağlar.", "Kredi puanını otomatik olarak 100 puan artırır.", "Vergi ödemelerini ortadan kaldırır."],
+["Aşağıdakilerden hangisi \"kötü borç\" kavramını en iyi örnekler?", "Değer kaybeden tüketim ürünlerini yüksek faizli borçla satın almak", "Gelir üreten bir varlık için kullanılan makul maliyetli finansman", "Eğitim için kullanılan düşük faizli kredi", "Uzun vadeli konut finansmanı"],
+["Servet oluşturmak isteyen bir kişinin acil durum fonu bulundurmasının temel amacı nedir?", "Beklenmedik giderlerde yüksek faizli borç kullanma ihtiyacını azaltmak", "Yüksek riskli yatırımlara daha fazla para yatırmak", "Kredi kartı limitini artırmak", "Vergi ödememek"],
+["Bir kişinin net serveti nasıl hesaplanır?", "Toplam varlıklar − toplam borçlar", "Yıllık gelir − yıllık harcama", "Toplam gelir − toplam vergi", "Toplam yatırım − toplam faiz"],
+["Servet oluşturma açısından gelir ile servet arasındaki temel fark nedir?", "Gelir belirli bir dönemde kazanılan paradır; servet ise sahip olunan varlıklardan borçlar çıkarıldıktan sonra kalan net değerdir.", "Gelir her zaman servetten daha değerlidir.", "Servet yalnızca banka hesabındaki nakitten oluşur.", "Gelir ve servet aynı kavramdır."],
+["Bir kişinin maaşı yüksek olmasına rağmen sürekli tüm gelirini harcaması durumunda ne söylenebilir?", "Yüksek gelir, tek başına yüksek net servet oluşturmayı garanti etmez.", "Yüksek gelir otomatik olarak yüksek servet anlamına gelir.", "Harcama arttıkça servet kesin olarak artar.", "Tasarruf yapmaya gerek yoktur."],
+["Servet oluşturma sürecinde gelir kaynaklarını çeşitlendirmek ne anlama gelir?", "Birden fazla gelir kaynağı oluşturmak", "Tüm parayı tek bir banka hesabında tutmak", "Yalnızca maaşa güvenmek", "Tüm yatırımları tek bir şirkete yapmak"],
+["Bir yatırımın yalnızca geçmişte yüksek getiri sağlamış olması hakkında hangisi doğrudur?", "Gelecekteki performansı garanti etmez.", "Gelecekte de aynı getiriyi kesin olarak sağlayacağı anlamına gelir.", "Risk taşımadığı anlamına gelir.", "Yatırımın değerinin her yıl artacağını garanti eder."],
+["Uzun vadeli yatırım yapan bir kişinin kısa vadeli piyasa dalgalanmaları karşısında sürekli alım satım yapmaktan kaçınmasının temel nedeni nedir?", "Kısa vadeli piyasa hareketlerini sürekli ve doğru şekilde tahmin etmenin zor olması", "Her yatırımın kesin olarak yükseleceğine inanmak", "Vergi ödememek", "Yatırım riskini tamamen ortadan kaldırmak"],
+["Servet oluşturma açısından bir kişinin \"varlık satın almaya\" odaklanması ne anlama gelir?", "Değer veya gelir üretme potansiyeli olan varlıklara yatırım yapmak", "Yalnızca tüketim ürünleri satın almak", "Her zaman en pahalı ürünü satın almak", "Tüm parasını harcamak"],
+["Aşağıdakilerden hangisi gelir üretme potansiyeline sahip bir varlığa örnek olabilir?", "Kira geliri sağlayan bir gayrimenkul", "Yüksek faizli kredi kartı borcu", "Kullanılmayan tüketici kredisi", "Ödenmemiş fatura"],
+["Bir kişinin yatırım yapmadan önce yatırımın ücretlerini ve masraflarını incelemesi neden önemlidir?", "Ücret ve masraflar zaman içinde yatırımcının net getirisini azaltabilir.", "Tüm yatırımların getirilerini garanti eder.", "Yatırımın riskini tamamen ortadan kaldırır.", "Vergileri ortadan kaldırır."],
+["Servet oluşturma açısından \"yaşam tarzı enflasyonu\" ne anlama gelir?", "Gelir arttıkça harcamaların da sürekli artırılması", "Enflasyon düştüğünde harcamaların azalması", "Yatırım getirilerinin azalması", "Vergilerin düşmesi"],
+["Uzun vadeli servet oluşturmak isteyen bir kişinin finansal hedeflerini belirlemesi neden önemlidir?", "Tasarruf ve yatırım kararlarını belirli hedeflere göre planlamasına yardımcı olur.", "Her yatırımın kazançlı olmasını garanti eder.", "Piyasa dalgalanmalarını ortadan kaldırır.", "Borçlanmayı gereksiz hale getirir."],
+["Ayda 5.000 $ net gelir elde eden bir kişi, gelirinin %20'sini düzenli olarak biriktiriyorsa ayda ne kadar tasarruf eder?", "1.000 $", "500 $", "750 $", "1.250 $"],
+["Bir kişinin aylık geliri 6.000 $'dan 7.000 $'a yükseliyor. Kişi yaşam tarzı harcamalarını 500 $ artırıp kalan 500 $'ı yatırıma ayırıyor. Bu yaklaşımın temel avantajı nedir?", "Gelir artışının bir bölümünü servet oluşturmaya yönlendirmesi", "Gelir artışının tamamını tüketime ayırması", "Daha fazla borçlanabilmesi", "Vergi ödemekten kurtulması"],
+["10.000 $ yatırım yapan bir kişi yıllık ortalama %8 getiri elde ediyor ve kazançlarını yatırımla birlikte bırakıyor. Yaklaşık 9 yıl sonunda yatırımının 20.000 $'a ulaşmasının temel nedeni nedir?", "Bileşik getiri", "Basit faiz", "Vergi indirimi", "Enflasyon"],
+["Bir kişinin yatırım için 30.000 $'ı vardır. Aşağıdaki seçeneklerden hangisi çeşitlendirmeye daha iyi bir örnektir?", "15.000 $ hisse senedi, 8.000 $ tahvil ve 7.000 $ farklı bir varlık sınıfına yatırmak", "30.000 $'ın tamamını tek bir şirketin hissesine yatırmak", "30.000 $'ın tamamını tek bir gayrimenkule yatırmak", "30.000 $'ı tek bir kripto paraya yatırmak"],
+["Ayda 4.000 $ kazanan bir kişi maaşı hesabına yattığı gün 600 $'ı otomatik olarak yatırım hesabına aktarıyor. Bu davranış aşağıdaki kavramlardan hangisine en iyi örnektir?", "Önce kendine ödeme yapmak", "Yaşam tarzı enflasyonu", "Borçla yatırım yapmak", "Tüketimi artırmak"],
+["Bir kişinin yıllık geliri 60.000 $'dan 75.000 $'a yükseliyor. Harcamaları 55.000 $'dan 72.000 $'a yükselirse, gelir artışının ne kadarı harcama artışına gitmiştir?", "17.000 $", "5.000 $", "10.000 $", "15.000 $"],
+["Bir kişinin 10.000 $ kredi kartı borcu vardır ve bu borcun yıllık faiz oranı %24'tür. Aynı kişinin elinde 10.000 $ nakit bulunmaktadır. Yüksek faizli borcu azaltmak, servet oluşturma açısından neden önemli olabilir?", "%24'lük borç maliyetini azaltabileceği için", "Her yatırımın %24 getiri sağlayacağını garanti ettiği için", "Kredi kartı borcunu vergiye dönüştürdüğü için", "Borcu tamamen ortadan kaldırdığı için"],
+["İki kişinin de aylık geliri 5.000 $'dır. Birinci kişi her ay 4.900 $ harcarken, ikinci kişi 3.800 $ harcayıp 1.200 $ biriktiriyor. Bu örnek neyi gösterir?", "Tasarruf oranının servet oluşturma sürecinde önemli olduğunu", "Yüksek gelirin tek başına servet oluşturmak için yeterli olduğunu", "Daha fazla harcamanın serveti artırdığını", "Gelir ile servetin aynı şey olduğunu"],
+["Aylık zorunlu giderleri 3.000 $ olan bir kişinin 6 aylık acil durum fonu oluşturmak istediğini düşünelim. Yaklaşık ne kadar paraya ihtiyacı vardır?", "18.000 $", "6.000 $", "9.000 $", "36.000 $"],
+["Bir kişinin 400.000 $ değerinde evi, 50.000 $ yatırım hesabı ve 20.000 $ nakdi vardır. Toplam borçları ise 250.000 $'dır. Net serveti ne kadardır?", "220.000 $", "180.000 $", "200.000 $", "470.000 $"],
+["İki kişinin yıllık geliri de 100.000 $'dır. Birinin 500.000 $ varlığı ve 100.000 $ borcu, diğerinin ise 150.000 $ varlığı ve 100.000 $ borcu vardır. Bu kişilerin gelirleri aynı olsa da aşağıdakilerden hangisi doğrudur?", "İlk kişinin net serveti daha yüksektir.", "Net servetleri aynıdır.", "İkinci kişinin net serveti daha yüksektir.", "Gelirleri aynı olduğu için servetleri de aynı olmak zorundadır."],
+["Bir kişinin yıllık geliri 80.000 $'dan 100.000 $'a yükseliyor. Ancak yıllık harcamaları da 60.000 $'dan 95.000 $'a yükseliyor. Bu durum aşağıdakilerden hangisine örnektir?", "Yaşam tarzı enflasyonu", "Bileşik getiri", "Çeşitlendirme", "Pasif gelir"],
+["Bir kişinin aylık 5.000 $ maaşının yanında 1.000 $ kira geliri ve ortalama 500 $ temettü geliri elde ettiğini düşünelim. Bu durum aşağıdakilerden hangisine örnektir?", "Gelir kaynaklarının çeşitlendirilmesi", "Kredi kullanımının artırılması", "Yaşam tarzı enflasyonu", "Borçların artırılması"],
+["Bir yatırım 5 yıl boyunca her yıl ortalama %12 getiri sağlamıştır. Bu bilgi aşağıdakilerden hangisini garanti eder?", "Gelecekteki getiriyi garanti etmez", "Gelecek 5 yılda da %12 getiri sağlayacağını", "Gelecekte zarar etmeyeceğini", "Yatırımın risksiz olduğunu"],
+["20.000 $'lık bir hisse senedi portföyü bir ayda %10 düşerek 18.000 $'a geriliyor. Uzun vadeli yatırım yapan bir kişinin yalnızca bu kısa vadeli düşüş nedeniyle panikle satış yapmaktan kaçınmasının temel nedeni nedir?", "Kısa vadeli fiyat hareketlerinin uzun vadeli yatırım sonucunu tek başına belirlememesi", "Hisselerin her zaman geri yükseleceğini bilmesi", "Zararın vergi nedeniyle otomatik olarak geri alınması", "Hisse senetlerinin risksiz olması"],
+["Aşağıdakilerden hangisi servet oluşturma açısından bir varlık satın almaya örnektir?", "Kira geliri sağlayan bir gayrimenkul satın almak", "%25 faizli kredi kartı borcuyla televizyon almak", "Değer kaybeden bir tüketim ürününü krediyle almak", "Ödenmemiş faturaları artırmak"],
+["Bir kişi 200.000 $'lık bir kiralık gayrimenkul satın alıyor ve bu mülk yıllık 18.000 $ kira geliri sağlıyor. Aşağıdakilerden hangisi bu yatırımın gelir üretme özelliğini ifade eder?", "Gayrimenkulün gelir üreten bir varlık olması", "Gayrimenkulün borç olması", "Kiranın yatırım maliyetini tamamen ortadan kaldırması", "Gayrimenkulün risksiz olması"],
+["Bir yatırım yılda %8 brüt getiri sağlıyor ancak yıllık ücret ve masrafları %1 ise, yatırımcının masraflar öncesi ve sonrası getirisi arasındaki fark yaklaşık kaç puandır?", "%1", "%0,5", "%7", "%8"],
+["Bir kişinin geliri 5.000 $'dan 6.000 $'a yükseliyor. Ancak aylık harcamaları da 4.000 $'dan 5.500 $'a çıkıyor. Bu durumda kişinin aylık tasarrufu nasıl değişmiştir?", "500 $ azalmıştır", "500 $ artmıştır", "Değişmemiştir", "1.000 $ artmıştır"],
+["Bir kişinin 10 yıl içinde 100.000 $ yatırım portföyü oluşturmak istediğini düşünelim. Aşağıdakilerden hangisi bu hedefe ulaşma olasılığını artırabilecek bir davranıştır?", "Belirli bir aylık tasarruf ve yatırım planı oluşturup düzenli olarak uygulamak", "Her ay plansız şekilde yatırım yapmak", "Yatırımı yalnızca piyasalar yükseldiğinde yapmak", "Tüm parasını kısa vadeli tüketim harcamalarına ayırmak"],
+["Ali ayda $5.000 gelir elde ediyor ve her ay $1.500 biriktiriyor. Ayşe ayda $8.000 kazanıyor ve her ay $500 biriktiriyor. Aşağıdakilerden hangisi doğrudur?", "Ali'nin gelirine göre tasarruf oranı daha yüksektir.", "Ayşe'nin tasarruf oranı daha yüksektir.", "İkisinin tasarruf oranı aynıdır.", "Gelirleri farklı olduğu için tasarruf oranları karşılaştırılamaz."],
+["Bir kişinin $50.000 değerindeki yatırım portföyü %20 düşerek $40.000'e geriliyor. Kişi yatırımlarını satıyor. Daha sonra piyasa %25 yükseliyor. Bu davranış aşağıdaki kavramlardan hangisiyle en çok ilişkilidir?", "Loss aversion", "Diversification", "Compound interest", "Inflation"],
+["Bir mağaza bir televizyonun fiyatını önce $1.500 olarak gösteriyor ve daha sonra \"$1.000\" fiyatla satışa çıkarıyor. Bir müşteri başka mağazalardaki fiyatları araştırmadan \"$500 tasarruf ettim\" diye düşünüyor. Bu durum hangi davranışsal finans kavramına örnektir?", "Anchoring", "Diversification", "Liquidity", "Opportunity cost"],
+["Bir kişi parasını \"ev\", \"araba\", \"tatil\" ve \"yatırım\" gibi ayrı hesaplarda tutuyor ve her hesaptaki paraya farklı davranıyor. Bu davranış hangi kavramla açıklanabilir?", "Mental accounting", "Loss aversion", "Compound interest", "Inflation hedging"],
+["Bir kişinin acil durum fonu olarak kullanabileceği $20.000'i vardır. Aşağıdakilerden hangisi acil durum fonunun temel amacı açısından daha uygundur?", "Gerektiğinde hızlı ve kolay erişilebilecek bir yerde tutmak", "Uzun vadeli ve yüksek dalgalanmalı bir yatırımda tutmak", "Tamamını spekülatif bir varlığa yatırmak", "Parayı en az 10 yıl çekilemeyecek bir hesaba koymak"],
+["Ali'nin yıllık geliri $100.000 ve net serveti $20.000'dir. Mehmet'in yıllık geliri $70.000 ancak net serveti $500.000'dir. Bu örnek aşağıdakilerden hangisini en iyi gösterir?", "Gelir ve net servet farklı finansal göstergelerdir.", "Yüksek gelir her zaman yüksek servet anlamına gelir.", "Net servet yalnızca maaşa bağlıdır.", "Düşük gelirli kişiler yatırım yapamaz."],
+["İki yatırımın da brüt yıllık getirisi %8'dir. Birinci yatırımın yıllık gider oranı %0,2, ikinci yatırımın yıllık gider oranı %1,2'dir. Uzun vadede aşağıdakilerden hangisi doğrudur?", "Daha düşük ücretli yatırımın yatırımcıya daha fazla net getiri bırakması beklenir.", "Ücretlerin uzun vadede hiçbir etkisi yoktur.", "%1'lik fark yalnızca ilk yıl önemlidir.", "Daha yüksek ücret her zaman daha yüksek getiri sağlar."],
+["Ali'nin $30.000 acil durum fonu ve aylık $2.000 zorunlu gideri vardır. Mehmet'in $5.000 acil durum fonu ve aylık $4.000 zorunlu gideri vardır. Aşağıdakilerden hangisi doğrudur?", "Ali'nin acil durum fonu daha uzun süre yeter.", "Mehmet'in acil durum fonu daha uzun süre yeter.", "İkisinin fonu aynı süre yeter.", "Acil durum fonunun süresi hesaplanamaz."],
+["Bir kişinin $500.000 değerinde bir evi ve $450.000 mortgage borcu vardır. Başka bir kişinin $300.000 değerinde ve tamamen ödenmiş bir evi vardır. Yalnızca bu evler dikkate alındığında hangisinin home equity'si daha yüksektir?", "İkinci kişinin, $300.000", "Birinci kişinin, $450.000", "Birinci kişinin, $50.000", "İkisinin equity'si aynıdır."],
+["Bir kişi bir işletmeye daha önce $30.000 yatırmıştır. İşletme artık sürekli zarar etmektedir. Kişi, \"Bu kadar para yatırdım, bu yüzden devam etmek zorundayım\" diye düşünmektedir. Bu düşünce hangi kavramla ilişkilidir?", "Sunk cost fallacy", "Diversification", "Compound interest", "Risk pooling"],
+["Bir kişi arkadaşının bir yatırımla %200 kazandığını görür ve yatırımın risklerini araştırmadan aynı yatırımı satın alır. Bu davranış aşağıdakilerden hangisiyle en çok ilişkilidir?", "FOMO ve sosyal etki", "Dollar-cost averaging", "Diversification", "Inflation adjustment"],
+["Bir yatırımcı yalnızca başarılı olmuş üç kişinin hikâyesini dinleyerek \"Bu yatırım yöntemi kesinlikle başarılıdır\" sonucuna varıyor. Başarısız olan kişileri hiç dikkate almıyor. Bu durum hangi kavrama örnektir?", "Survivorship bias", "Liquidity risk", "Compound interest", "Asset allocation"],
+["Bir kişi $5.000 harcayarak bir mesleki eğitim alıyor. Eğitim sonucunda yıllık geliri $8.000 artıyor. İlk yıl, eğitim maliyeti dikkate alındığında yaklaşık net gelir artışı ne olur?", "$3.000", "$5.000", "$8.000", "$13.000"],
+["Bir kişi $10.000 değerinde bir eğitim programına katılıyor ve bunun sonucunda yıllık gelirinin $15.000 artması bekleniyor. Yalnızca ilk yılın ek geliri dikkate alındığında, eğitim maliyetini çıkardıktan sonra yaklaşık ne kadar fazla gelir elde edilmiş olur?", "$5.000", "$10.000", "$15.000", "$25.000"],
+["Bir kişi $50.000'i araba almak için kullanmak yerine yatırım yapmayı seçiyor. Yatırımın yıllık ortalama getirisi %8 olsaydı ve getiri her yıl bileşik olarak devam etseydi, yaklaşık 10 yıl sonra yatırımın değeri ne olurdu?", "$108.000", "$58.000", "$80.000", "$150.000"],
+["25 yaşındaki Ali yılda $6.000 yatırım yapmaya başlıyor. Mehmet aynı miktarda yatırıma 40 yaşında başlıyor. Aynı ortalama getiriyi elde ettikleri varsayılırsa Ali'nin temel avantajı nedir?", "Daha uzun bileşik getiri süresi", "Daha yüksek enflasyon", "Daha yüksek kredi limiti", "Daha düşük vergi oranı"],
+["Bir kişinin yatırım portföyünün $200.000'lik toplam değerinin $150.000'i tek bir şirketin hissesinden oluşmaktadır. Bu portföydeki temel risk aşağıdakilerden hangisidir?", "Concentration risk", "Inflation risk", "Liquidity surplus", "Compound interest risk"],
+["Bir kişinin $300.000 değerindeki yatırım portföyünün %70'i tek bir şirkete, %30'u ise farklı yatırımlara dağılmıştır. Kişi tek şirkete bağlı riskini azaltmak istiyorsa aşağıdakilerden hangisini değerlendirebilir?", "Daha fazla çeşitlendirme yapmayı", "Portföyün tamamını aynı şirkete taşımayı", "Tüm yatırımları satıp nakit tutmayı zorunlu olarak tercih etmeyi", "Yalnızca geçmiş getirileri incelemeyi"],
+["Bir kişinin $300.000 değerinde bir yatırım mülkü vardır. Mülkün yıllık net işletme geliri (NOI) $24.000'dir. Cap rate yaklaşık kaçtır?", "%8", "%4", "%6", "%12"],
+["Bir yatırımcı bir rental property için toplam $80.000 nakit yatırım yapmıştır. Mülkten yılda $8.000 net cash flow elde etmektedir. Cash-on-cash return yaklaşık kaçtır?", "%10", "%5", "%8", "%20"],
+["Bir kişinin yatırım geliri yılda $36.000, yaşam giderleri ise yılda $30.000'dir. Yatırım gelirinin yaşam giderlerini karşılama oranı yaklaşık kaçtır?", "%120", "%83", "%100", "%150"],
+["Bir kişinin $1 milyon net serveti vardır ancak bunun büyük kısmı kolayca satılamayan bir gayrimenkuldedir. Başka bir kişinin $300.000 net serveti vardır ancak önemli bir kısmı likit varlıklardadır. Bu örnek aşağıdakilerden hangisini gösterir?", "Net servet ve likidite farklı finansal kavramlardır.", "Net servet ile likidite aynı şeydir.", "Daha yüksek net servet her durumda daha yüksek likidite anlamına gelir.", "Gayrimenkul hiçbir zaman servet oluşturmaz."],
+["Bir kişinin aylık zorunlu giderleri $4.000 ve acil durum fonu $24.000'dir. Geliri tamamen kesilirse, başka hiçbir kaynak kullanmadan bu fon teorik olarak kaç aylık zorunlu gideri karşılayabilir?", "6 ay", "3 ay", "4 ay", "12 ay"],
+["İki kişinin de net serveti $100.000'dir. Ali'nin $90.000'i evinin içinde bağlıdır. Mehmet'in ise $60.000'i nakit veya kolay erişilebilir yatırımlardadır. Beklenmedik $20.000'lik bir masraf ortaya çıktığında aşağıdakilerden hangisi doğrudur?", "Mehmet'in likit varlıkları nedeniyle bu masrafı karşılaması daha kolay olabilir.", "Net servetleri aynı olduğu için finansal dayanıklılıkları kesinlikle aynıdır.", "Ali'nin mutlaka daha fazla nakdi vardır.", "Net servet hiçbir şekilde önemli değildir."],
+["Bir kişinin $2 milyon net serveti ve aylık $20.000 yaşam gideri vardır. Başka bir kişinin $700.000 net serveti ve aylık $3.000 yaşam gideri vardır. Yalnızca bu bilgiler kullanılarak aşağıdakilerden hangisi söylenebilir?", "Net servetin yanında giderler ve sürdürülebilir gelir gibi başka faktörler de önemlidir.", "Daha yüksek net servete sahip olan kesinlikle daha finansal özgürdür.", "Daha düşük net servete sahip olan kesinlikle daha finansal özgürdür.", "Finansal özgürlüğü değerlendirmek için yalnızca net servet yeterlidir."],
+["Bir çalışan yıllık $60.000 maaş almaktadır. 401(k)'ye maaşının %5'ini yatırmaktadır. İşveren de çalışanın katkısının %5'e kadar olan kısmını %100 oranında eşleştirmektedir. İşveren yılda yaklaşık ne kadar katkı yapar?", "$3.000", "$1.500", "$2.000", "$6.000"],
+["Bir kişi aynı anda iki seçeneği değerlendirmektedir: $50.000'i bugün harcamak / $50.000'i yatırım yapmak ve gelecekte kullanmak. Bu durumda bugün harcamak yerine yatırım yapmanın temel finansal kavramı aşağıdakilerden hangisidir?", "Opportunity cost", "Anchoring", "Insurance pooling", "Credit utilization"],
+["Bir kişinin aylık geliri $8.000'den $10.000'e yükseliyor. Ancak aylık harcamaları $5.000'den $8.500'e çıkıyor. Aylık tasarrufu başlangıçta $3.000 iken daha sonra $1.500'e düşüyor. Bu durum aşağıdakilerden hangisini en iyi açıklar?", "Lifestyle inflation", "Diversification", "Deflation", "Risk pooling"],
+["Bir kişinin $1 milyon net serveti, yüksek geliri ve iyi bir kredi skoru vardır. Ancak her ay gelirinin tamamına yakınını harcamakta ve beklenmedik $20.000'lik bir masrafı karşılamak için borçlanması gerekmektedir. Bu örnek aşağıdakilerden hangisini gösterir?", "Net servet tek başına finansal refahı tamamen açıklamayabilir.", "Kredi skoru finansal refahın tek göstergesidir.", "Yüksek gelir her zaman finansal güvenlik sağlar.", "Borcu olmayan herkes finansal olarak güvendedir."],
+["Bir kişinin yıllık geliri $80.000'den $100.000'e yükseliyor. Aynı dönemde yıllık giderleri $60.000'den $95.000'e yükseliyor. Aşağıdakilerden hangisi doğrudur?", "Yıllık tasarrufu $15.000 azalmıştır.", "Yıllık tasarrufu $5.000 artmıştır.", "Yıllık tasarrufu $20.000 artmıştır.", "Yıllık tasarrufu değişmemiştir."],
+];
+
+const WEALTH_QUESTIONS_EN = [
+["What is the main purpose of regularly setting aside part of your income if you want to build wealth?", "To build capital that can be invested", "To consume more", "To avoid paying taxes", "To increase your borrowing capacity"],
+["Which behavior best supports a high-income earner in growing their wealth?", "Directing part of each income increase toward savings and investments", "Continuously increasing lifestyle spending as income rises", "Keeping all money in cash", "Using more expensive credit cards"],
+["What is one of the most important advantages of compound returns for building wealth?", "The investment earns returns on its previous returns over time", "The investment never loses value", "It eliminates taxes entirely", "It guarantees high returns in a short time"],
+["Why is diversification important for an investor building long-term wealth?", "It can reduce the impact of any single investment's poor performance on the overall portfolio.", "It guarantees every investment will have the same return.", "It eliminates the need to pay taxes.", "It only allows investing in high-return investments."],
+["In terms of building wealth, what does \"paying yourself first\" mean?", "Setting aside a set amount for savings or investing as soon as your paycheck arrives", "Spending on luxuries first", "Investing by borrowing your entire income", "Only saving whatever is left over at the end of the month"],
+["When a person's income increases, which of the following can be a healthier approach for building wealth?", "Directing part of the income increase toward savings and investments", "Spending the entire income increase on lifestyle", "Keeping the entire income increase in cash", "Taking on larger consumer loans"],
+["Why can it be important to pay off high-interest debt early when building wealth?", "It can reduce the future interest cost of the debt.", "It always earns more than investment returns.", "It automatically raises your credit score by 100 points.", "It eliminates your tax payments."],
+["Which of the following best exemplifies the concept of \"bad debt\"?", "Buying depreciating consumer goods with high-interest debt", "Reasonably priced financing used for an income-producing asset", "A low-interest loan used for education", "Long-term financing for a home"],
+["What is the main purpose of keeping an emergency fund for someone who wants to build wealth?", "To reduce the need to use high-interest debt for unexpected expenses", "To put more money into high-risk investments", "To increase your credit card limit", "To avoid paying taxes"],
+["How is a person's net worth calculated?", "Total assets minus total debts", "Annual income minus annual spending", "Total income minus total taxes", "Total investments minus total interest"],
+["In terms of building wealth, what is the basic difference between income and wealth (net worth)?", "Income is the money earned in a given period; wealth (net worth) is the net value left after subtracting debts from the assets you own.", "Income is always more valuable than wealth.", "Wealth consists only of the cash in a bank account.", "Income and wealth are the same concept."],
+["What can be said about a person with a high salary who nonetheless consistently spends all of their income?", "High income alone does not guarantee high net worth.", "High income automatically means high wealth.", "Wealth definitely increases as spending increases.", "There is no need to save."],
+["In the wealth-building process, what does diversifying your income sources mean?", "Creating more than one source of income", "Keeping all your money in a single bank account", "Relying only on your salary", "Investing everything in a single company"],
+["What is true about an investment that has only shown high returns in the past?", "It does not guarantee future performance.", "It means it will definitely deliver the same return in the future.", "It means it carries no risk.", "It guarantees the investment's value will rise every year."],
+["What is the main reason a long-term investor avoids constantly trading in response to short-term market swings?", "It's difficult to consistently and accurately predict short-term market movements", "Believing every investment will definitely go up", "To avoid paying taxes", "To eliminate investment risk entirely"],
+["In terms of building wealth, what does it mean for a person to focus on \"buying assets\"?", "Investing in assets that have the potential to generate value or income", "Only buying consumer goods", "Always buying the most expensive item", "Spending all of your money"],
+["Which of the following could be an example of an asset with income-generating potential?", "A rental property that generates rental income", "High-interest credit card debt", "An unused consumer loan", "An unpaid bill"],
+["Why is it important to review an investment's fees and expenses before investing?", "Fees and expenses can reduce the investor's net return over time.", "It guarantees the returns of every investment.", "It eliminates the investment's risk entirely.", "It eliminates taxes."],
+["In terms of building wealth, what does \"lifestyle inflation\" mean?", "Continuously increasing spending as income rises", "Spending decreasing when inflation falls", "Investment returns decreasing", "Taxes falling"],
+["Why is it important for someone who wants to build long-term wealth to set financial goals?", "It helps them plan their savings and investment decisions around specific targets.", "It guarantees every investment will be profitable.", "It eliminates market fluctuations.", "It makes borrowing unnecessary."],
+["Someone earns $5,000 in net income per month and regularly saves 20% of it. How much do they save per month?", "$1,000", "$500", "$750", "$1,250"],
+["A person's monthly income rises from $6,000 to $7,000. They increase their lifestyle spending by $500 and put the remaining $500 toward investing. What is the main benefit of this approach?", "Directing part of the income increase toward building wealth", "Spending the entire income increase on consumption", "Being able to borrow more", "Avoiding taxes"],
+["Someone invests $10,000 and earns an average annual return of 8%, leaving the earnings invested. What is the main reason the investment reaches roughly $20,000 after about 9 years?", "Compound returns", "Simple interest", "A tax deduction", "Inflation"],
+["A person has $30,000 to invest. Which of the following options is a better example of diversification?", "Investing $15,000 in stocks, $8,000 in bonds, and $7,000 in a different asset class", "Investing the entire $30,000 in a single company's stock", "Investing the entire $30,000 in a single property", "Investing all $30,000 in a single cryptocurrency"],
+["A person earning $4,000 a month automatically transfers $600 into an investment account the day their paycheck is deposited. Which concept does this behavior best illustrate?", "Paying yourself first", "Lifestyle inflation", "Investing with borrowed money", "Increasing consumption"],
+["A person's annual income rises from $60,000 to $75,000. If their expenses rise from $55,000 to $72,000, how much of the income increase went toward the increase in spending?", "$17,000", "$5,000", "$10,000", "$15,000"],
+["A person has $10,000 in credit card debt at a 24% annual interest rate. The same person has $10,000 in cash on hand. Why might reducing this high-interest debt be important for building wealth?", "Because it can reduce the 24% cost of carrying the debt", "Because it guarantees every investment will return 24%", "Because it converts the credit card debt into a tax benefit", "Because it eliminates the debt entirely"],
+["Two people both earn $5,000 a month. The first spends $4,900 a month, while the second spends $3,800 and saves $1,200. What does this example demonstrate?", "That the savings rate matters in the wealth-building process", "That high income alone is enough to build wealth", "That spending more increases wealth", "That income and wealth are the same thing"],
+["Suppose a person with $3,000 in monthly essential expenses wants to build a 6-month emergency fund. Roughly how much money do they need?", "$18,000", "$6,000", "$9,000", "$36,000"],
+["A person has a $400,000 house, a $50,000 investment account, and $20,000 in cash. Their total debts are $250,000. What is their net worth?", "$220,000", "$180,000", "$200,000", "$470,000"],
+["Two people both have an annual income of $100,000. One has $500,000 in assets and $100,000 in debt; the other has $150,000 in assets and $100,000 in debt. Even though their incomes are the same, which of the following is true?", "The first person has a higher net worth.", "Their net worths are the same.", "The second person has a higher net worth.", "Since their incomes are the same, their wealth must be the same too."],
+["A person's annual income rises from $80,000 to $100,000. However, their annual spending also rises from $60,000 to $95,000. Which of the following does this illustrate?", "Lifestyle inflation", "Compound returns", "Diversification", "Passive income"],
+["Suppose a person earns a $5,000 monthly salary, plus $1,000 in rental income and an average of $500 in dividend income. What does this illustrate?", "Diversifying income sources", "Increasing the use of credit", "Lifestyle inflation", "Increasing debt"],
+["An investment has returned an average of 12% per year for 5 years. What does this information guarantee?", "It does not guarantee future returns", "That it will return 12% for the next 5 years too", "That it won't lose money in the future", "That the investment is risk-free"],
+["A $20,000 stock portfolio drops 10% in a month, falling to $18,000. What is the main reason a long-term investor avoids panic-selling based solely on this short-term drop?", "Short-term price movements alone don't determine the long-term investment outcome", "Knowing that stocks always bounce back", "Losses are automatically recovered through taxes", "Stocks carry no risk"],
+["Which of the following is an example of \"buying an asset\" for the purpose of building wealth?", "Buying a rental property that generates rental income", "Buying a TV with 25%-interest credit card debt", "Buying a depreciating consumer good on credit", "Letting unpaid bills pile up"],
+["A person buys a $200,000 rental property that generates $18,000 a year in rental income. Which of the following describes this investment's income-generating quality?", "The property is an income-producing asset", "The property is a liability", "The rent completely eliminates the cost of the investment", "The property carries no risk"],
+["An investment returns 8% gross per year, but its annual fees and expenses are 1%. Approximately how many percentage points is the difference between the investor's return before and after fees?", "1%", "0.5%", "7%", "8%"],
+["A person's income rises from $5,000 to $6,000. However, their monthly expenses also rise from $4,000 to $5,500. How has their monthly savings changed?", "It has decreased by $500", "It has increased by $500", "It hasn't changed", "It has increased by $1,000"],
+["Suppose a person wants to build a $100,000 investment portfolio within 10 years. Which of the following behaviors could increase the odds of reaching that goal?", "Creating a specific monthly savings and investment plan and following it consistently", "Investing without a plan each month", "Only investing when the markets are rising", "Putting all their money toward short-term consumption"],
+["Ali earns $5,000 a month and saves $1,500 each month. Ayşe earns $8,000 a month and saves $500 each month. Which of the following is true?", "Ali's savings rate relative to his income is higher.", "Ayşe's savings rate is higher.", "Their savings rates are the same.", "Their savings rates can't be compared since their incomes differ."],
+["A person's $50,000 investment portfolio drops 20% to $40,000. The person sells their investments. The market then rises 25%. Which concept is this behavior most closely associated with?", "Loss aversion", "Diversification", "Compound interest", "Inflation"],
+["A store first lists a TV's price as $1,500, then puts it on sale for \"$1,000.\" A customer thinks \"I saved $500\" without checking prices at other stores. Which behavioral finance concept does this illustrate?", "Anchoring", "Diversification", "Liquidity", "Opportunity cost"],
+["A person keeps their money in separate mental \"accounts\" for house, car, vacation, and investing, and treats the money in each account differently. Which concept explains this behavior?", "Mental accounting", "Loss aversion", "Compound interest", "Inflation hedging"],
+["A person has $20,000 available as an emergency fund. Which of the following is better suited to the fund's core purpose?", "Keeping it somewhere quickly and easily accessible when needed", "Keeping it in a long-term, highly volatile investment", "Putting all of it into a speculative asset", "Locking it into an account that can't be accessed for at least 10 years"],
+["Ali has an annual income of $100,000 and a net worth of $20,000. Mehmet has an annual income of $70,000 but a net worth of $500,000. What does this example best illustrate?", "Income and net worth are different financial indicators.", "High income always means high wealth.", "Net worth depends only on salary.", "People with low income can't invest."],
+["Two investments both have a gross annual return of 8%. The first has an annual expense ratio of 0.2%, the second 1.2%. Over the long run, which of the following is true?", "The lower-fee investment is expected to leave the investor with a higher net return.", "Fees have no effect in the long run.", "The 1% difference only matters in the first year.", "A higher fee always means a higher return."],
+["Ali has a $30,000 emergency fund and $2,000 in monthly essential expenses. Mehmet has a $5,000 emergency fund and $4,000 in monthly essential expenses. Which of the following is true?", "Ali's emergency fund will last longer.", "Mehmet's emergency fund will last longer.", "Both funds will last the same amount of time.", "The duration of an emergency fund can't be calculated."],
+["One person has a $500,000 home with a $450,000 mortgage balance. Another person has a $300,000 home that is fully paid off. Considering only these homes, whose home equity is higher?", "The second person's, at $300,000", "The first person's, at $450,000", "The first person's, at $50,000", "Their equity is the same."],
+["A person previously invested $30,000 in a business. The business now keeps losing money. The person thinks, \"I've put in this much money, so I have to keep going.\" Which concept is this thinking associated with?", "Sunk cost fallacy", "Diversification", "Compound interest", "Risk pooling"],
+["A person sees a friend make 200% on an investment and buys the same investment without researching its risks. Which of the following is this behavior most closely associated with?", "FOMO and social influence", "Dollar-cost averaging", "Diversification", "Inflation adjustment"],
+["An investor hears the stories of only three people who succeeded and concludes, \"This investment method definitely works.\" They don't consider the people who failed at all. What does this illustrate?", "Survivorship bias", "Liquidity risk", "Compound interest", "Asset allocation"],
+["A person spends $5,000 on job training. As a result, their annual income increases by $8,000. In the first year, accounting for the cost of the training, what is the approximate net income gain?", "$3,000", "$5,000", "$8,000", "$13,000"],
+["A person enrolls in a $10,000 education program, which is expected to increase their annual income by $15,000. Considering only the first year's additional income, after subtracting the cost of the program, roughly how much extra income has been earned?", "$5,000", "$10,000", "$15,000", "$25,000"],
+["A person chooses to invest $50,000 instead of using it to buy a car. If the investment earned an average annual return of 8%, compounding each year, roughly what would the investment be worth after about 10 years?", "$108,000", "$58,000", "$80,000", "$150,000"],
+["25-year-old Ali starts investing $6,000 a year. Mehmet starts investing the same amount at age 40. Assuming they earn the same average return, what is Ali's main advantage?", "A longer period of compound growth", "Higher inflation", "A higher credit limit", "A lower tax rate"],
+["A person's $200,000 investment portfolio has $150,000 concentrated in a single company's stock. What is the main risk in this portfolio?", "Concentration risk", "Inflation risk", "Liquidity surplus", "Compound interest risk"],
+["A person's $300,000 investment portfolio has 70% in a single company and 30% spread across other investments. If they want to reduce the risk tied to that single company, which of the following could they consider?", "Diversifying further", "Moving the entire portfolio into that same company", "Being forced to sell everything and hold only cash", "Only reviewing past returns"],
+["A person owns a $300,000 investment property. The property's annual net operating income (NOI) is $24,000. What is the approximate cap rate?", "8%", "4%", "6%", "12%"],
+["An investor puts a total of $80,000 in cash into a rental property. The property generates $8,000 a year in net cash flow. What is the approximate cash-on-cash return?", "10%", "5%", "8%", "20%"],
+["A person's investment income is $36,000 a year, while their living expenses are $30,000 a year. Approximately what percentage of living expenses does the investment income cover?", "120%", "83%", "100%", "150%"],
+["One person has a net worth of $1 million, but most of it is tied up in real estate that isn't easy to sell. Another person has a net worth of $300,000, but a significant portion is in liquid assets. What does this example illustrate?", "Net worth and liquidity are different financial concepts.", "Net worth and liquidity are the same thing.", "A higher net worth always means higher liquidity.", "Real estate never builds wealth."],
+["A person has $4,000 in monthly essential expenses and a $24,000 emergency fund. If their income is cut off entirely, and with no other resources, how many months of essential expenses could this fund theoretically cover?", "6 months", "3 months", "4 months", "12 months"],
+["Two people both have a net worth of $100,000. Ali has $90,000 tied up in his home. Mehmet has $60,000 in cash or easily accessible investments. If an unexpected $20,000 expense comes up, which of the following is true?", "Mehmet may find it easier to cover the expense because of his liquid assets.", "Since their net worths are the same, their financial resilience is definitely the same.", "Ali definitely has more cash.", "Net worth doesn't matter at all."],
+["One person has a net worth of $2 million and $20,000 in monthly living expenses. Another has a net worth of $700,000 and $3,000 in monthly living expenses. Based only on this information, which of the following can be said?", "Besides net worth, other factors like expenses and sustainable income also matter.", "The person with the higher net worth is definitely more financially free.", "The person with the lower net worth is definitely more financially free.", "Net worth alone is enough to assess financial freedom."],
+["An employee earns an annual salary of $60,000 and contributes 5% of their salary to a 401(k). Their employer matches 100% of the employee's contribution up to 5%. Roughly how much does the employer contribute per year?", "$3,000", "$1,500", "$2,000", "$6,000"],
+["A person is weighing two options at once: spending $50,000 today, or investing that $50,000 and using it in the future. Which financial concept best describes the tradeoff of investing instead of spending today?", "Opportunity cost", "Anchoring", "Insurance pooling", "Credit utilization"],
+["A person's monthly income rises from $8,000 to $10,000. However, their monthly spending rises from $5,000 to $8,500. Their monthly savings, originally $3,000, drop to $1,500. What does this best illustrate?", "Lifestyle inflation", "Diversification", "Deflation", "Risk pooling"],
+["A person has a net worth of $1 million, a high income, and a good credit score. However, they spend nearly all of their income each month and have to borrow to cover an unexpected $20,000 expense. What does this example illustrate?", "Net worth alone may not fully explain financial well-being.", "Credit score is the sole indicator of financial well-being.", "High income always provides financial security.", "Anyone without debt is financially secure."],
+["A person's annual income rises from $80,000 to $100,000. Over the same period, their annual expenses rise from $60,000 to $95,000. Which of the following is true?", "Their annual savings has decreased by $15,000.", "Their annual savings has increased by $5,000.", "Their annual savings has increased by $20,000.", "Their annual savings hasn't changed."],
+];
+
 const FINLIT_QUESTIONS_EN = [
 ["Suppose you had $100 in a savings account and the interest rate was 2% per year. After 5 years, how much would you have in the account?","More than $102","Exactly $102","Less than $102","No change"],
 ["Imagine the interest rate on your savings account is 1% per year and inflation is 2% per year. After one year, how would the amount of goods/services you could buy with the money in this account change?","You would be able to buy less than today","You would be able to buy exactly the same amount","You would be able to buy more than today","Interest and inflation have no effect on each other"],
@@ -3404,6 +3560,7 @@ const UI_STRINGS = {
     tab_mistakes: "Yanlışlarım",
     tab_custom: "Kelime Ekle",
     tab_finlit: "Finansal Okuryazarlık",
+    tab_wealth: "Zenginlik ve Davranışsal Finans",
     setup_label: "Seviye seç",
     start_quiz: "Teste Başla",
     setup_hint: "Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.",
@@ -3421,6 +3578,8 @@ const UI_STRINGS = {
     as_hint: "ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.",
     fl_label: "Finansal Okuryazarlık Soruları",
     fl_hint: "Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.",
+    wealth_label: "Zenginlik, Servet ve Davranışsal Finans",
+    wealth_hint: "Servet oluşturma, net değer, çeşitlendirme, bileşik getiri ve davranışsal finans (kayıptan kaçınma, çapa etkisi, batık maliyet gibi) kavramlarını test eden senaryo bazlı sorular.",
     stat_correct: "Doğru", stat_wrong: "Yanlış", stat_mastered: "Öğrenildi",
     feedback_correct: "Doğru!",
     feedback_wrong: "Yanlış",
@@ -3449,6 +3608,7 @@ const UI_STRINGS = {
     tab_mistakes: "My Mistakes",
     tab_custom: "Add Words",
     tab_finlit: "Financial Literacy",
+    tab_wealth: "Wealth & Behavioral Finance",
     setup_label: "Choose a level",
     start_quiz: "Start Quiz",
     setup_hint: "Words you get right show up less often, words you get wrong show up more. Your progress is saved in this browser.",
@@ -3466,6 +3626,8 @@ const UI_STRINGS = {
     as_hint: "About 300 of the most common words on the ASVAB Word Knowledge section — this section counts double toward your AFQT score.",
     fl_label: "Financial Literacy Questions",
     fl_hint: "Multiple-choice questions testing core finance concepts like compound interest, inflation, credit scores, budgeting, investing, and insurance.",
+    wealth_label: "Wealth, Net Worth & Behavioral Finance Questions",
+    wealth_hint: "Scenario-based questions testing wealth-building, net worth, diversification, compound returns, and behavioral finance concepts like loss aversion, anchoring, and sunk cost.",
     stat_correct: "Correct", stat_wrong: "Wrong", stat_mastered: "Mastered",
     feedback_correct: "Correct!",
     feedback_wrong: "Wrong",
@@ -3494,9 +3656,17 @@ let LANG = "tr";
 function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
 
 function refreshCurrentQuestionLanguage(){
-  if(!current || !current.finlit) return;
-  const idx = parseInt(current.id.replace("fl",""), 10);
-  const src = LANG === "en" ? FINLIT_QUESTIONS_EN : FINLIT_QUESTIONS;
+  if(!current || !(current.finlit || current.wealth)) return;
+  let idx, src, labelKey;
+  if(current.wealth){
+    idx = parseInt(current.id.replace("wf",""), 10);
+    src = LANG === "en" ? WEALTH_QUESTIONS_EN : WEALTH_QUESTIONS;
+    labelKey = "tab_wealth";
+  } else {
+    idx = parseInt(current.id.replace("fl",""), 10);
+    src = LANG === "en" ? FINLIT_QUESTIONS_EN : FINLIT_QUESTIONS;
+    labelKey = "tab_finlit";
+  }
   const entry = src[idx];
   if(!entry) return;
   const [q, correct, w1, w2, w3] = entry;
@@ -3505,7 +3675,7 @@ function refreshCurrentQuestionLanguage(){
   current.e = q;
   current.t = correct;
   current.wrongOpts = [w1, w2, w3];
-  current.l = t("tab_finlit");
+  current.l = t(labelKey);
 
   currentOptions.forEach(opt=>{
     if(opt === current) return; // same object as current, already updated above
@@ -3529,7 +3699,7 @@ function refreshCurrentQuestionLanguage(){
   if(answered){
     const fb = document.getElementById("feedback");
     const wasRight = fb.classList.contains("right");
-    fb.textContent = wasRight ? t("feedback_correct") : (current.finlit ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
+    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
     document.getElementById("nextHint").textContent = t("next_hint");
   }
 }
@@ -3567,6 +3737,7 @@ function applyLanguage(lang){
   document.getElementById("reCount").textContent = t("total_words").replace("{n}", REAL_ESTATE_WORDS.length);
   document.getElementById("asCount").textContent = t("total_words").replace("{n}", ASVAB_WORDS.length);
   document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
+  document.getElementById("wealthCount").textContent = t("total_questions").replace("{n}", WEALTH_QUESTIONS.length);
 
   renderAuthUI(window.currentUser || null);
 
@@ -3578,11 +3749,13 @@ function applyLanguage(lang){
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
+  const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
+  if(wealthTabActive) renderWealthTab();
 }
 
 document.getElementById("langTr").addEventListener("click", ()=> applyLanguage("tr"));
@@ -3668,6 +3841,7 @@ document.getElementById("oxfordCount").textContent = `Toplam ${b2Count+c1Count} 
 document.getElementById("reCount").textContent = `Toplam ${REAL_ESTATE_WORDS.length} kelime`;
 document.getElementById("asCount").textContent = `Toplam ${ASVAB_WORDS.length} kelime`;
 document.getElementById("flCount").textContent = `Toplam ${FINLIT_QUESTIONS.length} soru`;
+document.getElementById("wealthCount").textContent = `Toplam ${WEALTH_QUESTIONS.length} soru`;
 
 /* ===== Setup screen ===== */
 const levelGrid = document.getElementById("levelGrid");
@@ -3783,7 +3957,7 @@ function nextQuestion(){
   }
   answered = false;
   current = pickWord();
-  currentOptions = current.finlit ? buildFinlitOptions(current) : buildOptions(current);
+  currentOptions = (current.finlit || current.wealth) ? buildFinlitOptions(current) : buildOptions(current);
 
   document.getElementById("levelBadge").textContent = current.l;
   const wordEnEl = document.getElementById("wordEn");
@@ -3829,7 +4003,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = current.finlit ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
+    fb.textContent = (current.finlit || current.wealth) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -3850,6 +4024,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.finlit){
     await saveFLQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushFinlitStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.wealth){
+    await saveWFQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushWealthStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -3890,12 +4067,14 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
     document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
     document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
+    document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
     document.getElementById("quiz").classList.add("hidden");
     if(tab === "mistakes") loadMistakes();
     if(tab === "custom") renderCustomTab();
     if(tab === "realestate") renderRealEstateTab();
     if(tab === "asvab") renderASVABTab();
     if(tab === "finlit") renderFinlitTab();
+    if(tab === "wealth") renderWealthTab();
   });
 });
 
@@ -4235,6 +4414,69 @@ document.getElementById("flDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== Wealth, Net Worth & Behavioral Finance tab (fixed curated question bank, mirrors Financial Literacy) ===== */
+const WF_STORE_PREFIX = "wf5k:";
+
+function listWFKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(WF_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(WF_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(WF_STORE_PREFIX)); }
+}
+async function loadWFQuestion(id){
+  const raw = await rawGet(WF_STORE_PREFIX+id);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveWFQuestion(id, val){
+  await rawSet(WF_STORE_PREFIX+id, JSON.stringify(val));
+}
+
+async function renderWealthTab(){
+  const listEl = document.getElementById("wealthList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const src = LANG === "en" ? WEALTH_QUESTIONS_EN : WEALTH_QUESTIONS;
+  const rows = [];
+  for(let i=0; i<src.length; i++){
+    const id = "wf"+i;
+    const stat = await loadWFQuestion(id);
+    rows.push({q:src[i][0], wrong: stat ? (stat.wrong||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <div class="mistake-tr">${r.q}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("wealthDrillBtn").addEventListener("click", async ()=>{
+  const src = LANG === "en" ? WEALTH_QUESTIONS_EN : WEALTH_QUESTIONS;
+  pool = [];
+  for(let i=0; i<src.length; i++){
+    const [q, correct, w1, w2, w3] = src[i];
+    const id = "wf"+i;
+    const stat = await loadWFQuestion(id);
+    pool.push({
+      id, e:q, p:"", t:correct, l: t("tab_wealth"),
+      wrongOpts:[w1,w2,w3],
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      wealth: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("wealth").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* ===== Auth (Google sign-in) + cloud sync ===== */
 window.currentUser = null;
 
@@ -4264,11 +4506,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -4302,11 +4544,13 @@ window.onAuthChanged = async function(user){
     const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
+    const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
     if(customTabActive) renderCustomTab();
     if(reTabActive) renderRealEstateTab();
     if(asTabActive) renderASVABTab();
     if(flTabActive) renderFinlitTab();
+    if(wealthTabActive) renderWealthTab();
   }
 };
 
@@ -4450,16 +4694,46 @@ async function syncWithCloud(uid){
     window.FB.pushFinlitStat(uid, id, merged);
   }
 
+  // --- Wealth / Behavioral Finance question stats, merged the same way ---
+  const cloudWF = await window.FB.fetchAllCloudWealth(uid);
+  const localWFKeys = listWFKeys();
+  const localWFMap = {};
+  for(const k of localWFKeys){
+    const id = k.slice(WF_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localWFMap[id] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allWFId = new Set([...Object.keys(localWFMap), ...Object.keys(cloudWF)]);
+  for(const id of allWFId){
+    const l = localWFMap[id], c = cloudWF[id];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveWFQuestion(id, merged);
+    window.FB.pushWealthStat(uid, id, merged);
+  }
+
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
+  const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
+  if(wealthTabActive) renderWealthTab();
 }
 
 /* Apply saved language preference now that all functions/consts above are defined */
@@ -4548,6 +4822,12 @@ async function fetchAllCloudFinlit(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudWealth(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "wealth"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function pushWordStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
   catch(e){ console.error("Kelime buluta yazılamadı:", e); }
@@ -4564,6 +4844,10 @@ async function pushFinlitStat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "finlit", id), data); }
   catch(e){ console.error("Finansal okuryazarlık sorusu buluta yazılamadı:", e); }
 }
+async function pushWealthStat(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "wealth", id), data); }
+  catch(e){ console.error("Zenginlik/davranışsal finans sorusu buluta yazılamadı:", e); }
+}
 async function pushCustomWord(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "custom", id), {...data, deleted:false}); }
   catch(e){ console.error("Özel kelime buluta yazılamadı:", e); }
@@ -4575,8 +4859,8 @@ async function deleteCustomWordCloud(uid, id){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat
 };
 
 onAuthStateChanged(auth, (user) => {
