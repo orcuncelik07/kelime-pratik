@@ -319,8 +319,18 @@ body{
   border-bottom:1px solid var(--line);
 }
 .mistake-row:last-child{border-bottom:none;}
-.admin-user-row{cursor:pointer;transition:background .12s ease;}
-.admin-user-row:hover{background:var(--card);}
+.admin-select{
+  width:100%;
+  font-family:"Georgia",serif;
+  font-size:.95rem;
+  border:1.5px solid var(--line);
+  background:#fff;
+  padding:12px 12px;
+  border-radius:2px;
+  outline:none;
+  color:var(--ink);
+}
+.admin-select:focus{border-color:var(--moss);}
 .mistake-main{flex:1;min-width:0;}
 .mistake-en{font-weight:700;font-size:1.02rem;}
 .mistake-pos{font-style:italic;color:var(--moss-dark);opacity:.6;font-size:.78rem;margin-left:6px;}
@@ -636,7 +646,7 @@ body{
     <p class="section-label" data-i18n="admin_label">Yönetici Paneli</p>
     <div class="stat-grid" id="adminSummary"></div>
     <p class="section-label" style="margin-top:26px;" data-i18n="admin_users_list_label">Kayıtlı Kullanıcılar</p>
-    <div id="adminUsers"></div>
+    <select id="adminUserSelect" class="admin-select"></select>
     <div id="adminUserDetail"></div>
     <p class="section-label" style="margin-top:26px;" data-i18n="admin_top_mistakes">En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)</p>
     <div id="adminMistakes"></div>
@@ -8131,6 +8141,7 @@ const UI_STRINGS = {
     admin_users: "Kayıtlı Kullanıcı",
     admin_records: "Toplam Kayıt",
     admin_users_list_label: "Kayıtlı Kullanıcılar",
+    admin_select_placeholder: "-- Kullanıcı seç --",
     admin_top_mistakes: "En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)",
     admin_denied: "Bu panele erişim yetkin yok.",
   },
@@ -8199,6 +8210,7 @@ const UI_STRINGS = {
     admin_users: "Registered Users",
     admin_records: "Total Records",
     admin_users_list_label: "Registered Users",
+    admin_select_placeholder: "-- Select a user --",
     admin_top_mistakes: "Most Missed Words (All Users)",
     admin_denied: "You don't have access to this panel.",
   }
@@ -8733,19 +8745,19 @@ let selectedAdminUid = null;
 
 async function renderAdminTab(){
   const summaryEl = document.getElementById("adminSummary");
-  const usersEl = document.getElementById("adminUsers");
+  const selectEl = document.getElementById("adminUserSelect");
   const detailEl = document.getElementById("adminUserDetail");
   const mistakesEl = document.getElementById("adminMistakes");
-  if(!summaryEl || !usersEl || !detailEl || !mistakesEl) return;
+  if(!summaryEl || !selectEl || !detailEl || !mistakesEl) return;
   if(!window.currentUser || window.currentUser.email !== OWNER_EMAIL){
     summaryEl.innerHTML = "";
-    usersEl.innerHTML = "";
+    selectEl.innerHTML = "";
     detailEl.innerHTML = "";
     mistakesEl.innerHTML = `<p class="mistake-empty">${t("admin_denied")}</p>`;
     return;
   }
   summaryEl.innerHTML = "";
-  usersEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  selectEl.innerHTML = `<option>${t("loading")}</option>`;
   detailEl.innerHTML = "";
   mistakesEl.innerHTML = "";
   try{
@@ -8755,18 +8767,23 @@ async function renderAdminTab(){
       <div class="stat-card"><div class="stat-num">${stats.userCount}</div><div class="stat-lbl">${t("admin_users")}</div></div>
       <div class="stat-card"><div class="stat-num">${stats.totalDocs}</div><div class="stat-lbl">${t("admin_records")}</div></div>
     `;
-    usersEl.innerHTML = stats.users.length ? stats.users.map(u => `
-      <div class="mistake-row admin-user-row" data-uid="${u.uid}">
-        <div class="mistake-main"><div class="mistake-tr">${u.displayName ? `${u.displayName} — ` : ""}${u.email || u.uid}</div></div>
-      </div>
-    `).join("") : `<p class="mistake-empty">${t("mistakes_empty_clean")}</p>`;
-    usersEl.querySelectorAll(".admin-user-row").forEach(row => {
-      row.addEventListener("click", () => {
-        selectedAdminUid = row.dataset.uid;
+    if(stats.users.length){
+      const options = stats.users.map(u => {
+        const label = u.displayName ? `${u.displayName} — ${u.email || u.uid}` : (u.email || u.uid);
+        return `<option value="${u.uid}">${label}</option>`;
+      }).join("");
+      selectEl.innerHTML = `<option value="">${t("admin_select_placeholder")}</option>${options}`;
+      selectEl.onchange = () => {
+        selectedAdminUid = selectEl.value || null;
         renderAdminUserDetail();
-      });
-    });
-    if(selectedAdminUid && stats.users.some(u => u.uid === selectedAdminUid)) renderAdminUserDetail();
+      };
+      if(selectedAdminUid && stats.users.some(u => u.uid === selectedAdminUid)){
+        selectEl.value = selectedAdminUid;
+        renderAdminUserDetail();
+      }
+    } else {
+      selectEl.innerHTML = `<option value="">${t("mistakes_empty_clean")}</option>`;
+    }
     mistakesEl.innerHTML = stats.topMistakes.length ? stats.topMistakes.map(([en, wrong]) => `
       <div class="mistake-row">
         <div class="mistake-main"><div class="mistake-tr">${en}</div></div>
@@ -8776,7 +8793,7 @@ async function renderAdminTab(){
   }catch(e){
     console.error("Yönetici verisi alınamadı:", e);
     summaryEl.innerHTML = "";
-    usersEl.innerHTML = "";
+    selectEl.innerHTML = "";
     detailEl.innerHTML = "";
     mistakesEl.innerHTML = `<p class="mistake-empty">${t("load_error")}</p>`;
   }
