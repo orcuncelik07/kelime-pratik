@@ -632,6 +632,8 @@ body{
   <div id="admin" class="panel hidden">
     <p class="section-label" data-i18n="admin_label">Yönetici Paneli</p>
     <div class="stat-grid" id="adminSummary"></div>
+    <p class="section-label" style="margin-top:26px;" data-i18n="admin_users_list_label">Kayıtlı Kullanıcılar</p>
+    <div id="adminUsers"></div>
     <p class="section-label" style="margin-top:26px;" data-i18n="admin_top_mistakes">En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)</p>
     <div id="adminMistakes"></div>
   </div>
@@ -8123,6 +8125,7 @@ const UI_STRINGS = {
     admin_label: "Yönetici Paneli",
     admin_users: "Kayıtlı Kullanıcı",
     admin_records: "Toplam Kayıt",
+    admin_users_list_label: "Kayıtlı Kullanıcılar",
     admin_top_mistakes: "En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)",
     admin_denied: "Bu panele erişim yetkin yok.",
   },
@@ -8189,6 +8192,7 @@ const UI_STRINGS = {
     admin_label: "Admin Dashboard",
     admin_users: "Registered Users",
     admin_records: "Total Records",
+    admin_users_list_label: "Registered Users",
     admin_top_mistakes: "Most Missed Words (All Users)",
     admin_denied: "You don't have access to this panel.",
   }
@@ -8720,21 +8724,29 @@ async function renderPanelTab(){
 /* ===== Admin dashboard (owner only, aggregate stats across all users) ===== */
 async function renderAdminTab(){
   const summaryEl = document.getElementById("adminSummary");
+  const usersEl = document.getElementById("adminUsers");
   const mistakesEl = document.getElementById("adminMistakes");
-  if(!summaryEl || !mistakesEl) return;
+  if(!summaryEl || !usersEl || !mistakesEl) return;
   if(!window.currentUser || window.currentUser.email !== OWNER_EMAIL){
     summaryEl.innerHTML = "";
+    usersEl.innerHTML = "";
     mistakesEl.innerHTML = `<p class="mistake-empty">${t("admin_denied")}</p>`;
     return;
   }
   summaryEl.innerHTML = "";
-  mistakesEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  usersEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  mistakesEl.innerHTML = "";
   try{
     const stats = await window.FB.fetchAdminStats();
     summaryEl.innerHTML = `
       <div class="stat-card"><div class="stat-num">${stats.userCount}</div><div class="stat-lbl">${t("admin_users")}</div></div>
       <div class="stat-card"><div class="stat-num">${stats.totalDocs}</div><div class="stat-lbl">${t("admin_records")}</div></div>
     `;
+    usersEl.innerHTML = stats.users.length ? stats.users.map(u => `
+      <div class="mistake-row">
+        <div class="mistake-main"><div class="mistake-tr">${u.displayName ? `${u.displayName} — ` : ""}${u.email || u.uid}</div></div>
+      </div>
+    `).join("") : `<p class="mistake-empty">${t("mistakes_empty_clean")}</p>`;
     mistakesEl.innerHTML = stats.topMistakes.length ? stats.topMistakes.map(([en, wrong]) => `
       <div class="mistake-row">
         <div class="mistake-main"><div class="mistake-tr">${en}</div></div>
@@ -8744,6 +8756,7 @@ async function renderAdminTab(){
   }catch(e){
     console.error("Yönetici verisi alınamadı:", e);
     summaryEl.innerHTML = "";
+    usersEl.innerHTML = "";
     mistakesEl.innerHTML = `<p class="mistake-empty">${t("load_error")}</p>`;
   }
 }
@@ -9391,6 +9404,7 @@ window.onAuthChanged = async function(user){
   }
 
   if(user){
+    if(window.FB) window.FB.pushUserProfile(user.uid, user.email, user.displayName || "");
     const box = document.getElementById("authBox");
     box.insertAdjacentHTML("beforeend", `<span class="auth-status" id="syncStatus">${t("auth_sync_progress")}</span>`);
     try{
@@ -9819,10 +9833,19 @@ async function deleteCustomWordCloud(uid, id){
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
 const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","fbr","custom"];
 
+async function pushUserProfile(uid, email, displayName){
+  try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
+  catch(e){ console.error("Kullanıcı profili buluta yazılamadı:", e); }
+}
+
 async function fetchAdminStats(){
   if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL){
     throw new Error("not-authorized");
   }
+  const profileSnap = await getDocs(collection(db, "users"));
+  const profiles = {};
+  profileSnap.forEach(d => { profiles[d.id] = d.data(); });
+
   const userIds = new Set();
   let totalDocs = 0;
   const wordWrong = {};
@@ -9838,15 +9861,20 @@ async function fetchAdminStats(){
       }
     });
   }
+  const users = Array.from(userIds).map(uid => ({
+    uid,
+    email: (profiles[uid] && profiles[uid].email) || null,
+    displayName: (profiles[uid] && profiles[uid].displayName) || null,
+  }));
   const topMistakes = Object.entries(wordWrong).sort((a,b) => b[1]-a[1]).slice(0, 15);
-  return { userCount: userIds.size, totalDocs, topMistakes };
+  return { userCount: userIds.size, totalDocs, users, topMistakes };
 }
 
 window.FB = {
   signIn, signOutUser,
   fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudFBR, fetchAllCloudOX3K,
   pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushFBRStat, pushOX3KStat,
-  fetchAdminStats
+  pushUserProfile, fetchAdminStats
 };
 
 onAuthStateChanged(auth, (user) => {
