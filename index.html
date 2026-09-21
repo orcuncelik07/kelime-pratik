@@ -519,9 +519,9 @@ body{
   <div id="debugStatus" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:.7rem;color:#b5562f;text-align:right;margin-top:-10px;margin-bottom:10px;"></div>
 
   <div class="tabbar" id="tabbar">
-    <button class="tab-btn" data-tab="panel" data-i18n="tab_panel">Panel</button>
+    <button class="tab-btn active" data-tab="panel" data-i18n="tab_panel">Panel</button>
     <button class="tab-btn hidden" data-tab="admin" id="adminTabBtn" data-i18n="tab_admin">Yönetici</button>
-    <button class="tab-btn active" data-tab="ox3k" data-i18n="tab_ox3k">Oxford 3000</button>
+    <button class="tab-btn" data-tab="ox3k" data-i18n="tab_ox3k">Oxford 3000</button>
     <button class="tab-btn" data-tab="setup" data-i18n="tab_oxford">Oxford 5000</button>
     <button class="tab-btn" data-tab="mistakes" data-i18n="tab_mistakes">Yanlışlarım</button>
     <button class="tab-btn" data-tab="custom" data-i18n="tab_custom">Kelime Ekle</button>
@@ -611,7 +611,7 @@ body{
   </div>
 
   <!-- OXFORD 3000 -->
-  <div id="ox3k" class="panel">
+  <div id="ox3k" class="panel hidden">
     <p class="section-label" data-i18n="ox3k_label">Oxford 3000 Kelimeleri</p>
     <p class="tab-count" id="ox3kCount"></p>
     <div class="level-grid" id="ox3kLevelGrid"></div>
@@ -621,7 +621,7 @@ body{
   </div>
 
   <!-- PANEL (personal progress) -->
-  <div id="panel" class="panel hidden">
+  <div id="panel" class="panel">
     <p class="section-label" data-i18n="panel_label">İlerleme Panelin</p>
     <p class="hint" id="panelSignInHint" style="margin-top:0;margin-bottom:16px;" data-i18n="panel_signin_hint">İlerlemenizin kaydolması için giriş yapabilirsiniz.</p>
     <div class="stat-grid" id="panelSummary"></div>
@@ -9201,10 +9201,6 @@ async function renderOX3KTab(){
   `).join("");
 }
 
-/* Oxford 3000 is the default active tab on page load — populate it now.
-   (Must come after OX3K_STORE_PREFIX/loadOX3KWord are defined above.) */
-renderOX3KTab();
-
 document.getElementById("ox3kDrillBtn").addEventListener("click", async ()=>{
   currentDistractorPool = ALL_OX3K_WORDS;
   pool = [];
@@ -9329,6 +9325,10 @@ async function renderWealthTab(){
   `).join("");
 }
 
+/* Panel is the default active tab on page load — populate it now.
+   (Must come after every category's STORE_PREFIX/load* helpers are defined above.) */
+renderPanelTab();
+
 document.getElementById("wealthDrillBtn").addEventListener("click", async ()=>{
   const src = LANG === "en" ? WEALTH_QUESTIONS_EN : WEALTH_QUESTIONS;
   pool = [];
@@ -9405,7 +9405,7 @@ window.onAuthChanged = async function(user){
   if(adminBtn) adminBtn.classList.toggle("hidden", !isOwner);
   if(!isOwner && !document.getElementById("admin").classList.contains("hidden")){
     // Admin tab was open but this account isn't the owner (e.g. switched accounts) — bounce to the default tab.
-    document.querySelector('.tab-btn[data-tab="ox3k"]').click();
+    document.querySelector('.tab-btn[data-tab="panel"]').click();
   }
 
   if(user){
