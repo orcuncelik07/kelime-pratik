@@ -8139,7 +8139,6 @@ const UI_STRINGS = {
     tab_admin: "Yönetici",
     admin_label: "Yönetici Paneli",
     admin_users: "Kayıtlı Kullanıcı",
-    admin_records: "Toplam Kayıt",
     admin_users_list_label: "Kayıtlı Kullanıcılar",
     admin_select_placeholder: "-- Kullanıcı seç --",
     admin_top_mistakes: "En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)",
@@ -8208,7 +8207,6 @@ const UI_STRINGS = {
     tab_admin: "Admin",
     admin_label: "Admin Dashboard",
     admin_users: "Registered Users",
-    admin_records: "Total Records",
     admin_users_list_label: "Registered Users",
     admin_select_placeholder: "-- Select a user --",
     admin_top_mistakes: "Most Missed Words (All Users)",
@@ -8763,9 +8761,9 @@ async function renderAdminTab(){
   try{
     const stats = await window.FB.fetchAdminStats();
     lastAdminStats = stats;
+    summaryEl.style.gridTemplateColumns = "1fr";
     summaryEl.innerHTML = `
       <div class="stat-card"><div class="stat-num">${stats.userCount}</div><div class="stat-lbl">${t("admin_users")}</div></div>
-      <div class="stat-card"><div class="stat-num">${stats.totalDocs}</div><div class="stat-lbl">${t("admin_records")}</div></div>
     `;
     if(stats.users.length){
       const options = stats.users.map(u => {
@@ -9958,13 +9956,15 @@ async function fetchAdminStats(){
       }
     });
   }
-  const users = Array.from(userIds).map(uid => ({
-    uid,
-    email: (profiles[uid] && profiles[uid].email) || null,
-    displayName: (profiles[uid] && profiles[uid].displayName) || null,
-  }));
+  const users = Array.from(userIds)
+    .filter(uid => uid !== auth.currentUser.uid)
+    .map(uid => ({
+      uid,
+      email: (profiles[uid] && profiles[uid].email) || null,
+      displayName: (profiles[uid] && profiles[uid].displayName) || null,
+    }));
   const topMistakes = Object.entries(wordWrong).sort((a,b) => b[1]-a[1]).slice(0, 15);
-  return { userCount: userIds.size, totalDocs, users, topMistakes, perUser };
+  return { userCount: users.length, totalDocs, users, topMistakes, perUser };
 }
 
 window.FB = {
