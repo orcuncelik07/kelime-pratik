@@ -502,6 +502,7 @@ body{
     <div class="level-grid" id="levelGrid"></div>
     <button class="start-btn" id="startBtn" data-i18n="start_quiz">Teste Başla</button>
     <p class="hint" data-i18n="setup_hint">Doğru cevapladığın kelimeler seyrekleşir, yanlış cevapladıkların daha sık karşına çıkar. İlerlemen bu tarayıcıda saklanır.</p>
+    <div id="oxfordList"></div>
   </div>
 
   <!-- MISTAKES -->
@@ -8206,6 +8207,9 @@ function applyLanguage(lang){
   const quizVisible = !document.getElementById("quiz").classList.contains("hidden");
   if(quizVisible) refreshCurrentQuestionLanguage();
 
+  const oxfordTabActive = !document.getElementById("setup").classList.contains("hidden");
+  if(oxfordTabActive) renderOxfordTab();
+
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
@@ -8329,9 +8333,13 @@ levelDefs.forEach(l=>{
     document.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
     selectedLevels = l.key === "ALL" ? new Set(["B2","C1"]) : new Set([l.key]);
+    renderOxfordTab();
   });
   levelGrid.appendChild(btn);
 });
+
+/* Populate the Oxford 5000 word list for the default selected level (setup panel is hidden on load, but pre-render so it's ready). */
+renderOxfordTab();
 
 /* ===== Oxford 3000: CEFR level grid (mirrors Oxford 5000 setup) ===== */
 let selectedOX3KLevels = new Set(["A1-A2"]);
@@ -8566,6 +8574,7 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.classList.add("active");
     const tab = btn.dataset.tab;
     document.getElementById("setup").classList.toggle("hidden", tab!=="setup");
+    if(tab === "setup") renderOxfordTab();
     document.getElementById("mistakes").classList.toggle("hidden", tab!=="mistakes");
     document.getElementById("custom").classList.toggle("hidden", tab!=="custom");
     document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
@@ -8933,6 +8942,32 @@ async function loadOX3KWord(en){
 }
 async function saveOX3KWord(en, val){
   await rawSet(OX3K_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+async function renderOxfordTab(){
+  const listEl = document.getElementById("oxfordList");
+  if(!listEl) return;
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const chosen = WORDS.filter(w => selectedLevels.has(w[3]));
+  const rows = [];
+  for(const w of chosen){
+    const stat = await loadWord(w[0]);
+    rows.push({en:w[0], pos:w[1], tr:w[2], lvl:w[3], wrong: stat ? (stat.wrong||0) : 0, correct: stat ? (stat.correct||0) : 0});
+  }
+  const levelOrder = ["B2","C1"];
+  const groups = levelOrder.map(lvl => ({lvl, items: rows.filter(r=>r.lvl===lvl)})).filter(g=>g.items.length);
+  listEl.innerHTML = groups.map(g => `
+    <p class="section-label" style="margin-top:18px;">${g.lvl} <span style="opacity:.6;text-transform:none;letter-spacing:0;">(${g.items.length} kelime)</span></p>
+    ${g.items.map(r => `
+      <div class="mistake-row">
+        <div class="mistake-main">
+          <span class="mistake-en">${r.en}</span><span class="mistake-pos">${r.pos}</span>
+          <div class="mistake-tr">${r.tr}</div>
+        </div>
+        ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+      </div>
+    `).join("")}
+  `).join("");
 }
 
 async function renderOX3KTab(){
