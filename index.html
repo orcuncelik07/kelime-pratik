@@ -8671,9 +8671,7 @@ function getPanelCategories(){
 async function renderPanelTab(){
   const summaryEl = document.getElementById("panelSummary");
   const catsEl = document.getElementById("panelCategories");
-  const signInHintEl = document.getElementById("panelSignInHint");
   if(!summaryEl || !catsEl) return;
-  if(signInHintEl) signInHintEl.classList.toggle("hidden", !!window.currentUser);
   catsEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
 
   const rows = [];
