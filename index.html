@@ -522,6 +522,7 @@ body{
       <option value="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</option>
       <option value="irc" data-i18n="tab_irc">Ev Yapı Kodu</option>
       <option value="irc2021" data-i18n="tab_irc2021">IRC 2021 Code</option>
+      <option value="cdl" data-i18n="tab_cdl">CDL</option>
     </select>
   </div>
 
@@ -611,6 +612,16 @@ body{
     <div class="level-grid" id="irc2021LevelGrid" style="grid-template-columns:1fr 1fr;"></div>
     <button class="start-btn" id="irc2021DrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="irc2021List"></div>
+  </div>
+
+  <!-- CDL (Commercial Driver's License) -->
+  <div id="cdl" class="panel hidden">
+    <p class="section-label" data-i18n="cdl_label">CDL Soruları</p>
+    <p class="tab-count" id="cdlCount"></p>
+    <p class="section-label" style="margin-top:0;" data-i18n="irc2021_topic_label">Konu Seç</p>
+    <div class="level-grid" id="cdlLevelGrid" style="grid-template-columns:1fr 1fr;"></div>
+    <button class="start-btn" id="cdlDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="cdlList"></div>
   </div>
 
   <!-- FOOLED BY RANDOMNESS -->
@@ -8986,6 +8997,13 @@ const IRC2021_QUESTIONS_EN = [
 ["Yenilenen bir banyonun zemininde duş alanına doğru verilen eğimin (Slope) yetersiz olması nedeniyle suyun duş köşelerinde biriktiği görülmüştür. Doğru duş zemini eğimi ne kadar olmalıdır?","Gidere doğru metrede en az %2 (ayak başına 1/4 inç) eğim verilmiş harç yatağı oluşturulmalıdır","Zemin tamamen düz yapılmalıdır","Giderden dışarıya doğru eğim verilmelidir","Metrede %10 eğim verilmelidir","Gerçek Proje Senaryoları"],
 ["Bir evin çatısına yüksek kapasiteli güneş panelleri (Solar Panels) kurulacaktır. Montaj öncesinde yapılması gereken en kritik mühendislik kontrolü nedir?","Çatı karkasının ve makaslarının (Trusses) ilave statik yükü taşıyıp taşıyamayacağının çatı taşıyıcı analiz yapılarak doğrulanması","Kiremitlerin renginin güneş paneliyle uyumuna bakılması","Baca temizliği yapılması","Yağmur oluklarının değiştirilmesi","Gerçek Proje Senaryoları"],
 ];
+
+/* ===== CDL (Commercial Driver's License) — user-provided question bank ===== */
+const CDL_QUESTIONS = [
+];
+
+const CDL_QUESTIONS_EN = [
+];
 </script>
 <script>
 /* ===== Language toggle (TR/EN) ===== */
@@ -9022,6 +9040,8 @@ const UI_STRINGS = {
     tab_irc2021: "IRC 2021 Code",
     irc2021_label: "IRC 2021 Code Soruları",
     irc2021_topic_label: "Konu Seç",
+    tab_cdl: "CDL",
+    cdl_label: "CDL Soruları",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
     fbr_label: "Fooled by Randomness Kelimeleri",
     fbr_hint: "Nassim Taleb'in Fooled by Randomness kitabından seçilmiş ~280 ileri düzey (C1/C2) kelime ve deyim — şans, olasılık, piyasalar ve insan davranışı üzerine.",
@@ -9096,6 +9116,8 @@ const UI_STRINGS = {
     tab_irc2021: "IRC 2021 Code",
     irc2021_label: "IRC 2021 Code Questions",
     irc2021_topic_label: "Choose a Topic",
+    tab_cdl: "CDL",
+    cdl_label: "CDL Questions",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
     fbr_label: "Fooled by Randomness Vocabulary",
     fbr_hint: "About 280 advanced (C1/C2) words and phrases curated from Nassim Taleb's Fooled by Randomness — on luck, probability, markets, and human behavior.",
@@ -9144,7 +9166,7 @@ let LANG = "tr";
 function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
 
 function refreshCurrentQuestionLanguage(){
-  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021)) return;
+  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl)) return;
   let idx, src, labelKey;
   if(current.wealth){
     idx = parseInt(current.id.replace("wf",""), 10);
@@ -9154,6 +9176,10 @@ function refreshCurrentQuestionLanguage(){
     idx = parseInt(current.id.replace("irc2021_",""), 10);
     src = LANG === "en" ? IRC2021_QUESTIONS_EN : IRC2021_QUESTIONS;
     labelKey = "tab_irc2021";
+  } else if(current.cdl){
+    idx = parseInt(current.id.replace("cdl_",""), 10);
+    src = LANG === "en" ? CDL_QUESTIONS_EN : CDL_QUESTIONS;
+    labelKey = "tab_cdl";
   } else if(current.irc){
     idx = parseInt(current.id.replace("irc",""), 10);
     src = LANG === "en" ? IRC_QUESTIONS_EN : IRC_QUESTIONS;
@@ -9195,7 +9221,7 @@ function refreshCurrentQuestionLanguage(){
   if(answered){
     const fb = document.getElementById("feedback");
     const wasRight = fb.classList.contains("right");
-    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
+    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
     document.getElementById("nextHint").textContent = t("next_hint");
   }
 }
@@ -9236,6 +9262,7 @@ function applyLanguage(lang){
   document.getElementById("wealthCount").textContent = t("total_questions").replace("{n}", WEALTH_QUESTIONS.length);
   document.getElementById("ircCount").textContent = t("total_questions").replace("{n}", IRC_QUESTIONS.length);
   document.getElementById("irc2021Count").textContent = t("total_questions").replace("{n}", IRC2021_QUESTIONS.length);
+  document.getElementById("cdlCount").textContent = t("total_questions").replace("{n}", CDL_QUESTIONS.length);
   document.getElementById("fbrCount").textContent = t("total_words").replace("{n}", FBR_WORDS.length);
   document.getElementById("ox3kCount").textContent = t("total_words").replace("{n}", OXFORD3000_WORDS.length);
 
@@ -9255,6 +9282,7 @@ function applyLanguage(lang){
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
   const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
+  const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -9265,6 +9293,7 @@ function applyLanguage(lang){
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
   if(irc2021TabActive) renderIRC2021Tab();
+  if(cdlTabActive) renderCDLTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -9361,6 +9390,7 @@ document.getElementById("flCount").textContent = `Toplam ${FINLIT_QUESTIONS.leng
 document.getElementById("wealthCount").textContent = `Toplam ${WEALTH_QUESTIONS.length} soru`;
 document.getElementById("ircCount").textContent = `Toplam ${IRC_QUESTIONS.length} soru`;
 document.getElementById("irc2021Count").textContent = `Toplam ${IRC2021_QUESTIONS.length} soru`;
+document.getElementById("cdlCount").textContent = `Toplam ${CDL_QUESTIONS.length} soru`;
 document.getElementById("fbrCount").textContent = `Toplam ${FBR_WORDS.length} kelime`;
 document.getElementById("ox3kCount").textContent = `Toplam ${OXFORD3000_WORDS.length} kelime`;
 
@@ -9507,7 +9537,7 @@ function nextQuestion(){
   }
   answered = false;
   current = pickWord();
-  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021) ? buildFinlitOptions(current) : buildOptions(current);
+  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl) ? buildFinlitOptions(current) : buildOptions(current);
 
   document.getElementById("levelBadge").textContent = current.l;
   const wordEnEl = document.getElementById("wordEn");
@@ -9553,7 +9583,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
+    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -9589,6 +9619,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.irc2021){
     await saveIRC2021Question(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushIRC2021Stat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.cdl){
+    await saveCDLQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushCDLStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -9627,6 +9660,7 @@ function getPanelCategories(){
     {key:"wealth", col:"wealth", nameTr:"Zenginlik ve Davranışsal Finans", nameEn:"Wealth & Behavioral Finance", total: WEALTH_QUESTIONS.length, keys: listWFKeys, load: loadWFQuestion, prefix: WF_STORE_PREFIX},
     {key:"irc", col:"irc", nameTr:"Ev Yapı Kodu", nameEn:"Home Building Code", total: IRC_QUESTIONS.length, keys: listIRCKeys, load: loadIRCQuestion, prefix: IRC_STORE_PREFIX},
     {key:"irc2021", col:"irc2021", nameTr:"IRC 2021 Code", nameEn:"IRC 2021 Code", total: IRC2021_QUESTIONS.length, keys: listIRC2021Keys, load: loadIRC2021Question, prefix: IRC2021_STORE_PREFIX},
+    {key:"cdl", col:"cdl", nameTr:"CDL", nameEn:"CDL", total: CDL_QUESTIONS.length, keys: listCDLKeys, load: loadCDLQuestion, prefix: CDL_STORE_PREFIX},
     {key:"fbr", col:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
   ];
 }
@@ -9800,6 +9834,7 @@ function switchTab(tab){
   document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
   document.getElementById("irc").classList.toggle("hidden", tab!=="irc");
   document.getElementById("irc2021").classList.toggle("hidden", tab!=="irc2021");
+  document.getElementById("cdl").classList.toggle("hidden", tab!=="cdl");
   document.getElementById("fbr").classList.toggle("hidden", tab!=="fbr");
   document.getElementById("ox3k").classList.toggle("hidden", tab!=="ox3k");
   document.getElementById("panel").classList.toggle("hidden", tab!=="panel");
@@ -9813,6 +9848,7 @@ function switchTab(tab){
   if(tab === "wealth") renderWealthTab();
   if(tab === "irc") renderIRCTab();
   if(tab === "irc2021") renderIRC2021Tab();
+  if(tab === "cdl") renderCDLTab();
   if(tab === "fbr") renderFBRTab();
   if(tab === "ox3k") renderOX3KTab();
   if(tab === "panel") renderPanelTab();
@@ -10520,6 +10556,90 @@ document.getElementById("irc2021DrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== CDL (Commercial Driver's License) tab, mirrors the IRC 2021 Code tab above ===== */
+const CDL_STORE_PREFIX = "cdl5k:";
+
+function listCDLKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(CDL_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(CDL_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(CDL_STORE_PREFIX)); }
+}
+async function loadCDLQuestion(id){
+  const raw = await rawGet(CDL_STORE_PREFIX+id);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveCDLQuestion(id, val){
+  await rawSet(CDL_STORE_PREFIX+id, JSON.stringify(val));
+}
+
+/* ===== CDL: topic grid (mirrors Oxford 3000/5000 level selection) ===== */
+const CDL_TOPICS = [...new Set(CDL_QUESTIONS.map(r => r[5]))];
+let selectedCDLTopics = new Set([CDL_TOPICS[0]]);
+const cdlLevelGrid = document.getElementById("cdlLevelGrid");
+CDL_TOPICS.forEach((topic, idx)=>{
+  const count = CDL_QUESTIONS.filter(r => r[5] === topic).length;
+  const btn = document.createElement("button");
+  btn.className = "level-btn" + (idx===0 ? " active":"");
+  btn.dataset.key = topic;
+  btn.innerHTML = `<span class="lvl-name">${topic}</span><span class="lvl-count">${count} soru</span>`;
+  btn.addEventListener("click", ()=>{
+    cdlLevelGrid.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedCDLTopics = new Set([topic]);
+    renderCDLTab();
+  });
+  cdlLevelGrid.appendChild(btn);
+});
+
+async function renderCDLTab(){
+  const listEl = document.getElementById("cdlList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const src = LANG === "en" ? CDL_QUESTIONS_EN : CDL_QUESTIONS;
+  const rows = [];
+  for(let i=0; i<src.length; i++){
+    if(!selectedCDLTopics.has(src[i][5])) continue;
+    const id = "cdl_"+i;
+    const stat = await loadCDLQuestion(id);
+    rows.push({q:src[i][0], wrong: stat ? (stat.wrong||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <div class="mistake-tr">${r.q}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("cdlDrillBtn").addEventListener("click", async ()=>{
+  const src = LANG === "en" ? CDL_QUESTIONS_EN : CDL_QUESTIONS;
+  pool = [];
+  for(let i=0; i<src.length; i++){
+    if(!selectedCDLTopics.has(src[i][5])) continue;
+    const [q, correct, w1, w2, w3] = src[i];
+    const id = "cdl_"+i;
+    const stat = await loadCDLQuestion(id);
+    pool.push({
+      id, e:q, p:"", t:correct, l: t("tab_cdl"),
+      wrongOpts:[w1,w2,w3],
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      cdl: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("cdl").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* Panel is the default active tab on page load — populate it now.
    (Must come after every category's STORE_PREFIX/load* helpers are defined above.) */
 renderPanelTab();
@@ -10553,11 +10673,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -10613,6 +10733,7 @@ window.onAuthChanged = async function(user){
     const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
     const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
     const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
+    const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
     const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
     const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
@@ -10623,6 +10744,7 @@ window.onAuthChanged = async function(user){
     if(wealthTabActive) renderWealthTab();
     if(ircTabActive) renderIRCTab();
     if(irc2021TabActive) renderIRC2021Tab();
+    if(cdlTabActive) renderCDLTab();
     if(fbrTabActive) renderFBRTab();
     if(ox3kTabActive) renderOX3KTab();
     const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -10856,6 +10978,34 @@ async function syncWithCloud(uid){
     window.FB.pushIRC2021Stat(uid, id, merged);
   }
 
+  // --- CDL question stats, merged the same way ---
+  const cloudCDL = await window.FB.fetchAllCloudCDL(uid);
+  const localCDLKeys = listCDLKeys();
+  const localCDLMap = {};
+  for(const k of localCDLKeys){
+    const id = k.slice(CDL_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localCDLMap[id] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allCDLId = new Set([...Object.keys(localCDLMap), ...Object.keys(cloudCDL)]);
+  for(const id of allCDLId){
+    const l = localCDLMap[id], c = cloudCDL[id];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveCDLQuestion(id, merged);
+    window.FB.pushCDLStat(uid, id, merged);
+  }
+
   // --- Fooled by Randomness word stats, merged the same way as Oxford/RE/ASVAB words ---
   const cloudFBR = await window.FB.fetchAllCloudFBR(uid);
   const localFBRKeys = listFBRKeys();
@@ -10920,6 +11070,7 @@ async function syncWithCloud(uid){
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
   const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
+  const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -10930,6 +11081,7 @@ async function syncWithCloud(uid){
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
   if(irc2021TabActive) renderIRC2021Tab();
+  if(cdlTabActive) renderCDLTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -11040,6 +11192,12 @@ async function fetchAllCloudIRC2021(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudCDL(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "cdl"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function fetchAllCloudFBR(uid){
   const out = {};
   const snap = await getDocs(collection(db, "users", uid, "fbr"));
@@ -11080,6 +11238,10 @@ async function pushIRC2021Stat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "irc2021", id), data); }
   catch(e){ console.error("IRC 2021 Code sorusu buluta yazılamadı:", e); }
 }
+async function pushCDLStat(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "cdl", id), data); }
+  catch(e){ console.error("CDL sorusu buluta yazılamadı:", e); }
+}
 async function pushFBRStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "fbr", en), data); }
   catch(e){ console.error("Fooled by Randomness kelimesi buluta yazılamadı:", e); }
@@ -11099,7 +11261,7 @@ async function deleteCustomWordCloud(uid, id){
 
 /* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
-const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","irc","irc2021","fbr","custom"];
+const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","irc","irc2021","cdl","fbr","custom"];
 
 async function pushUserProfile(uid, email, displayName){
   try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
@@ -11165,8 +11327,8 @@ async function fetchAdminStats(){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushFBRStat, pushOX3KStat,
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFBR, fetchAllCloudOX3K,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFBRStat, pushOX3KStat,
   pushUserProfile, fetchAdminStats
 };
 
