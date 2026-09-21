@@ -8343,7 +8343,6 @@ const ox3kLevelDefs = [
   {key:"A1-A2", name:"A1-A2", count:ox3kA1A2Count},
   {key:"B1", name:"B1", count:ox3kB1Count},
   {key:"B2", name:"B2", count:ox3kB2Count},
-  {key:"ALL", name:"A1-B2", count:OXFORD3000_WORDS.length},
 ];
 ox3kLevelDefs.forEach(l=>{
   const btn = document.createElement("button");
@@ -8353,7 +8352,7 @@ ox3kLevelDefs.forEach(l=>{
   btn.addEventListener("click", ()=>{
     ox3kLevelGrid.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    selectedOX3KLevels = l.key === "ALL" ? new Set(["A1-A2","B1","B2"]) : new Set([l.key]);
+    selectedOX3KLevels = new Set([l.key]);
     renderOX3KTab();
   });
   ox3kLevelGrid.appendChild(btn);
