@@ -118,6 +118,41 @@ body{
 }
 .start-btn:hover{background:#9c4726;}
 .start-btn:disabled{background:#c9bfa8;cursor:not-allowed;}
+.stat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+  margin-bottom:10px;
+}
+.stat-card{
+  border:1.5px solid var(--ink);
+  border-radius:2px;
+  padding:16px 6px;
+  text-align:center;
+}
+.stat-num{font-size:1.5rem;font-weight:700;color:var(--ink);letter-spacing:.01em;}
+.stat-lbl{
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.64rem;
+  color:var(--moss-dark);
+  opacity:.75;
+  margin-top:4px;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+}
+.panel-cat-row{padding:12px 0;border-bottom:1px solid var(--line);}
+.panel-cat-row:last-child{border-bottom:none;}
+.panel-cat-top{
+  display:flex;
+  justify-content:space-between;
+  font-family:"Helvetica Neue",Arial,sans-serif;
+  font-size:.88rem;
+  margin-bottom:6px;
+}
+.panel-cat-name{font-weight:600;color:var(--ink);}
+.panel-cat-frac{color:var(--moss-dark);opacity:.75;}
+.panel-bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
+.panel-bar-fill{height:100%;background:var(--moss);}
 .hint{
   font-family:"Helvetica Neue",Arial,sans-serif;
   font-size:.76rem;
@@ -493,6 +528,8 @@ body{
     <button class="tab-btn" data-tab="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</button>
     <button class="tab-btn" data-tab="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</button>
     <button class="tab-btn" data-tab="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</button>
+    <button class="tab-btn" data-tab="panel" data-i18n="tab_panel">Panel</button>
+    <button class="tab-btn hidden" data-tab="admin" id="adminTabBtn" data-i18n="tab_admin">Yönetici</button>
   </div>
 
   <!-- SETUP -->
@@ -581,6 +618,22 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="ox3k_hint">Oxford 3000 listesine dayanan, bir öğrencinin bilmesi gereken en temel ~3877 İngilizce kelime — günlük hayat, iş ve okulda en sık kullanılan isim, fiil, sıfat ve zarflar.</p>
     <button class="start-btn" id="ox3kDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="ox3kList"></div>
+  </div>
+
+  <!-- PANEL (personal progress) -->
+  <div id="panel" class="panel hidden">
+    <p class="section-label" data-i18n="panel_label">İlerleme Panelin</p>
+    <div class="stat-grid" id="panelSummary"></div>
+    <p class="section-label" style="margin-top:26px;" data-i18n="panel_categories">Kategori Bazında</p>
+    <div id="panelCategories"></div>
+  </div>
+
+  <!-- ADMIN (owner only) -->
+  <div id="admin" class="panel hidden">
+    <p class="section-label" data-i18n="admin_label">Yönetici Paneli</p>
+    <div class="stat-grid" id="adminSummary"></div>
+    <p class="section-label" style="margin-top:26px;" data-i18n="admin_top_mistakes">En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)</p>
+    <div id="adminMistakes"></div>
   </div>
 
   <!-- QUIZ -->
@@ -8060,6 +8113,18 @@ const UI_STRINGS = {
     loading: "Yükleniyor…",
     wrong_suffix: "× yanlış",
     not_enough_words: "Bu seviyede yeterli kelime yok",
+    tab_panel: "Panel",
+    panel_label: "İlerleme Panelin",
+    panel_categories: "Kategori Bazında",
+    panel_mastered: "Öğrenilen",
+    panel_total: "Toplam Kelime/Soru",
+    panel_accuracy: "Doğruluk",
+    tab_admin: "Yönetici",
+    admin_label: "Yönetici Paneli",
+    admin_users: "Kayıtlı Kullanıcı",
+    admin_records: "Toplam Kayıt",
+    admin_top_mistakes: "En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)",
+    admin_denied: "Bu panele erişim yetkin yok.",
   },
   en: {
     title: "Spaced Repetition",
@@ -8114,6 +8179,18 @@ const UI_STRINGS = {
     loading: "Loading…",
     wrong_suffix: "× wrong",
     not_enough_words: "Not enough words at this level",
+    tab_panel: "Panel",
+    panel_label: "Your Progress Panel",
+    panel_categories: "By Category",
+    panel_mastered: "Mastered",
+    panel_total: "Total Words/Questions",
+    panel_accuracy: "Accuracy",
+    tab_admin: "Admin",
+    admin_label: "Admin Dashboard",
+    admin_users: "Registered Users",
+    admin_records: "Total Records",
+    admin_top_mistakes: "Most Missed Words (All Users)",
+    admin_denied: "You don't have access to this panel.",
   }
 };
 
@@ -8230,6 +8307,10 @@ function applyLanguage(lang){
   if(wealthTabActive) renderWealthTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
+  const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
+  if(panelTabActive) renderPanelTab();
+  const adminTabActive = !document.getElementById("admin").classList.contains("hidden");
+  if(adminTabActive) renderAdminTab();
 }
 
 document.getElementById("langTr").addEventListener("click", ()=> applyLanguage("tr"));
@@ -8568,6 +8649,108 @@ function updateStats(){
   document.getElementById("progressFill").style.width = pct+"%";
 }
 
+/* ===== Panel (personal progress across all categories) ===== */
+const OWNER_EMAIL = "orcuncagataycelik@gmail.com";
+
+function getPanelCategories(){
+  return [
+    {key:"ox3k", nameTr:"Oxford 3000", nameEn:"Oxford 3000", total: OXFORD3000_WORDS.length, keys: listOX3KKeys, load: loadOX3KWord, prefix: OX3K_STORE_PREFIX},
+    {key:"oxford5000", nameTr:"Oxford 5000", nameEn:"Oxford 5000", total: WORDS.length, keys: listWordKeys, load: loadWord, prefix: STORE_PREFIX},
+    {key:"realestate", nameTr:"Real Estate", nameEn:"Real Estate", total: REAL_ESTATE_WORDS.length, keys: listREKeys, load: loadREWord, prefix: RE_STORE_PREFIX},
+    {key:"asvab", nameTr:"ASVAB", nameEn:"ASVAB", total: ASVAB_WORDS.length, keys: listASKeys, load: loadASWord, prefix: AS_STORE_PREFIX},
+    {key:"finlit", nameTr:"Finansal Okuryazarlık", nameEn:"Financial Literacy", total: FINLIT_QUESTIONS.length, keys: listFLKeys, load: loadFLQuestion, prefix: FL_STORE_PREFIX},
+    {key:"wealth", nameTr:"Zenginlik ve Davranışsal Finans", nameEn:"Wealth & Behavioral Finance", total: WEALTH_QUESTIONS.length, keys: listWFKeys, load: loadWFQuestion, prefix: WF_STORE_PREFIX},
+    {key:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
+  ];
+}
+
+async function renderPanelTab(){
+  const summaryEl = document.getElementById("panelSummary");
+  const catsEl = document.getElementById("panelCategories");
+  if(!summaryEl || !catsEl) return;
+  catsEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+
+  const rows = [];
+  let totalWords = 0, totalMastered = 0, totalCorrect = 0, totalWrong = 0;
+
+  for(const cat of getPanelCategories()){
+    const keys = cat.keys();
+    let mastered = 0, correct = 0, wrong = 0;
+    for(const k of keys){
+      const id = k.slice(cat.prefix.length);
+      const stat = await cat.load(id);
+      if(!stat) continue;
+      if((stat.weight ?? 3) <= MASTER_THRESHOLD && (stat.correct||0) > 0) mastered++;
+      correct += stat.correct||0;
+      wrong += stat.wrong||0;
+    }
+    rows.push({...cat, mastered, correct, wrong});
+    totalWords += cat.total; totalMastered += mastered; totalCorrect += correct; totalWrong += wrong;
+  }
+
+  const customList = await loadCustomList();
+  let cMastered = 0, cCorrect = 0, cWrong = 0;
+  for(const w of customList){
+    if((w.weight ?? 3) <= MASTER_THRESHOLD && (w.correct||0) > 0) cMastered++;
+    cCorrect += w.correct||0; cWrong += w.wrong||0;
+  }
+  rows.push({key:"custom", nameTr:"Kendi Kelimelerin", nameEn:"Your Own Words", total: customList.length, mastered: cMastered, correct: cCorrect, wrong: cWrong});
+  totalWords += customList.length; totalMastered += cMastered; totalCorrect += cCorrect; totalWrong += cWrong;
+
+  const totalAnswers = totalCorrect + totalWrong;
+  const accuracy = totalAnswers ? Math.round((totalCorrect/totalAnswers)*100) : 0;
+
+  summaryEl.innerHTML = `
+    <div class="stat-card"><div class="stat-num">${totalMastered}</div><div class="stat-lbl">${t("panel_mastered")}</div></div>
+    <div class="stat-card"><div class="stat-num">${totalWords}</div><div class="stat-lbl">${t("panel_total")}</div></div>
+    <div class="stat-card"><div class="stat-num">%${accuracy}</div><div class="stat-lbl">${t("panel_accuracy")}</div></div>
+  `;
+
+  catsEl.innerHTML = rows.filter(r=>r.total>0).map(r=>{
+    const pct = r.total ? Math.round((r.mastered/r.total)*100) : 0;
+    const name = LANG === "en" ? (r.nameEn || r.nameTr) : r.nameTr;
+    return `
+    <div class="panel-cat-row">
+      <div class="panel-cat-top">
+        <span class="panel-cat-name">${name}</span>
+        <span class="panel-cat-frac">${r.mastered}/${r.total}</span>
+      </div>
+      <div class="panel-bar"><div class="panel-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+}
+
+/* ===== Admin dashboard (owner only, aggregate stats across all users) ===== */
+async function renderAdminTab(){
+  const summaryEl = document.getElementById("adminSummary");
+  const mistakesEl = document.getElementById("adminMistakes");
+  if(!summaryEl || !mistakesEl) return;
+  if(!window.currentUser || window.currentUser.email !== OWNER_EMAIL){
+    summaryEl.innerHTML = "";
+    mistakesEl.innerHTML = `<p class="mistake-empty">${t("admin_denied")}</p>`;
+    return;
+  }
+  summaryEl.innerHTML = "";
+  mistakesEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  try{
+    const stats = await window.FB.fetchAdminStats();
+    summaryEl.innerHTML = `
+      <div class="stat-card"><div class="stat-num">${stats.userCount}</div><div class="stat-lbl">${t("admin_users")}</div></div>
+      <div class="stat-card"><div class="stat-num">${stats.totalDocs}</div><div class="stat-lbl">${t("admin_records")}</div></div>
+    `;
+    mistakesEl.innerHTML = stats.topMistakes.length ? stats.topMistakes.map(([en, wrong]) => `
+      <div class="mistake-row">
+        <div class="mistake-main"><div class="mistake-tr">${en}</div></div>
+        <div class="mistake-badge">${wrong}${t("wrong_suffix")}</div>
+      </div>
+    `).join("") : `<p class="mistake-empty">${t("mistakes_empty_clean")}</p>`;
+  }catch(e){
+    console.error("Yönetici verisi alınamadı:", e);
+    summaryEl.innerHTML = "";
+    mistakesEl.innerHTML = `<p class="mistake-empty">${t("load_error")}</p>`;
+  }
+}
+
 /* ===== Tabs ===== */
 const WORD_LOOKUP = {};
 WORDS.forEach(w => { WORD_LOOKUP[w[0]] = {p:w[1], t:w[2], l:w[3]}; });
@@ -8587,6 +8770,8 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
     document.getElementById("fbr").classList.toggle("hidden", tab!=="fbr");
     document.getElementById("ox3k").classList.toggle("hidden", tab!=="ox3k");
+    document.getElementById("panel").classList.toggle("hidden", tab!=="panel");
+    document.getElementById("admin").classList.toggle("hidden", tab!=="admin");
     document.getElementById("quiz").classList.add("hidden");
     if(tab === "mistakes") loadMistakes();
     if(tab === "custom") renderCustomTab();
@@ -8596,6 +8781,8 @@ document.querySelectorAll(".tab-btn").forEach(btn=>{
     if(tab === "wealth") renderWealthTab();
     if(tab === "fbr") renderFBRTab();
     if(tab === "ox3k") renderOX3KTab();
+    if(tab === "panel") renderPanelTab();
+    if(tab === "admin") renderAdminTab();
   });
 });
 
@@ -9194,6 +9381,14 @@ window.onAuthChanged = async function(user){
   window.currentUser = user;
   renderAuthUI(user);
 
+  const adminBtn = document.getElementById("adminTabBtn");
+  const isOwner = !!(user && user.email === OWNER_EMAIL);
+  if(adminBtn) adminBtn.classList.toggle("hidden", !isOwner);
+  if(!isOwner && !document.getElementById("admin").classList.contains("hidden")){
+    // Admin tab was open but this account isn't the owner (e.g. switched accounts) — bounce to the default tab.
+    document.querySelector('.tab-btn[data-tab="ox3k"]').click();
+  }
+
   if(user){
     const box = document.getElementById("authBox");
     box.insertAdjacentHTML("beforeend", `<span class="auth-status" id="syncStatus">${t("auth_sync_progress")}</span>`);
@@ -9227,6 +9422,10 @@ window.onAuthChanged = async function(user){
     if(wealthTabActive) renderWealthTab();
     if(fbrTabActive) renderFBRTab();
     if(ox3kTabActive) renderOX3KTab();
+    const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
+    if(panelTabActive) renderPanelTab();
+    const adminTabActive = !document.getElementById("admin").classList.contains("hidden");
+    if(adminTabActive) renderAdminTab();
   }
 };
 
@@ -9470,6 +9669,8 @@ async function syncWithCloud(uid){
   if(wealthTabActive) renderWealthTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
+  const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
+  if(panelTabActive) renderPanelTab();
 }
 
 /* Apply saved language preference now that all functions/consts above are defined */
@@ -9486,7 +9687,7 @@ import {
   getRedirectResult, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 import {
-  getFirestore, doc, setDoc, collection, getDocs
+  getFirestore, doc, setDoc, collection, getDocs, collectionGroup
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -9613,10 +9814,38 @@ async function deleteCustomWordCloud(uid, id){
   catch(e){ console.error(e); }
 }
 
+/* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
+const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
+const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","fbr","custom"];
+
+async function fetchAdminStats(){
+  if(!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL){
+    throw new Error("not-authorized");
+  }
+  const userIds = new Set();
+  let totalDocs = 0;
+  const wordWrong = {};
+  for(const colName of ADMIN_COLLECTIONS){
+    const snap = await getDocs(collectionGroup(db, colName));
+    snap.forEach(d => {
+      totalDocs++;
+      const parentUser = d.ref.parent.parent;
+      if(parentUser) userIds.add(parentUser.id);
+      if(colName === "oxford"){
+        const wrong = d.data().wrong || 0;
+        if(wrong > 0) wordWrong[d.id] = (wordWrong[d.id] || 0) + wrong;
+      }
+    });
+  }
+  const topMistakes = Object.entries(wordWrong).sort((a,b) => b[1]-a[1]).slice(0, 15);
+  return { userCount: userIds.size, totalDocs, topMistakes };
+}
+
 window.FB = {
   signIn, signOutUser,
   fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushFBRStat, pushOX3KStat
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushFBRStat, pushOX3KStat,
+  fetchAdminStats
 };
 
 onAuthStateChanged(auth, (user) => {
