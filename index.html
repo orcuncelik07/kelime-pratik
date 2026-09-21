@@ -623,6 +623,7 @@ body{
   <!-- PANEL (personal progress) -->
   <div id="panel" class="panel hidden">
     <p class="section-label" data-i18n="panel_label">İlerleme Panelin</p>
+    <p class="hint" id="panelSignInHint" style="margin-top:0;margin-bottom:16px;" data-i18n="panel_signin_hint">İlerlemenizin kaydolması için giriş yapabilirsiniz.</p>
     <div class="stat-grid" id="panelSummary"></div>
     <p class="section-label" style="margin-top:26px;" data-i18n="panel_categories">Kategori Bazında</p>
     <div id="panelCategories"></div>
@@ -8117,6 +8118,7 @@ const UI_STRINGS = {
     not_enough_words: "Bu seviyede yeterli kelime yok",
     tab_panel: "Panel",
     panel_label: "İlerleme Panelin",
+    panel_signin_hint: "İlerlemenizin kaydolması için giriş yapabilirsiniz.",
     panel_categories: "Kategori Bazında",
     panel_mastered: "Öğrenilen",
     panel_total: "Toplam Kelime/Soru",
@@ -8184,6 +8186,7 @@ const UI_STRINGS = {
     not_enough_words: "Not enough words at this level",
     tab_panel: "Panel",
     panel_label: "Your Progress Panel",
+    panel_signin_hint: "You can sign in so your progress gets saved.",
     panel_categories: "By Category",
     panel_mastered: "Mastered",
     panel_total: "Total Words/Questions",
@@ -8668,7 +8671,9 @@ function getPanelCategories(){
 async function renderPanelTab(){
   const summaryEl = document.getElementById("panelSummary");
   const catsEl = document.getElementById("panelCategories");
+  const signInHintEl = document.getElementById("panelSignInHint");
   if(!summaryEl || !catsEl) return;
+  if(signInHintEl) signInHintEl.classList.toggle("hidden", !!window.currentUser);
   catsEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
 
   const rows = [];
