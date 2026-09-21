@@ -521,6 +521,7 @@ body{
       <option value="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</option>
       <option value="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</option>
       <option value="irc" data-i18n="tab_irc">Ev Yapı Kodu</option>
+      <option value="irc2021" data-i18n="tab_irc2021">IRC 2021 Code</option>
     </select>
   </div>
 
@@ -600,6 +601,14 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="irc_hint">Duman/CO alarmı, merdiven ve korkuluk ölçüleri, çıkış pencereleri, elektrik ve tesisat gibi konularda evinin genel kod gereksinimlerine ne kadar uygun olduğunu test eden sorular. Genel bilgi amaçlıdır, resmi kod metninin yerini tutmaz — kesin uygulama için yerel yönetmeliğe ve yetkili bir uzmana danış.</p>
     <button class="start-btn" id="ircDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="ircList"></div>
+  </div>
+
+  <!-- IRC 2021 CODE (user-provided question bank) -->
+  <div id="irc2021" class="panel hidden">
+    <p class="section-label" data-i18n="irc2021_label">IRC 2021 Code Soruları</p>
+    <p class="tab-count" id="irc2021Count"></p>
+    <button class="start-btn" id="irc2021DrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="irc2021List"></div>
   </div>
 
   <!-- FOOLED BY RANDOMNESS -->
@@ -8128,6 +8137,13 @@ const IRC_QUESTIONS_EN = [
 ["When is an attic access opening required?","When the attic area is about 30 sq ft or more and its height is about 30 inches or more","In every attic, regardless of size","Only in homes taller than two stories","It's never required"],
 ["What's required for low-sill windows (sill under about 24 inches, and more than about 72 inches above grade outside)?","A window fall prevention device or opening limiter","No precaution is needed","Curtains are enough","Just using thicker glass is enough"],
 ];
+
+/* ===== IRC 2021 Code — user-provided question bank (separate from the "Ev Yapı Kodu" tab above) ===== */
+const IRC2021_QUESTIONS = [
+];
+
+const IRC2021_QUESTIONS_EN = [
+];
 </script>
 <script>
 /* ===== Language toggle (TR/EN) ===== */
@@ -8161,6 +8177,8 @@ const UI_STRINGS = {
     tab_irc: "Ev Yapı Kodu",
     irc_label: "Ev Yapı Kodu Soruları",
     irc_hint: "Duman/CO alarmı, merdiven ve korkuluk ölçüleri, çıkış pencereleri, elektrik ve tesisat gibi konularda evinin genel kod gereksinimlerine ne kadar uygun olduğunu test eden sorular. Genel bilgi amaçlıdır, resmi kod metninin yerini tutmaz — kesin uygulama için yerel yönetmeliğe ve yetkili bir uzmana danış.",
+    tab_irc2021: "IRC 2021 Code",
+    irc2021_label: "IRC 2021 Code Soruları",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
     fbr_label: "Fooled by Randomness Kelimeleri",
     fbr_hint: "Nassim Taleb'in Fooled by Randomness kitabından seçilmiş ~280 ileri düzey (C1/C2) kelime ve deyim — şans, olasılık, piyasalar ve insan davranışı üzerine.",
@@ -8232,6 +8250,8 @@ const UI_STRINGS = {
     tab_irc: "Home Building Code",
     irc_label: "Home Building Code Questions",
     irc_hint: "Questions testing how well your home meets general code requirements around smoke/CO alarms, stair and guard dimensions, egress windows, electrical, and plumbing. For general education only — not a substitute for the official code text; check your local code and a licensed professional for anything you actually build.",
+    tab_irc2021: "IRC 2021 Code",
+    irc2021_label: "IRC 2021 Code Questions",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
     fbr_label: "Fooled by Randomness Vocabulary",
     fbr_hint: "About 280 advanced (C1/C2) words and phrases curated from Nassim Taleb's Fooled by Randomness — on luck, probability, markets, and human behavior.",
@@ -8280,12 +8300,16 @@ let LANG = "tr";
 function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
 
 function refreshCurrentQuestionLanguage(){
-  if(!current || !(current.finlit || current.wealth || current.irc)) return;
+  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021)) return;
   let idx, src, labelKey;
   if(current.wealth){
     idx = parseInt(current.id.replace("wf",""), 10);
     src = LANG === "en" ? WEALTH_QUESTIONS_EN : WEALTH_QUESTIONS;
     labelKey = "tab_wealth";
+  } else if(current.irc2021){
+    idx = parseInt(current.id.replace("irc2021_",""), 10);
+    src = LANG === "en" ? IRC2021_QUESTIONS_EN : IRC2021_QUESTIONS;
+    labelKey = "tab_irc2021";
   } else if(current.irc){
     idx = parseInt(current.id.replace("irc",""), 10);
     src = LANG === "en" ? IRC_QUESTIONS_EN : IRC_QUESTIONS;
@@ -8327,7 +8351,7 @@ function refreshCurrentQuestionLanguage(){
   if(answered){
     const fb = document.getElementById("feedback");
     const wasRight = fb.classList.contains("right");
-    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
+    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
     document.getElementById("nextHint").textContent = t("next_hint");
   }
 }
@@ -8367,6 +8391,7 @@ function applyLanguage(lang){
   document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
   document.getElementById("wealthCount").textContent = t("total_questions").replace("{n}", WEALTH_QUESTIONS.length);
   document.getElementById("ircCount").textContent = t("total_questions").replace("{n}", IRC_QUESTIONS.length);
+  document.getElementById("irc2021Count").textContent = t("total_questions").replace("{n}", IRC2021_QUESTIONS.length);
   document.getElementById("fbrCount").textContent = t("total_words").replace("{n}", FBR_WORDS.length);
   document.getElementById("ox3kCount").textContent = t("total_words").replace("{n}", OXFORD3000_WORDS.length);
 
@@ -8385,6 +8410,7 @@ function applyLanguage(lang){
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
+  const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -8394,6 +8420,7 @@ function applyLanguage(lang){
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
+  if(irc2021TabActive) renderIRC2021Tab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -8489,6 +8516,7 @@ document.getElementById("asCount").textContent = `Toplam ${ASVAB_WORDS.length} k
 document.getElementById("flCount").textContent = `Toplam ${FINLIT_QUESTIONS.length} soru`;
 document.getElementById("wealthCount").textContent = `Toplam ${WEALTH_QUESTIONS.length} soru`;
 document.getElementById("ircCount").textContent = `Toplam ${IRC_QUESTIONS.length} soru`;
+document.getElementById("irc2021Count").textContent = `Toplam ${IRC2021_QUESTIONS.length} soru`;
 document.getElementById("fbrCount").textContent = `Toplam ${FBR_WORDS.length} kelime`;
 document.getElementById("ox3kCount").textContent = `Toplam ${OXFORD3000_WORDS.length} kelime`;
 
@@ -8635,7 +8663,7 @@ function nextQuestion(){
   }
   answered = false;
   current = pickWord();
-  currentOptions = (current.finlit || current.wealth || current.irc) ? buildFinlitOptions(current) : buildOptions(current);
+  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021) ? buildFinlitOptions(current) : buildOptions(current);
 
   document.getElementById("levelBadge").textContent = current.l;
   const wordEnEl = document.getElementById("wordEn");
@@ -8681,7 +8709,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = (current.finlit || current.wealth || current.irc) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
+    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -8714,6 +8742,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.irc){
     await saveIRCQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushIRCStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.irc2021){
+    await saveIRC2021Question(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushIRC2021Stat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -8751,6 +8782,7 @@ function getPanelCategories(){
     {key:"finlit", col:"finlit", nameTr:"Finansal Okuryazarlık", nameEn:"Financial Literacy", total: FINLIT_QUESTIONS.length, keys: listFLKeys, load: loadFLQuestion, prefix: FL_STORE_PREFIX},
     {key:"wealth", col:"wealth", nameTr:"Zenginlik ve Davranışsal Finans", nameEn:"Wealth & Behavioral Finance", total: WEALTH_QUESTIONS.length, keys: listWFKeys, load: loadWFQuestion, prefix: WF_STORE_PREFIX},
     {key:"irc", col:"irc", nameTr:"Ev Yapı Kodu", nameEn:"Home Building Code", total: IRC_QUESTIONS.length, keys: listIRCKeys, load: loadIRCQuestion, prefix: IRC_STORE_PREFIX},
+    {key:"irc2021", col:"irc2021", nameTr:"IRC 2021 Code", nameEn:"IRC 2021 Code", total: IRC2021_QUESTIONS.length, keys: listIRC2021Keys, load: loadIRC2021Question, prefix: IRC2021_STORE_PREFIX},
     {key:"fbr", col:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
   ];
 }
@@ -8923,6 +8955,7 @@ function switchTab(tab){
   document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
   document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
   document.getElementById("irc").classList.toggle("hidden", tab!=="irc");
+  document.getElementById("irc2021").classList.toggle("hidden", tab!=="irc2021");
   document.getElementById("fbr").classList.toggle("hidden", tab!=="fbr");
   document.getElementById("ox3k").classList.toggle("hidden", tab!=="ox3k");
   document.getElementById("panel").classList.toggle("hidden", tab!=="panel");
@@ -8935,6 +8968,7 @@ function switchTab(tab){
   if(tab === "finlit") renderFinlitTab();
   if(tab === "wealth") renderWealthTab();
   if(tab === "irc") renderIRCTab();
+  if(tab === "irc2021") renderIRC2021Tab();
   if(tab === "fbr") renderFBRTab();
   if(tab === "ox3k") renderOX3KTab();
   if(tab === "panel") renderPanelTab();
@@ -9558,6 +9592,69 @@ document.getElementById("ircDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== IRC 2021 Code tab (user-provided question bank, mirrors the Ev Yapı Kodu tab above) ===== */
+const IRC2021_STORE_PREFIX = "irc21_5k:";
+
+function listIRC2021Keys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(IRC2021_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(IRC2021_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(IRC2021_STORE_PREFIX)); }
+}
+async function loadIRC2021Question(id){
+  const raw = await rawGet(IRC2021_STORE_PREFIX+id);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveIRC2021Question(id, val){
+  await rawSet(IRC2021_STORE_PREFIX+id, JSON.stringify(val));
+}
+
+async function renderIRC2021Tab(){
+  const listEl = document.getElementById("irc2021List");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const src = LANG === "en" ? IRC2021_QUESTIONS_EN : IRC2021_QUESTIONS;
+  const rows = [];
+  for(let i=0; i<src.length; i++){
+    const id = "irc2021_"+i;
+    const stat = await loadIRC2021Question(id);
+    rows.push({q:src[i][0], wrong: stat ? (stat.wrong||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <div class="mistake-tr">${r.q}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("irc2021DrillBtn").addEventListener("click", async ()=>{
+  const src = LANG === "en" ? IRC2021_QUESTIONS_EN : IRC2021_QUESTIONS;
+  pool = [];
+  for(let i=0; i<src.length; i++){
+    const [q, correct, w1, w2, w3] = src[i];
+    const id = "irc2021_"+i;
+    const stat = await loadIRC2021Question(id);
+    pool.push({
+      id, e:q, p:"", t:correct, l: t("tab_irc2021"),
+      wrongOpts:[w1,w2,w3],
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      irc2021: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("irc2021").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* Panel is the default active tab on page load — populate it now.
    (Must come after every category's STORE_PREFIX/load* helpers are defined above.) */
 renderPanelTab();
@@ -9591,11 +9688,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -9650,6 +9747,7 @@ window.onAuthChanged = async function(user){
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
     const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
     const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
+    const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
     const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
     const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
@@ -9659,6 +9757,7 @@ window.onAuthChanged = async function(user){
     if(flTabActive) renderFinlitTab();
     if(wealthTabActive) renderWealthTab();
     if(ircTabActive) renderIRCTab();
+    if(irc2021TabActive) renderIRC2021Tab();
     if(fbrTabActive) renderFBRTab();
     if(ox3kTabActive) renderOX3KTab();
     const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -9864,6 +9963,34 @@ async function syncWithCloud(uid){
     window.FB.pushIRCStat(uid, id, merged);
   }
 
+  // --- IRC 2021 Code question stats, merged the same way ---
+  const cloudIRC2021 = await window.FB.fetchAllCloudIRC2021(uid);
+  const localIRC2021Keys = listIRC2021Keys();
+  const localIRC2021Map = {};
+  for(const k of localIRC2021Keys){
+    const id = k.slice(IRC2021_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localIRC2021Map[id] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allIRC2021Id = new Set([...Object.keys(localIRC2021Map), ...Object.keys(cloudIRC2021)]);
+  for(const id of allIRC2021Id){
+    const l = localIRC2021Map[id], c = cloudIRC2021[id];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveIRC2021Question(id, merged);
+    window.FB.pushIRC2021Stat(uid, id, merged);
+  }
+
   // --- Fooled by Randomness word stats, merged the same way as Oxford/RE/ASVAB words ---
   const cloudFBR = await window.FB.fetchAllCloudFBR(uid);
   const localFBRKeys = listFBRKeys();
@@ -9927,6 +10054,7 @@ async function syncWithCloud(uid){
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
+  const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -9936,6 +10064,7 @@ async function syncWithCloud(uid){
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
+  if(irc2021TabActive) renderIRC2021Tab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -10040,6 +10169,12 @@ async function fetchAllCloudIRC(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudIRC2021(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "irc2021"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function fetchAllCloudFBR(uid){
   const out = {};
   const snap = await getDocs(collection(db, "users", uid, "fbr"));
@@ -10076,6 +10211,10 @@ async function pushIRCStat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "irc", id), data); }
   catch(e){ console.error("Ev yapı kodu sorusu buluta yazılamadı:", e); }
 }
+async function pushIRC2021Stat(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "irc2021", id), data); }
+  catch(e){ console.error("IRC 2021 Code sorusu buluta yazılamadı:", e); }
+}
 async function pushFBRStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "fbr", en), data); }
   catch(e){ console.error("Fooled by Randomness kelimesi buluta yazılamadı:", e); }
@@ -10095,7 +10234,7 @@ async function deleteCustomWordCloud(uid, id){
 
 /* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
-const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","irc","fbr","custom"];
+const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","irc","irc2021","fbr","custom"];
 
 async function pushUserProfile(uid, email, displayName){
   try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
@@ -10161,8 +10300,8 @@ async function fetchAdminStats(){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushFBRStat, pushOX3KStat,
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudFBR, fetchAllCloudOX3K,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushFBRStat, pushOX3KStat,
   pushUserProfile, fetchAdminStats
 };
 
