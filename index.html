@@ -319,6 +319,8 @@ body{
   border-bottom:1px solid var(--line);
 }
 .mistake-row:last-child{border-bottom:none;}
+.admin-user-row{cursor:pointer;transition:background .12s ease;}
+.admin-user-row:hover{background:var(--card);}
 .mistake-main{flex:1;min-width:0;}
 .mistake-en{font-weight:700;font-size:1.02rem;}
 .mistake-pos{font-style:italic;color:var(--moss-dark);opacity:.6;font-size:.78rem;margin-left:6px;}
@@ -635,6 +637,7 @@ body{
     <div class="stat-grid" id="adminSummary"></div>
     <p class="section-label" style="margin-top:26px;" data-i18n="admin_users_list_label">Kayıtlı Kullanıcılar</p>
     <div id="adminUsers"></div>
+    <div id="adminUserDetail"></div>
     <p class="section-label" style="margin-top:26px;" data-i18n="admin_top_mistakes">En Çok Yanlış Yapılan Kelimeler (Tüm Kullanıcılar)</p>
     <div id="adminMistakes"></div>
   </div>
@@ -8658,13 +8661,13 @@ const OWNER_EMAIL = "orcuncagataycelik@gmail.com";
 
 function getPanelCategories(){
   return [
-    {key:"ox3k", nameTr:"Oxford 3000", nameEn:"Oxford 3000", total: OXFORD3000_WORDS.length, keys: listOX3KKeys, load: loadOX3KWord, prefix: OX3K_STORE_PREFIX},
-    {key:"oxford5000", nameTr:"Oxford 5000", nameEn:"Oxford 5000", total: WORDS.length, keys: listWordKeys, load: loadWord, prefix: STORE_PREFIX},
-    {key:"realestate", nameTr:"Real Estate", nameEn:"Real Estate", total: REAL_ESTATE_WORDS.length, keys: listREKeys, load: loadREWord, prefix: RE_STORE_PREFIX},
-    {key:"asvab", nameTr:"ASVAB", nameEn:"ASVAB", total: ASVAB_WORDS.length, keys: listASKeys, load: loadASWord, prefix: AS_STORE_PREFIX},
-    {key:"finlit", nameTr:"Finansal Okuryazarlık", nameEn:"Financial Literacy", total: FINLIT_QUESTIONS.length, keys: listFLKeys, load: loadFLQuestion, prefix: FL_STORE_PREFIX},
-    {key:"wealth", nameTr:"Zenginlik ve Davranışsal Finans", nameEn:"Wealth & Behavioral Finance", total: WEALTH_QUESTIONS.length, keys: listWFKeys, load: loadWFQuestion, prefix: WF_STORE_PREFIX},
-    {key:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
+    {key:"ox3k", col:"ox3k", nameTr:"Oxford 3000", nameEn:"Oxford 3000", total: OXFORD3000_WORDS.length, keys: listOX3KKeys, load: loadOX3KWord, prefix: OX3K_STORE_PREFIX},
+    {key:"oxford5000", col:"oxford", nameTr:"Oxford 5000", nameEn:"Oxford 5000", total: WORDS.length, keys: listWordKeys, load: loadWord, prefix: STORE_PREFIX},
+    {key:"realestate", col:"realestate", nameTr:"Real Estate", nameEn:"Real Estate", total: REAL_ESTATE_WORDS.length, keys: listREKeys, load: loadREWord, prefix: RE_STORE_PREFIX},
+    {key:"asvab", col:"asvab", nameTr:"ASVAB", nameEn:"ASVAB", total: ASVAB_WORDS.length, keys: listASKeys, load: loadASWord, prefix: AS_STORE_PREFIX},
+    {key:"finlit", col:"finlit", nameTr:"Finansal Okuryazarlık", nameEn:"Financial Literacy", total: FINLIT_QUESTIONS.length, keys: listFLKeys, load: loadFLQuestion, prefix: FL_STORE_PREFIX},
+    {key:"wealth", col:"wealth", nameTr:"Zenginlik ve Davranışsal Finans", nameEn:"Wealth & Behavioral Finance", total: WEALTH_QUESTIONS.length, keys: listWFKeys, load: loadWFQuestion, prefix: WF_STORE_PREFIX},
+    {key:"fbr", col:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
   ];
 }
 
@@ -8725,31 +8728,45 @@ async function renderPanelTab(){
 }
 
 /* ===== Admin dashboard (owner only, aggregate stats across all users) ===== */
+let lastAdminStats = null;
+let selectedAdminUid = null;
+
 async function renderAdminTab(){
   const summaryEl = document.getElementById("adminSummary");
   const usersEl = document.getElementById("adminUsers");
+  const detailEl = document.getElementById("adminUserDetail");
   const mistakesEl = document.getElementById("adminMistakes");
-  if(!summaryEl || !usersEl || !mistakesEl) return;
+  if(!summaryEl || !usersEl || !detailEl || !mistakesEl) return;
   if(!window.currentUser || window.currentUser.email !== OWNER_EMAIL){
     summaryEl.innerHTML = "";
     usersEl.innerHTML = "";
+    detailEl.innerHTML = "";
     mistakesEl.innerHTML = `<p class="mistake-empty">${t("admin_denied")}</p>`;
     return;
   }
   summaryEl.innerHTML = "";
   usersEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  detailEl.innerHTML = "";
   mistakesEl.innerHTML = "";
   try{
     const stats = await window.FB.fetchAdminStats();
+    lastAdminStats = stats;
     summaryEl.innerHTML = `
       <div class="stat-card"><div class="stat-num">${stats.userCount}</div><div class="stat-lbl">${t("admin_users")}</div></div>
       <div class="stat-card"><div class="stat-num">${stats.totalDocs}</div><div class="stat-lbl">${t("admin_records")}</div></div>
     `;
     usersEl.innerHTML = stats.users.length ? stats.users.map(u => `
-      <div class="mistake-row">
+      <div class="mistake-row admin-user-row" data-uid="${u.uid}">
         <div class="mistake-main"><div class="mistake-tr">${u.displayName ? `${u.displayName} — ` : ""}${u.email || u.uid}</div></div>
       </div>
     `).join("") : `<p class="mistake-empty">${t("mistakes_empty_clean")}</p>`;
+    usersEl.querySelectorAll(".admin-user-row").forEach(row => {
+      row.addEventListener("click", () => {
+        selectedAdminUid = row.dataset.uid;
+        renderAdminUserDetail();
+      });
+    });
+    if(selectedAdminUid && stats.users.some(u => u.uid === selectedAdminUid)) renderAdminUserDetail();
     mistakesEl.innerHTML = stats.topMistakes.length ? stats.topMistakes.map(([en, wrong]) => `
       <div class="mistake-row">
         <div class="mistake-main"><div class="mistake-tr">${en}</div></div>
@@ -8760,8 +8777,45 @@ async function renderAdminTab(){
     console.error("Yönetici verisi alınamadı:", e);
     summaryEl.innerHTML = "";
     usersEl.innerHTML = "";
+    detailEl.innerHTML = "";
     mistakesEl.innerHTML = `<p class="mistake-empty">${t("load_error")}</p>`;
   }
+}
+
+function renderAdminUserDetail(){
+  const detailEl = document.getElementById("adminUserDetail");
+  if(!detailEl || !lastAdminStats || !selectedAdminUid) return;
+  const user = lastAdminStats.users.find(u => u.uid === selectedAdminUid);
+  const perCat = (lastAdminStats.perUser && lastAdminStats.perUser[selectedAdminUid]) || {};
+  const label = user ? (user.displayName ? `${user.displayName} — ${user.email || user.uid}` : (user.email || user.uid)) : selectedAdminUid;
+
+  const rows = getPanelCategories().map(cat => {
+    const d = perCat[cat.col] || {mastered:0, total:0};
+    const total = cat.total;
+    const pct = total ? Math.round((d.mastered/total)*100) : 0;
+    const name = LANG === "en" ? (cat.nameEn || cat.nameTr) : cat.nameTr;
+    return {name, mastered: d.mastered, total, pct};
+  });
+  const customData = perCat.custom || {mastered:0, total:0};
+  rows.push({
+    name: LANG === "en" ? "Your Own Words" : "Kendi Kelimeleri",
+    mastered: customData.mastered, total: customData.total,
+    pct: customData.total ? Math.round((customData.mastered/customData.total)*100) : 0
+  });
+
+  const visibleRows = rows.filter(r => r.total > 0);
+  detailEl.innerHTML = `
+    <p class="section-label" style="margin-top:26px;">${label}</p>
+    ${visibleRows.length ? visibleRows.map(r => `
+      <div class="panel-cat-row">
+        <div class="panel-cat-top">
+          <span class="panel-cat-name">${r.name}</span>
+          <span class="panel-cat-frac">${r.mastered}/${r.total}</span>
+        </div>
+        <div class="panel-bar"><div class="panel-bar-fill" style="width:${r.pct}%"></div></div>
+      </div>
+    `).join("") : `<p class="mistake-empty">${t("mistakes_empty_clean")}</p>`}
+  `;
 }
 
 /* ===== Tabs ===== */
@@ -9858,15 +9912,32 @@ async function fetchAdminStats(){
   const userIds = new Set();
   let totalDocs = 0;
   const wordWrong = {};
+  const perUser = {}; // uid -> { colName -> {mastered, correct, wrong, total} }
   for(const colName of ADMIN_COLLECTIONS){
     const snap = await getDocs(collectionGroup(db, colName));
     snap.forEach(d => {
-      totalDocs++;
+      const data = d.data();
       const parentUser = d.ref.parent.parent;
-      if(parentUser) userIds.add(parentUser.id);
-      if(colName === "oxford"){
-        const wrong = d.data().wrong || 0;
-        if(wrong > 0) wordWrong[d.id] = (wordWrong[d.id] || 0) + wrong;
+      if(!parentUser) return;
+      const uid = parentUser.id;
+      userIds.add(uid);
+      totalDocs++;
+
+      if(colName === "custom" && data.deleted) return; // soft-deleted custom words don't count
+
+      if(!perUser[uid]) perUser[uid] = {};
+      if(!perUser[uid][colName]) perUser[uid][colName] = {mastered:0, correct:0, wrong:0, total:0};
+      const bucket = perUser[uid][colName];
+      const weight = data.weight ?? 3;
+      const correct = data.correct || 0;
+      const wrong = data.wrong || 0;
+      bucket.total++;
+      bucket.correct += correct;
+      bucket.wrong += wrong;
+      if(weight <= 1 && correct > 0) bucket.mastered++;
+
+      if(colName === "oxford" && wrong > 0){
+        wordWrong[d.id] = (wordWrong[d.id] || 0) + wrong;
       }
     });
   }
@@ -9876,7 +9947,7 @@ async function fetchAdminStats(){
     displayName: (profiles[uid] && profiles[uid].displayName) || null,
   }));
   const topMistakes = Object.entries(wordWrong).sort((a,b) => b[1]-a[1]).slice(0, 15);
-  return { userCount: userIds.size, totalDocs, users, topMistakes };
+  return { userCount: userIds.size, totalDocs, users, topMistakes, perUser };
 }
 
 window.FB = {
