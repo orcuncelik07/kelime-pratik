@@ -511,7 +511,6 @@ body{
   <div class="tabbar" id="tabbar">
     <select class="admin-select tab-select" id="tabbarSelect">
       <option value="panel" data-i18n="tab_panel">Panel</option>
-      <option value="admin" id="adminTabOption" data-i18n="tab_admin" hidden>Yönetici</option>
       <option value="ox3k" data-i18n="tab_ox3k">Oxford 3000</option>
       <option value="setup" data-i18n="tab_oxford">Oxford 5000</option>
       <option value="mistakes" data-i18n="tab_mistakes">Yanlışlarım</option>
@@ -9448,9 +9447,19 @@ window.onAuthChanged = async function(user){
   window.currentUser = user;
   renderAuthUI(user);
 
-  const adminOption = document.getElementById("adminTabOption");
+  const tabSelect = document.getElementById("tabbarSelect");
   const isOwner = !!(user && user.email === OWNER_EMAIL);
-  if(adminOption) adminOption.hidden = !isOwner;
+  let adminOption = document.getElementById("adminTabOption");
+  if(isOwner && !adminOption && tabSelect){
+    adminOption = document.createElement("option");
+    adminOption.value = "admin";
+    adminOption.id = "adminTabOption";
+    adminOption.setAttribute("data-i18n", "tab_admin");
+    adminOption.textContent = t("tab_admin");
+    tabSelect.insertBefore(adminOption, tabSelect.children[1] || null);
+  } else if(!isOwner && adminOption){
+    adminOption.remove();
+  }
   if(!isOwner && !document.getElementById("admin").classList.contains("hidden")){
     // Admin tab was open but this account isn't the owner (e.g. switched accounts) — bounce to the default tab.
     switchTab("panel");
