@@ -8451,9 +8451,6 @@ ox3kLevelDefs.forEach(l=>{
   ox3kLevelGrid.appendChild(btn);
 });
 
-/* Oxford 3000 is the default active tab on page load — populate it now. */
-renderOX3KTab();
-
 document.getElementById("startBtn").addEventListener("click", startSession);
 document.getElementById("backBtn").addEventListener("click", ()=>{
   document.getElementById("quiz").classList.add("hidden");
@@ -9185,6 +9182,10 @@ async function renderOX3KTab(){
     `).join("")}
   `).join("");
 }
+
+/* Oxford 3000 is the default active tab on page load — populate it now.
+   (Must come after OX3K_STORE_PREFIX/loadOX3KWord are defined above.) */
+renderOX3KTab();
 
 document.getElementById("ox3kDrillBtn").addEventListener("click", async ()=>{
   currentDistractorPool = ALL_OX3K_WORDS;
