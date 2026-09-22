@@ -10150,7 +10150,17 @@ async function fetchCustomPos(en){
     const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(en)}`);
     if(!res.ok) return null;
     const data = await res.json();
-    const pos = data && data[0] && data[0].meanings && data[0].meanings[0] && data[0].meanings[0].partOfSpeech;
+    const meanings = data && data[0] && data[0].meanings;
+    if(!meanings || !meanings.length) return null;
+    // Wiktionary-sourced entries mark inflected participle forms with a
+    // definition like "Present participle of run." / "Past participle of write." —
+    // the API itself has no separate "participle" category, so we detect it here.
+    for(const m of meanings){
+      for(const d of (m.definitions || [])){
+        if(d.definition && /\bparticiple of\b/i.test(d.definition)) return "sıfat-fiil";
+      }
+    }
+    const pos = meanings[0].partOfSpeech;
     return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
   }catch(e){ console.error("Kelime türü alınamadı:", e); }
   return null;
