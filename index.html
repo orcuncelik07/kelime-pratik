@@ -550,8 +550,8 @@ body{
     <p class="tab-count" id="customCount"></p>
     <form id="customForm" class="custom-form">
       <input type="text" id="customEn" placeholder="İngilizce kelime" data-i18n-ph="custom_en_ph" autocomplete="off" required>
-      <input type="text" id="customTr" placeholder="Türkçe karşılığı" data-i18n-ph="custom_tr_ph" autocomplete="off" required>
-      <input type="text" id="customPos" placeholder="tür (v., n., adj. — opsiyonel)" data-i18n-ph="custom_pos_ph" autocomplete="off">
+      <input type="text" id="customTr" placeholder="Türkçe karşılığı (otomatik doldurulur)" data-i18n-ph="custom_tr_ph" autocomplete="off">
+      <input type="text" id="customPos" placeholder="tür (otomatik doldurulur)" data-i18n-ph="custom_pos_ph" autocomplete="off">
       <button type="submit" class="add-btn" data-i18n="add_btn">Ekle</button>
     </form>
     <button class="start-btn hidden" id="customDrillBtn" style="margin:18px 0;" data-i18n="practice_these">Bu Kelimelerle Çalış</button>
@@ -9022,8 +9022,8 @@ const UI_STRINGS = {
     practice_these: "Bu Kelimelerle Çalış",
     custom_label: "Kendi Kelimelerini Ekle",
     custom_en_ph: "İngilizce kelime",
-    custom_tr_ph: "Türkçe karşılığı",
-    custom_pos_ph: "tür (v., n., adj. — opsiyonel)",
+    custom_tr_ph: "Türkçe karşılığı (otomatik doldurulur)",
+    custom_pos_ph: "tür (otomatik doldurulur)",
     add_btn: "Ekle",
     custom_empty: "Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.",
     re_label: "Emlak Lisans Sınavı Kelimeleri",
@@ -9098,8 +9098,8 @@ const UI_STRINGS = {
     practice_these: "Practice These Words",
     custom_label: "Add Your Own Words",
     custom_en_ph: "English word",
-    custom_tr_ph: "Turkish meaning",
-    custom_pos_ph: "type (v., n., adj. — optional)",
+    custom_tr_ph: "Turkish meaning (auto-filled)",
+    custom_pos_ph: "type (auto-filled)",
     add_btn: "Add",
     custom_empty: "You haven't added any words yet. Add some above and practice with just those.",
     re_label: "Real Estate License Exam Terms",
@@ -9970,12 +9970,77 @@ async function renderCustomTab(){
   });
 }
 
+/* ===== Custom word add: auto-fill Turkish meaning + part of speech from free public APIs ===== */
+const CUSTOM_POS_MAP = {
+  noun:"n.", verb:"v.", adjective:"adj.", adverb:"adv.", pronoun:"pron.",
+  preposition:"prep.", conjunction:"conj.", interjection:"interj.",
+  exclamation:"interj.", determiner:"det.", article:"art.", numeral:"num."
+};
+
+async function fetchCustomTranslation(en){
+  try{
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(en)}&langpair=en|tr`);
+    if(!res.ok) return null;
+    const data = await res.json();
+    const text = data && data.responseData && data.responseData.translatedText;
+    if(text && !/no query|mymemory warning/i.test(text)) return text;
+  }catch(e){ console.error("Çeviri alınamadı:", e); }
+  return null;
+}
+
+async function fetchCustomPos(en){
+  try{
+    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(en)}`);
+    if(!res.ok) return null;
+    const data = await res.json();
+    const pos = data && data[0] && data[0].meanings && data[0].meanings[0] && data[0].meanings[0].partOfSpeech;
+    return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
+  }catch(e){ console.error("Kelime türü alınamadı:", e); }
+  return null;
+}
+
+let customAutoFillInFlight = null;
+async function autoFillCustomWord(){
+  const enInput = document.getElementById("customEn");
+  const trInput = document.getElementById("customTr");
+  const posInput = document.getElementById("customPos");
+  const en = enInput.value.trim();
+  if(!en || (trInput.value.trim() && posInput.value.trim())) return;
+  const addBtn = document.querySelector('#customForm button[type="submit"]');
+  const originalLabel = addBtn ? addBtn.textContent : null;
+  if(addBtn){ addBtn.disabled = true; addBtn.textContent = "…"; }
+  customAutoFillInFlight = (async ()=>{
+    const [tr, pos] = await Promise.all([fetchCustomTranslation(en), fetchCustomPos(en)]);
+    if(enInput.value.trim() !== en) return; // word changed while we were fetching, discard
+    if(tr && !trInput.value.trim()) trInput.value = tr;
+    if(pos && !posInput.value.trim()) posInput.value = pos;
+  })();
+  try{ await customAutoFillInFlight; }
+  finally{
+    customAutoFillInFlight = null;
+    if(addBtn){ addBtn.disabled = false; addBtn.textContent = originalLabel; }
+  }
+}
+
+let customAutoFillTimer = null;
+document.getElementById("customEn").addEventListener("input", ()=>{
+  clearTimeout(customAutoFillTimer);
+  customAutoFillTimer = setTimeout(autoFillCustomWord, 700);
+});
+document.getElementById("customEn").addEventListener("blur", ()=>{
+  clearTimeout(customAutoFillTimer);
+  autoFillCustomWord();
+});
+
 document.getElementById("customForm").addEventListener("submit", async (e)=>{
   e.preventDefault();
   const enInput = document.getElementById("customEn");
   const trInput = document.getElementById("customTr");
   const posInput = document.getElementById("customPos");
   const en = enInput.value.trim();
+  if(!en) return;
+  if(customAutoFillInFlight) await customAutoFillInFlight;
+  if(!trInput.value.trim()) await autoFillCustomWord();
   const tr = trInput.value.trim();
   const pos = posInput.value.trim();
   if(!en || !tr) return;
