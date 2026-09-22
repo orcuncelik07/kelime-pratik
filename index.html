@@ -10424,6 +10424,25 @@ async function fetchCustomPosFromDictionaryApi(en){
   return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
 }
 
+async function fetchCustomPosFromWiktionary(en){
+  const res = await fetch(`https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(en)}`);
+  if(!res.ok){ console.warn("[auto-fill] Wiktionary HTTP hatası (kelime sözlükte yoksa 404 normaldir):", res.status, en); return null; }
+  const data = await res.json();
+  const entries = data && data.en;
+  if(!entries || !entries.length){ console.warn("[auto-fill] Wiktionary'de İngilizce girdi bulunamadı:", data); return null; }
+  // Same Wiktionary convention as dictionaryapi.dev ("Present/Past participle
+  // of ..."), but served straight from Wikimedia's own, much more reliably
+  // up infrastructure — a real fallback for when dictionaryapi.dev is down.
+  for(const entry of entries){
+    for(const d of (entry.definitions || [])){
+      const text = (d.definition || "").replace(/<[^>]+>/g, "");
+      if(/\bparticiple of\b/i.test(text)) return "sıfat-fiil";
+    }
+  }
+  const pos = (entries[0].partOfSpeech || "").toLowerCase();
+  return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
+}
+
 const DATAMUSE_POS_MAP = { n:"n.", v:"v.", adj:"adj.", adv:"adv." };
 async function fetchCustomPosFromDatamuse(en){
   const res = await fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(en)}&md=p&max=1`);
@@ -10437,14 +10456,19 @@ async function fetchCustomPosFromDatamuse(en){
 }
 
 async function fetchCustomPos(en){
-  // Two independent free dictionary APIs: if one is unreachable (network
-  // policy, downtime, ad-blocker) on the user's side, the other can still
-  // answer. dictionaryapi.dev is tried first since it can also detect
-  // participle ("sıfat-fiil") forms that Datamuse has no concept of.
+  // Three independent sources: if one is unreachable (network policy,
+  // downtime, ad-blocker) on the user's side, the others can still answer.
+  // dictionaryapi.dev and Wiktionary both detect participle ("sıfat-fiil")
+  // forms via the same "participle of ..." definition text; Datamuse is
+  // last resort and only gives a plain part of speech, no participle info.
   try{
     const pos = await fetchCustomPosFromDictionaryApi(en);
     if(pos) return pos;
   }catch(e){ console.error("[auto-fill] DictionaryAPI isteği başarısız (ağ/CORS hatası olabilir):", e); }
+  try{
+    const pos = await fetchCustomPosFromWiktionary(en);
+    if(pos) return pos;
+  }catch(e){ console.error("[auto-fill] Wiktionary isteği başarısız (ağ/CORS hatası olabilir):", e); }
   try{
     const pos = await fetchCustomPosFromDatamuse(en);
     if(pos) return pos;
