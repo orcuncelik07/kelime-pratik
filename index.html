@@ -10137,21 +10137,22 @@ const CUSTOM_POS_MAP = {
 async function fetchCustomTranslation(en){
   try{
     const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(en)}&langpair=en|tr`);
-    if(!res.ok) return null;
+    if(!res.ok){ console.warn("[auto-fill] MyMemory HTTP hatası:", res.status, res.statusText); return null; }
     const data = await res.json();
     const text = data && data.responseData && data.responseData.translatedText;
     if(text && !/no query|mymemory warning/i.test(text)) return text;
-  }catch(e){ console.error("Çeviri alınamadı:", e); }
+    console.warn("[auto-fill] MyMemory çeviri döndürmedi:", data);
+  }catch(e){ console.error("[auto-fill] Çeviri isteği başarısız (ağ/CORS hatası olabilir):", e); }
   return null;
 }
 
 async function fetchCustomPos(en){
   try{
     const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(en)}`);
-    if(!res.ok) return null;
+    if(!res.ok){ console.warn("[auto-fill] DictionaryAPI HTTP hatası (kelime sözlükte yoksa 404 normaldir):", res.status, en); return null; }
     const data = await res.json();
     const meanings = data && data[0] && data[0].meanings;
-    if(!meanings || !meanings.length) return null;
+    if(!meanings || !meanings.length){ console.warn("[auto-fill] DictionaryAPI'de meanings bulunamadı:", data); return null; }
     // Wiktionary-sourced entries mark inflected participle forms with a
     // definition like "Present participle of run." / "Past participle of write." —
     // the API itself has no separate "participle" category, so we detect it here.
@@ -10162,7 +10163,7 @@ async function fetchCustomPos(en){
     }
     const pos = meanings[0].partOfSpeech;
     return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
-  }catch(e){ console.error("Kelime türü alınamadı:", e); }
+  }catch(e){ console.error("[auto-fill] Kelime türü isteği başarısız (ağ/CORS hatası olabilir):", e); }
   return null;
 }
 
