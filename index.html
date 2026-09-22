@@ -10146,24 +10146,50 @@ async function fetchCustomTranslation(en){
   return null;
 }
 
-async function fetchCustomPos(en){
-  try{
-    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(en)}`);
-    if(!res.ok){ console.warn("[auto-fill] DictionaryAPI HTTP hatası (kelime sözlükte yoksa 404 normaldir):", res.status, en); return null; }
-    const data = await res.json();
-    const meanings = data && data[0] && data[0].meanings;
-    if(!meanings || !meanings.length){ console.warn("[auto-fill] DictionaryAPI'de meanings bulunamadı:", data); return null; }
-    // Wiktionary-sourced entries mark inflected participle forms with a
-    // definition like "Present participle of run." / "Past participle of write." —
-    // the API itself has no separate "participle" category, so we detect it here.
-    for(const m of meanings){
-      for(const d of (m.definitions || [])){
-        if(d.definition && /\bparticiple of\b/i.test(d.definition)) return "sıfat-fiil";
-      }
+async function fetchCustomPosFromDictionaryApi(en){
+  const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(en)}`);
+  if(!res.ok){ console.warn("[auto-fill] DictionaryAPI HTTP hatası (kelime sözlükte yoksa 404 normaldir):", res.status, en); return null; }
+  const data = await res.json();
+  const meanings = data && data[0] && data[0].meanings;
+  if(!meanings || !meanings.length){ console.warn("[auto-fill] DictionaryAPI'de meanings bulunamadı:", data); return null; }
+  // Wiktionary-sourced entries mark inflected participle forms with a
+  // definition like "Present participle of run." / "Past participle of write." —
+  // the API itself has no separate "participle" category, so we detect it here.
+  for(const m of meanings){
+    for(const d of (m.definitions || [])){
+      if(d.definition && /\bparticiple of\b/i.test(d.definition)) return "sıfat-fiil";
     }
-    const pos = meanings[0].partOfSpeech;
-    return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
-  }catch(e){ console.error("[auto-fill] Kelime türü isteği başarısız (ağ/CORS hatası olabilir):", e); }
+  }
+  const pos = meanings[0].partOfSpeech;
+  return pos ? (CUSTOM_POS_MAP[pos] || pos) : null;
+}
+
+const DATAMUSE_POS_MAP = { n:"n.", v:"v.", adj:"adj.", adv:"adv." };
+async function fetchCustomPosFromDatamuse(en){
+  const res = await fetch(`https://api.datamuse.com/words?sp=${encodeURIComponent(en)}&md=p&max=1`);
+  if(!res.ok){ console.warn("[auto-fill] Datamuse HTTP hatası:", res.status, en); return null; }
+  const data = await res.json();
+  const entry = data && data[0];
+  const tags = entry && entry.tags;
+  if(!tags) return null;
+  const tag = tags.find(x => DATAMUSE_POS_MAP[x]);
+  return tag ? DATAMUSE_POS_MAP[tag] : null;
+}
+
+async function fetchCustomPos(en){
+  // Two independent free dictionary APIs: if one is unreachable (network
+  // policy, downtime, ad-blocker) on the user's side, the other can still
+  // answer. dictionaryapi.dev is tried first since it can also detect
+  // participle ("sıfat-fiil") forms that Datamuse has no concept of.
+  try{
+    const pos = await fetchCustomPosFromDictionaryApi(en);
+    if(pos) return pos;
+  }catch(e){ console.error("[auto-fill] DictionaryAPI isteği başarısız (ağ/CORS hatası olabilir):", e); }
+  try{
+    const pos = await fetchCustomPosFromDatamuse(en);
+    if(pos) return pos;
+    console.warn("[auto-fill] Datamuse'de de tür bulunamadı:", en);
+  }catch(e){ console.error("[auto-fill] Datamuse isteği başarısız (ağ/CORS hatası olabilir):", e); }
   return null;
 }
 
