@@ -515,6 +515,7 @@ body{
       <option value="setup" data-i18n="tab_oxford">Oxford 5000</option>
       <option value="mistakes" data-i18n="tab_mistakes">Yanlışlarım</option>
       <option value="custom" data-i18n="tab_custom">Kelime Ekle</option>
+      <option value="trwords" data-i18n="tab_trwords">Turkish Words</option>
       <option value="realestate">Real Estate</option>
       <option value="asvab">ASVAB</option>
       <option value="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</option>
@@ -557,6 +558,15 @@ body{
     <button class="start-btn hidden" id="customDrillBtn" style="margin:18px 0;" data-i18n="practice_these">Bu Kelimelerle Çalış</button>
     <div id="customList"></div>
     <p class="mistake-empty" id="customEmpty" data-i18n="custom_empty">Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.</p>
+  </div>
+
+  <!-- TURKISH WORDS -->
+  <div id="trwords" class="panel hidden">
+    <p class="section-label" data-i18n="trw_label">Günlük Hayatta Kullanılan Basit Türkçe Kelimeler</p>
+    <p class="tab-count" id="trwCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="trw_hint">Selamlaşma, aile, sayılar, günler, ev eşyaları, yiyecekler, renkler ve en sık kullanılan fiiller gibi günlük hayattan ~230 temel Türkçe kelime.</p>
+    <button class="start-btn" id="trwDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="trwList"></div>
   </div>
 
   <!-- REAL ESTATE -->
@@ -3282,6 +3292,240 @@ const REAL_ESTATE_WORDS_EN = [
 ["disclosure statement","a document in which a seller reveals known issues with a property"],
 ["latent defect","a hidden flaw in a property not discoverable through a reasonable inspection"],
 ["material fact","information significant enough to affect a buyer's decision"],
+];
+
+const TURKISH_WORDS = [
+["merhaba","hello"],
+["günaydın","good morning"],
+["iyi akşamlar","good evening"],
+["iyi geceler","good night"],
+["hoşça kal","goodbye"],
+["teşekkürler","thank you"],
+["lütfen","please"],
+["evet","yes"],
+["hayır","no"],
+["özür dilerim","I'm sorry"],
+["anne","mother"],
+["baba","father"],
+["kardeş","sibling"],
+["abla","older sister"],
+["abi","older brother"],
+["teyze","aunt (mother's sister)"],
+["dayı","uncle (mother's brother)"],
+["hala","aunt (father's sister)"],
+["amca","uncle (father's brother)"],
+["çocuk","child"],
+["bebek","baby"],
+["aile","family"],
+["arkadaş","friend"],
+["komşu","neighbor"],
+["ben","I"],
+["sen","you (singular)"],
+["o","he / she / it"],
+["biz","we"],
+["siz","you (plural/formal)"],
+["onlar","they"],
+["kim","who"],
+["ne","what"],
+["nerede","where"],
+["ne zaman","when"],
+["neden","why"],
+["nasıl","how"],
+["kaç","how many"],
+["bir","one"],
+["iki","two"],
+["üç","three"],
+["dört","four"],
+["beş","five"],
+["altı","six"],
+["yedi","seven"],
+["sekiz","eight"],
+["dokuz","nine"],
+["on","ten"],
+["yüz","hundred"],
+["bin","thousand"],
+["pazartesi","Monday"],
+["salı","Tuesday"],
+["çarşamba","Wednesday"],
+["perşembe","Thursday"],
+["cuma","Friday"],
+["cumartesi","Saturday"],
+["pazar","Sunday"],
+["bugün","today"],
+["yarın","tomorrow"],
+["dün","yesterday"],
+["şimdi","now"],
+["sonra","later"],
+["önce","before"],
+["her zaman","always"],
+["bazen","sometimes"],
+["asla","never"],
+["sabah","morning"],
+["akşam","evening"],
+["gece","night"],
+["gün","day"],
+["hafta","week"],
+["ay","moon / month"],
+["yıl","year"],
+["saat","hour / clock"],
+["dakika","minute"],
+["ev","house"],
+["oda","room"],
+["mutfak","kitchen"],
+["banyo","bathroom"],
+["bahçe","garden"],
+["kapı","door"],
+["pencere","window"],
+["masa","table"],
+["sandalye","chair"],
+["yatak","bed"],
+["kitap","book"],
+["kalem","pen"],
+["telefon","phone"],
+["bilgisayar","computer"],
+["anahtar","key"],
+["çanta","bag"],
+["para","money"],
+["ayna","mirror"],
+["lamba","lamp"],
+["dolap","cupboard / closet"],
+["okul","school"],
+["iş","job / work"],
+["şehir","city"],
+["ülke","country"],
+["dünya","world"],
+["market","grocery store"],
+["hastane","hospital"],
+["eczane","pharmacy"],
+["otel","hotel"],
+["restoran","restaurant"],
+["yol","road"],
+["araba","car"],
+["otobüs","bus"],
+["tren","train"],
+["uçak","airplane"],
+["havaalanı","airport"],
+["istasyon","station"],
+["park","park"],
+["yemek","food, meal / to eat"],
+["ekmek","bread"],
+["su","water"],
+["süt","milk"],
+["peynir","cheese"],
+["et","meat"],
+["tavuk","chicken"],
+["balık","fish"],
+["meyve","fruit"],
+["sebze","vegetable"],
+["elma","apple"],
+["muz","banana"],
+["portakal","orange"],
+["domates","tomato"],
+["patates","potato"],
+["şeker","sugar"],
+["tuz","salt"],
+["çay","tea"],
+["kahve","coffee"],
+["baş","head"],
+["göz","eye"],
+["kulak","ear"],
+["burun","nose"],
+["ağız","mouth"],
+["el","hand"],
+["ayak","foot"],
+["kol","arm"],
+["bacak","leg"],
+["kalp","heart"],
+["hava","weather / air"],
+["yağmur","rain"],
+["kar","snow"],
+["rüzgar","wind"],
+["güneş","sun"],
+["yıldız","star"],
+["deniz","sea"],
+["göl","lake"],
+["nehir","river"],
+["dağ","mountain"],
+["orman","forest"],
+["ağaç","tree"],
+["çiçek","flower"],
+["hayvan","animal"],
+["kedi","cat"],
+["köpek","dog"],
+["kuş","bird"],
+["büyük","big"],
+["küçük","small"],
+["iyi","good"],
+["kötü","bad"],
+["güzel","beautiful"],
+["çirkin","ugly"],
+["sıcak","hot"],
+["soğuk","cold"],
+["yeni","new"],
+["eski","old"],
+["hızlı","fast"],
+["yavaş","slow"],
+["kolay","easy"],
+["zor","difficult"],
+["doğru","right / correct"],
+["yanlış","wrong"],
+["mutlu","happy"],
+["üzgün","sad"],
+["yorgun","tired"],
+["aç","hungry"],
+["tok","full (not hungry)"],
+["temiz","clean"],
+["kirli","dirty"],
+["uzun","long / tall"],
+["kısa","short"],
+["ağır","heavy"],
+["hafif","light (weight)"],
+["kırmızı","red"],
+["mavi","blue"],
+["sarı","yellow"],
+["yeşil","green"],
+["siyah","black"],
+["beyaz","white"],
+["turuncu","orange (color)"],
+["mor","purple"],
+["pembe","pink"],
+["kahverengi","brown"],
+["gri","gray"],
+["gitmek","to go"],
+["gelmek","to come"],
+["içmek","to drink"],
+["uyumak","to sleep"],
+["uyanmak","to wake up"],
+["çalışmak","to work / to study"],
+["konuşmak","to speak"],
+["dinlemek","to listen"],
+["görmek","to see"],
+["bakmak","to look"],
+["bilmek","to know"],
+["istemek","to want"],
+["sevmek","to love / to like"],
+["almak","to take / to buy"],
+["vermek","to give"],
+["yapmak","to do / to make"],
+["okumak","to read"],
+["yazmak","to write"],
+["koşmak","to run"],
+["yürümek","to walk"],
+["oturmak","to sit"],
+["kalkmak","to get up / to stand up"],
+["açmak","to open"],
+["kapatmak","to close"],
+["başlamak","to start"],
+["bitirmek","to finish"],
+["beklemek","to wait"],
+["düşünmek","to think"],
+["anlamak","to understand"],
+["unutmak","to forget"],
+["hatırlamak","to remember"],
+["gülmek","to laugh"],
+["ağlamak","to cry"],
+["söylemek","to say / to tell"],
+["sormak","to ask"],
 ];
 
 const ASVAB_WORDS = [
@@ -9182,6 +9426,9 @@ const UI_STRINGS = {
     custom_pos_ph: "tür (otomatik doldurulur)",
     add_btn: "Ekle",
     custom_empty: "Henüz kendi kelime eklemedin. Yukarıdan ekleyip sadece onlarla pratik yapabilirsin.",
+    tab_trwords: "Turkish Words",
+    trw_label: "Günlük Hayatta Kullanılan Basit Türkçe Kelimeler",
+    trw_hint: "Selamlaşma, aile, sayılar, günler, ev eşyaları, yiyecekler, renkler ve en sık kullanılan fiiller gibi günlük hayattan ~230 temel Türkçe kelime.",
     re_label: "Emlak Lisans Sınavı Kelimeleri",
     re_hint: "ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.",
     as_label: "ASVAB Word Knowledge Kelimeleri",
@@ -9258,6 +9505,9 @@ const UI_STRINGS = {
     custom_pos_ph: "type (auto-filled)",
     add_btn: "Add",
     custom_empty: "You haven't added any words yet. Add some above and practice with just those.",
+    tab_trwords: "Turkish Words",
+    trw_label: "Simple Turkish Words for Everyday Life",
+    trw_hint: "About 230 essential Turkish words for daily life — greetings, family, numbers, days, household items, food, colors, and the most common verbs.",
     re_label: "Real Estate License Exam Terms",
     re_hint: "About 150 of the most common terms on U.S. real estate licensing exams — covering property, agency, contracts, financing, appraisal, closing, zoning, and leasing.",
     as_label: "ASVAB Word Knowledge Terms",
@@ -9412,6 +9662,7 @@ function applyLanguage(lang){
 
   document.getElementById("oxfordCount").textContent = t("total_words_oxford")
     .replace("{n}", b2Count + c1Count).replace("{b2}", b2Count).replace("{c1}", c1Count);
+  document.getElementById("trwCount").textContent = t("total_words").replace("{n}", TURKISH_WORDS.length);
   document.getElementById("reCount").textContent = t("total_words").replace("{n}", REAL_ESTATE_WORDS.length);
   document.getElementById("asCount").textContent = t("total_words").replace("{n}", ASVAB_WORDS.length);
   document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
@@ -9432,6 +9683,7 @@ function applyLanguage(lang){
 
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+  const trwTabActive = !document.getElementById("trwords").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
@@ -9443,6 +9695,7 @@ function applyLanguage(lang){
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
+  if(trwTabActive) renderTRWTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
@@ -9530,6 +9783,7 @@ let sessionCorrect = 0, sessionWrong = 0;
 let mistakeRowsCache = [];
 const MASTER_THRESHOLD = 1; // weight at/under this = considered "mastered" once seen correctly a couple times
 const ALL_WORDS = WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
+const ALL_TRW_WORDS = TURKISH_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Turkish Words"}));
 const ALL_RE_WORDS = REAL_ESTATE_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_RE_WORDS_EN = REAL_ESTATE_WORDS_EN.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_AS_WORDS = ASVAB_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"ASVAB"}));
@@ -9752,6 +10006,9 @@ async function handleAnswer(chosenOpt, btnEl){
     }
     await saveCustomList(customWordsCache);
     if(window.currentUser && window.FB) window.FB.pushCustomWord(window.currentUser.uid, current.id, customWordsCache[idx] || {en:current.e, tr:current.t, pos:current.p, weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.trw){
+    await saveTRWWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushTRWStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.re){
     await saveREWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushRealEstateStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -9811,6 +10068,7 @@ function getPanelCategories(){
   return [
     {key:"ox3k", col:"ox3k", nameTr:"Oxford 3000", nameEn:"Oxford 3000", total: OXFORD3000_WORDS.length, keys: listOX3KKeys, load: loadOX3KWord, prefix: OX3K_STORE_PREFIX},
     {key:"oxford5000", col:"oxford", nameTr:"Oxford 5000", nameEn:"Oxford 5000", total: WORDS.length, keys: listWordKeys, load: loadWord, prefix: STORE_PREFIX},
+    {key:"trwords", col:"trwords", nameTr:"Turkish Words", nameEn:"Turkish Words", total: TURKISH_WORDS.length, keys: listTRWKeys, load: loadTRWWord, prefix: TRW_STORE_PREFIX},
     {key:"realestate", col:"realestate", nameTr:"Real Estate", nameEn:"Real Estate", total: REAL_ESTATE_WORDS.length, keys: listREKeys, load: loadREWord, prefix: RE_STORE_PREFIX},
     {key:"asvab", col:"asvab", nameTr:"ASVAB", nameEn:"ASVAB", total: ASVAB_WORDS.length, keys: listASKeys, load: loadASWord, prefix: AS_STORE_PREFIX},
     {key:"finlit", col:"finlit", nameTr:"Finansal Okuryazarlık", nameEn:"Financial Literacy", total: FINLIT_QUESTIONS.length, keys: listFLKeys, load: loadFLQuestion, prefix: FL_STORE_PREFIX},
@@ -9985,6 +10243,7 @@ function switchTab(tab){
   if(tab === "setup") renderOxfordTab();
   document.getElementById("mistakes").classList.toggle("hidden", tab!=="mistakes");
   document.getElementById("custom").classList.toggle("hidden", tab!=="custom");
+  document.getElementById("trwords").classList.toggle("hidden", tab!=="trwords");
   document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
   document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
   document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
@@ -9999,6 +10258,7 @@ function switchTab(tab){
   document.getElementById("quiz").classList.add("hidden");
   if(tab === "mistakes") loadMistakes();
   if(tab === "custom") renderCustomTab();
+  if(tab === "trwords") renderTRWTab();
   if(tab === "realestate") renderRealEstateTab();
   if(tab === "asvab") renderASVABTab();
   if(tab === "finlit") renderFinlitTab();
@@ -10266,6 +10526,65 @@ document.getElementById("customDrillBtn").addEventListener("click", async ()=>{
   sessionCorrect = 0; sessionWrong = 0;
   document.getElementById("setup").classList.add("hidden");
   document.getElementById("custom").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
+/* ===== Turkish Words tab (fixed curated list, mirrors Real Estate/FBR) ===== */
+const TRW_STORE_PREFIX = "trw5k:";
+
+function listTRWKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(TRW_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(TRW_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(TRW_STORE_PREFIX)); }
+}
+async function loadTRWWord(en){
+  const raw = await rawGet(TRW_STORE_PREFIX+en);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveTRWWord(en, val){
+  await rawSet(TRW_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+async function renderTRWTab(){
+  const listEl = document.getElementById("trwList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const rows = [];
+  for(const w of TURKISH_WORDS){
+    const stat = await loadTRWWord(w[0]);
+    rows.push({en:w[0], tr:w[1], wrong: stat ? (stat.wrong||0) : 0, correct: stat ? (stat.correct||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <span class="mistake-en">${r.en}</span>
+        <div class="mistake-tr">${r.tr}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("trwDrillBtn").addEventListener("click", async ()=>{
+  currentDistractorPool = ALL_TRW_WORDS;
+  pool = [];
+  for(const w of TURKISH_WORDS){
+    const stat = await loadTRWWord(w[0]);
+    pool.push({
+      e:w[0], p:"", t:w[1], l:"Turkish Words",
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      trw: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("trwords").classList.add("hidden");
   document.getElementById("tabbar").classList.add("hidden");
   document.getElementById("quiz").classList.remove("hidden");
   document.getElementById("statTotal").textContent = pool.length;
@@ -10934,11 +11253,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -10988,6 +11307,7 @@ window.onAuthChanged = async function(user){
     clearLocalProgress();
     const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
     const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+    const trwTabActive = !document.getElementById("trwords").classList.contains("hidden");
     const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
@@ -10999,6 +11319,7 @@ window.onAuthChanged = async function(user){
     const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
     if(customTabActive) renderCustomTab();
+    if(trwTabActive) renderTRWTab();
     if(reTabActive) renderRealEstateTab();
     if(asTabActive) renderASVABTab();
     if(flTabActive) renderFinlitTab();
@@ -11070,6 +11391,34 @@ async function syncWithCloud(uid){
     window.FB.pushCustomWord(uid, id, word);
   }
   await saveCustomList(mergedList);
+
+  // --- Turkish Words word stats, merged the same way as Oxford words ---
+  const cloudTRW = await window.FB.fetchAllCloudTRW(uid);
+  const localTRWKeys = listTRWKeys();
+  const localTRWMap = {};
+  for(const k of localTRWKeys){
+    const en = k.slice(TRW_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localTRWMap[en] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allTRWEn = new Set([...Object.keys(localTRWMap), ...Object.keys(cloudTRW)]);
+  for(const en of allTRWEn){
+    const l = localTRWMap[en], c = cloudTRW[en];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveTRWWord(en, merged);
+    window.FB.pushTRWStat(uid, en, merged);
+  }
 
   // --- Real Estate word stats, merged the same way as Oxford words ---
   const cloudRE = await window.FB.fetchAllCloudRealEstate(uid);
@@ -11325,6 +11674,7 @@ async function syncWithCloud(uid){
 
   const mistakesTabActive = !document.getElementById("mistakes").classList.contains("hidden");
   const customTabActive = !document.getElementById("custom").classList.contains("hidden");
+  const trwTabActive = !document.getElementById("trwords").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
@@ -11336,6 +11686,7 @@ async function syncWithCloud(uid){
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
   if(customTabActive) renderCustomTab();
+  if(trwTabActive) renderTRWTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(flTabActive) renderFinlitTab();
@@ -11418,6 +11769,12 @@ async function fetchAllCloudCustom(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudTRW(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "trwords"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function fetchAllCloudRealEstate(uid){
   const out = {};
   const snap = await getDocs(collection(db, "users", uid, "realestate"));
@@ -11476,6 +11833,10 @@ async function pushWordStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "oxford", en), data); }
   catch(e){ console.error("Kelime buluta yazılamadı:", e); }
 }
+async function pushTRWStat(uid, en, data){
+  try{ await setDoc(doc(db, "users", uid, "trwords", en), data); }
+  catch(e){ console.error("Turkish Words kelimesi buluta yazılamadı:", e); }
+}
 async function pushRealEstateStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "realestate", en), data); }
   catch(e){ console.error("Real Estate kelimesi buluta yazılamadı:", e); }
@@ -11523,7 +11884,7 @@ async function deleteCustomWordCloud(uid, id){
 
 /* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
-const ADMIN_COLLECTIONS = ["oxford","ox3k","realestate","asvab","finlit","wealth","irc","irc2021","cdl","fbr","custom"];
+const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","finlit","wealth","irc","irc2021","cdl","fbr","custom"];
 
 async function pushUserProfile(uid, email, displayName){
   try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
@@ -11589,8 +11950,8 @@ async function fetchAdminStats(){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFBRStat, pushOX3KStat,
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFBR, fetchAllCloudOX3K,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFBRStat, pushOX3KStat,
   pushUserProfile, fetchAdminStats
 };
 
