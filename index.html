@@ -524,6 +524,7 @@ body{
       <option value="irc" data-i18n="tab_irc">Ev Yapı Kodu</option>
       <option value="irc2021" data-i18n="tab_irc2021">IRC 2021 Code</option>
       <option value="cdl" data-i18n="tab_cdl">CDL</option>
+      <option value="fidium" data-i18n="tab_fidium">Fidium Installation</option>
     </select>
   </div>
 
@@ -632,6 +633,17 @@ body{
     <div class="level-grid" id="cdlLevelGrid" style="grid-template-columns:1fr 1fr;"></div>
     <button class="start-btn" id="cdlDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="cdlList"></div>
+  </div>
+
+  <!-- FIDIUM INSTALLATION (fiber internet installation technician training) -->
+  <div id="fidium" class="panel hidden">
+    <p class="section-label" data-i18n="fidium_label">Fidium Installation Soruları</p>
+    <p class="tab-count" id="fidiumCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="fidium_hint">Fiber internet kurulum teknisyenliği için temel bilgiler — fiber optik temelleri, drop kablo çekme, ek yapma (splicing), ONT/router kurulumu, sinyal test ve ölçüm, aktivasyon ve müşteri hizmeti/güvenlik konularında ~140 soru.</p>
+    <p class="section-label" style="margin-top:0;" data-i18n="irc2021_topic_label">Konu Seç</p>
+    <div class="level-grid" id="fidiumLevelGrid" style="grid-template-columns:1fr 1fr;"></div>
+    <button class="start-btn" id="fidiumDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="fidiumList"></div>
   </div>
 
   <!-- FOOLED BY RANDOMNESS -->
@@ -9404,6 +9416,150 @@ const CDL_QUESTIONS = [
 
 const CDL_QUESTIONS_EN = [
 ];
+
+/* ===== Fidium Installation (fiber internet install technician training) ===== */
+const FIDIUM_QUESTIONS = [
+["Fiber optik kablonun içindeki veri hangi ortamda taşınır?","Işık (cam veya plastik lif içinde)","Elektrik akımı","Radyo dalgaları","Manyetik alan","Fiber Optik Temelleri"],
+["GPON açılımı nedir?","Gigabit Passive Optical Network","General Public Optical Node","Global Passive Ohm Network","Gigabit Protocol Output Node","Fiber Optik Temelleri"],
+["Bir GPON ağında merkez ofiste (CO) bulunan ana cihazın adı nedir?","OLT (Optical Line Terminal)","ONT","NID","Splitter","Fiber Optik Temelleri"],
+["Müşterinin evinde/binasında kurulan fiber sonlandırma cihazının adı nedir?","ONT (Optical Network Terminal)","OLT","OTDR","VFL","Fiber Optik Temelleri"],
+["Bir GPON ağında tek bir fiber hattı, splitter aracılığıyla kaç eve kadar sinyali paylaştırabilir?","Genellikle 32 veya 64 eve kadar","Sadece 2 eve","Sadece 4 eve","Sınırsız","Fiber Optik Temelleri"],
+["\"Passive\" (pasif) optik ağda splitter'ın çalışması için elektriğe ihtiyaç var mıdır?","Hayır, splitter tamamen pasiftir, elektrik gerektirmez","Evet her zaman 220V gerekir","Sadece gece gerekir","Sadece yağmurda gerekir","Fiber Optik Temelleri"],
+["Single-mode fiber ile multi-mode fiber arasındaki temel fark nedir?","Single-mode daha ince çekirdeğe sahiptir ve uzun mesafede daha az sinyal kaybı yaşar","Multi-mode her zaman daha hızlıdır","Single-mode sadece kısa mesafede kullanılır","İkisi aynı şeydir","Fiber Optik Temelleri"],
+["Ev/İş internet bağlantılarında (FTTH) hangi fiber tipi standart olarak kullanılır?","Single-mode fiber","Multi-mode fiber","Coaxial kablo","Cat5 kablo","Fiber Optik Temelleri"],
+["Fiber optik kabloda ışık kaynağı olarak genellikle ne kullanılır?","Lazer diyot veya LED","Halojen ampul","Manyetik bobin","Kızılötesi termostat","Fiber Optik Temelleri"],
+["FTTH açılımı nedir?","Fiber to the Home","Fiber to the Hub","Fast Transfer to Home","Fiber Transmission Handler","Fiber Optik Temelleri"],
+["Fiberin dış plastik kaplamasına ne ad verilir?","Jacket (kılıf)","Core","Cladding","Sadece buffer","Fiber Optik Temelleri"],
+["Fiber optik kablonun ışığı ilettiği en iç kısmına ne denir?","Core (çekirdek)","Cladding","Jacket","Strength member","Fiber Optik Temelleri"],
+["Cladding'in (kaplama tabakası) fiber optikte temel görevi nedir?","Işığı core içinde tutmak (total internal reflection ile)","Kabloyu renklendirmek","Elektriği yalıtmak","Suyu emmek","Fiber Optik Temelleri"],
+["Drop kablo nedir?","Ana dağıtım noktasından doğrudan müşterinin evine çekilen son bağlantı kablosu","Sadece şehir içi ana omurga kablosu","Sadece elektrik kablosu","Router içindeki kablo","Fiber Optik Temelleri"],
+["Aerial (havai) ve buried (gömülü) drop kablo kurulumu arasındaki fark nedir?","Aerial direk üzerinden havadan, buried yer altından döşenir","Aerial sadece yazın yapılır","Buried sadece binalarda kullanılır","İkisi aynı yöntemdir","Fiber Optik Temelleri"],
+["NID (Network Interface Device) neyi ifade eder?","Fiber hattının bina dışında sonlandığı, müşteri ile şirket sorumluluğunun ayrıldığı kutu","Sadece router modeli","Sadece WiFi anteni","Sadece elektrik sigortası","Fiber Optik Temelleri"],
+["Demarcation point (demarc) nedir?","Servis sağlayıcının sorumluluğu ile müşterinin ev kablolamasının sorumluluğunun ayrıldığı nokta","Sadece OLT'nin bulunduğu bina","Sadece splitter kutusu","Sadece modem","Fiber Optik Temelleri"],
+["Bir GPON ağında \"downstream\" ve \"upstream\" trafiği farklı dalga boylarında mı taşınır?","Evet, farklı wavelength'lerde (WDM ile) aynı fiber üzerinde taşınır","Hayır, aynı wavelength kullanılır","Sadece downstream fiber ile taşınır","İkisi de bakır kablo ile taşınır","Fiber Optik Temelleri"],
+["Fiber optik kablonun avantajlarından biri olarak, bakır kabloya kıyasla elektromanyetik girişime (EMI) karşı durumu nedir?","Fiber optik EMI'den etkilenmez","Fiber optik EMI'den bakırdan daha çok etkilenir","İkisi aynı derecede etkilenir","Fiber sadece sıcakta etkilenir","Fiber Optik Temelleri"],
+["\"Drop\" kablonun tipik çekirdek sayısı (fiber count) ev bağlantılarında genelde kaçtır?","Genellikle 1-2 fiber (bazen birkaç fiber)","Her zaman 144 fiber","Her zaman 48 fiber","Sadece 1000 fiber","Fiber Optik Temelleri"],
+["Havai (aerial) drop kablo çekerken direkten eve olan minimum yer üstü yüksekliği genelde neye göre belirlenir?","Yerel National Electrical Safety Code (NESC) kurallarına göre","Teknisyenin tercihine","Sadece müşterinin isteğine","Hava durumuna","Drop Kablo Çekme ve Kurulum"],
+["Drop kablo gerginliği (tension) çok fazla olursa ne olabilir?","Fiber kırılabilir veya aşırı sinyal kaybı (attenuation) oluşabilir","Hız artar","Renk değişir","Hiçbir etkisi olmaz","Drop Kablo Çekme ve Kurulum"],
+["Fiber kablo için minimum bükülme yarıçapı (bend radius) neden önemlidir?","Aşırı bükülme ışık kaybına (macrobend loss) ve kırılmaya yol açar","Sadece estetik içindir","Kabloyu ısıtır","Hızı artırır","Drop Kablo Çekme ve Kurulum"],
+["Bir ev girişinde (house entry) kablo giriş noktası seçilirken nelere dikkat edilir?","Su sızdırmazlığı, en kısa iç mesafe, ONT'nin kurulacağı yere yakınlık","Sadece rengine","Sadece müşteri odasının rengine","Sadece kapı numarasına","Drop Kablo Çekme ve Kurulum"],
+["Conduit (boru) içinden fiber kablo çekerken aşırı çekme kuvveti neyi riske atar?","Kablonun strength member'ının zarar görmesini ve fiberin kırılmasını","Sadece boyanın solmasını","Sadece kablonun renginin değişmesini","Hiçbir şeyi","Drop Kablo Çekme ve Kurulum"],
+["Dışarıdan içeriye kablo geçişinde su/nem girişini önlemek için ne kullanılır?","Sızdırmazlık (sealant/gasket) ve doğru açılı giriş","Sadece bant","Sadece silikon spreyi","Hiçbir şey gerekmez","Drop Kablo Çekme ve Kurulum"],
+["Yer altı (buried) drop kablo döşerken tipik minimum gömme derinliği neye göre değişir?","Yerel yönetmeliklere ve zemin tipine göre (genelde birkaç inç ile 2 fit arası)","Her zaman 10 fit","Her zaman 1 inç","Derinlik önemli değildir","Drop Kablo Çekme ve Kurulum"],
+["Fiber kabloyu keskin köşelerden geçirirken neye dikkat edilmelidir?","Kabloyu koruyucu conduit veya köşe koruyucularla korumak","Kabloyu doğrudan köşeye bastırmak","Bant ile sabitlemek yeterlidir","Önemi yoktur","Drop Kablo Çekme ve Kurulum"],
+["Mesken dışı ortak alanlardan (örneğin çok daireli binalarda) kablo çekerken nelere dikkat edilir?","Bina yönetimi izinleri ve yangın kodlarına (fire-rated cable, firestop) uyum","Sadece hızlı olmaya","Sadece renk uyumuna","Hiçbir kurala gerek yok","Drop Kablo Çekme ve Kurulum"],
+["\"Slack loop\" (fazlalık kablo halkası) neden bırakılır?","Gelecekteki tamir/yeniden sonlandırma için ekstra kablo payı sağlamak","Estetik görünüm için","Hızı artırmak için","Zorunlu değildir","Drop Kablo Çekme ve Kurulum"],
+["Direkten eve çekilen drop kablonun sarkması (sag) neden önemlidir?","Çok gergin olursa kırılabilir, çok gevşek olursa araçlara/insanlara takılabilir","Sadece görüntü içindir","Hiç önemi yoktur","Sadece kışın önemlidir","Drop Kablo Çekme ve Kurulum"],
+["Fiber kablo çekerken kullanılan \"fish tape\" veya \"pull string\" ne işe yarar?","Kabloyu boru/duvar içinden çekmeye yardımcı olur","Kabloyu keser","Kabloyu ısıtır","Sinyali test eder","Drop Kablo Çekme ve Kurulum"],
+["Ağaç dallarının drop kabloya temas etmesi neden sorun olabilir?","Kabloya sürtünme/aşınma veya kopmaya yol açabilir","Sinyali güçlendirir","Hiçbir etkisi yoktur","Rengini değiştirir","Drop Kablo Çekme ve Kurulum"],
+["İç mekanda (indoor) kablo çekerken duvar içinden geçirmek yerine sıklıkla ne tercih edilir?","Duvar kenarlarından, pervazlardan gizlenerek çekmek (raceway/molding kullanmak)","Duvarı kırmak her zaman gereklidir","Kablo her zaman görünür bırakılır","Fark etmez","Drop Kablo Çekme ve Kurulum"],
+["Bir ONT kurulum noktası seçilirken elektrik prizine yakınlık neden önemlidir?","ONT'nin çalışması için elektrik gerekir (aktif cihazdır)","Sadece görüntü için","ONT elektriksiz çalışır","Sadece ısınma için","Drop Kablo Çekme ve Kurulum"],
+["Drop kablo döşerken mevcut yer altı hatlarına (gaz, su, elektrik) zarar vermemek için ne yapılır?","Kazı öncesi \"call before you dig\" / utility locate hizmeti ile hatlar işaretletilir","Rastgele kazılır","Sadece haritaya bakılır","Hiçbir önlem alınmaz","Drop Kablo Çekme ve Kurulum"],
+["Bir binaya yeni fiber girişi açılırken (yeni delik delme) nelere dikkat edilir?","Duvarın yapısal bütünlüğü, mevcut kablolara zarar vermemek, doğru açı ile aşağı eğimli delme (su girişini önlemek için)","Sadece hız","Sadece görüntü","Hiçbiri","Drop Kablo Çekme ve Kurulum"],
+["Fiber kablo kesildiğinde veya hasar gördüğünde genellikle ne yapılır?","Hasarlı kısım kesilip yeniden splice edilir veya kablo değiştirilir","Bant ile sarılır ve bırakılır","Hiçbir şey yapılmaz","Boyanır","Drop Kablo Çekme ve Kurulum"],
+["Aerial drop kablo için kullanılan \"strand\" (destek teli) nedir?","Kabloyu direkler arasında fiziksel olarak taşıyan çelik tel","Fiberin kendisi","Elektrik kablosu","Topraklama teli","Drop Kablo Çekme ve Kurulum"],
+["Yeni bir kurulumda kablo döşeme rotası planlanırken müşteriyle neden önceden konuşulmalıdır?","Kablonun evden nereden geçeceği, hangi odaya gireceği konusunda onay almak için","Gerek yoktur","Sadece faturalama için","Sadece hava durumu için","Drop Kablo Çekme ve Kurulum"],
+["Fusion splicing nedir?","İki fiber ucunun ısıyla eritilerek kalıcı olarak birleştirilmesi","İki fiberin bantla yapıştırılması","Fiberin boyanması","Fiberin lehimlenmesi","Ek Yapma (Splicing) ve Konnektörler"],
+["Mechanical splice (mekanik ek) fusion splice'a göre genellikle nasıldır?","Daha hızlı ama genelde daha yüksek sinyal kaybına (loss) sahiptir","Her zaman daha kalıcıdır","Elektrik gerektirmez asla","Fusion'dan her zaman daha az kayıplıdır","Ek Yapma (Splicing) ve Konnektörler"],
+["Fusion splicer cihazı splice yaparken fiber uçlarını nasıl birleştirir?","Elektrik arkı (electric arc) ile ısıtıp eriterek","Yapıştırıcı ile","Dondurarak","Preslerle sıkıştırarak","Ek Yapma (Splicing) ve Konnektörler"],
+["Fiber ucunu splice/konnektör takmadan önce temizlemek için sıklıkla ne kullanılır?","İzopropil alkol ve lint-free mendil","Su ve sabun","Yağ","Zımpara kağıdı","Ek Yapma (Splicing) ve Konnektörler"],
+["Fiber ucunu düzgün kesmek için kullanılan alete ne denir?","Cleaver (fiber kesici)","Pense","Tornavida","Makas","Ek Yapma (Splicing) ve Konnektörler"],
+["SC konnektör ile LC konnektör arasındaki temel fark nedir?","LC daha küçük form faktörlüdür (yoğun bağlantı noktalarında kullanılır)","SC hiç kullanılmaz artık","LC sadece elektrik içindir","Aralarında fark yoktur","Ek Yapma (Splicing) ve Konnektörler"],
+["APC (Angled Physical Contact) konnektör ile UPC (Ultra Physical Contact) konnektör arasındaki en belirgin fark nedir?","APC'nin ucu 8 derece açılıdır, geri yansımayı (return loss) azaltır","APC her zaman yeşil değil mavi renklidir","UPC her zaman daha pahalıdır","Aralarında fark yoktur","Ek Yapma (Splicing) ve Konnektörler"],
+["APC konnektörler genellikle hangi renkte üretilir (endüstri standardı)?","Yeşil","Mavi","Kırmızı","Sarı","Ek Yapma (Splicing) ve Konnektörler"],
+["UPC konnektörler genellikle hangi renkte üretilir?","Mavi","Yeşil","Siyah","Turuncu","Ek Yapma (Splicing) ve Konnektörler"],
+["Bir konnektör ucunun kirli olması (dirty connector) sinyale ne yapar?","Işık kaybına (attenuation) ve hatta cihaza zarar verebilecek yansımalara yol açar","Sinyali güçlendirir","Hiçbir etkisi olmaz","Rengi değiştirir","Ek Yapma (Splicing) ve Konnektörler"],
+["Bir fusion splice işleminin kalitesini ölçmek için splicer cihazı genelde neyi tahmini olarak gösterir?","Tahmini splice loss (dB) değeri","Kablonun rengini","Fiberin uzunluğunu","Kablonun üretim tarihini","Ek Yapma (Splicing) ve Konnektörler"],
+["Fiber ekleme (splice) noktaları neden genellikle bir splice tray/kutu içinde korunur?","Fiziksel hasar ve neme karşı korumak, düzenli saklamak için","Sadece görüntü için","Zorunlu değildir","Sadece etiketleme için","Ek Yapma (Splicing) ve Konnektörler"],
+["Kabul edilebilir tipik bir fusion splice kaybı (loss) yaklaşık ne kadardır?","Genellikle 0.1 dB veya altı","10 dB","50 dB","100 dB","Ek Yapma (Splicing) ve Konnektörler"],
+["Konnektör başına tipik kabul edilebilir insertion loss (ekleme kaybı) yaklaşık ne kadardır?","Genellikle yaklaşık 0.3-0.5 dB","20 dB","50 dB","5 dB her zaman","Ek Yapma (Splicing) ve Konnektörler"],
+["Pigtail nedir?","Bir ucunda fabrikada takılı konnektör bulunan kısa fiber parçası, splice ile ana kabloya bağlanır","Router'ın anteni","Elektrik kablosu","Sadece bir çeşit bant","Ek Yapma (Splicing) ve Konnektörler"],
+["Bir konnektör kirli veya hasarlıysa saha teknisyeni genelde ne yapar?","Konnektörü temizler veya gerekirse yeniden sonlandırır (re-terminate)","Görmezden gelir","Boyar","Elektrik bantı ile sarar","Ek Yapma (Splicing) ve Konnektörler"],
+["Fiber optik temizleme kalemi (cleaning pen/click cleaner) neyi temizler?","Konnektör uçlarındaki toz ve yağı","Router'ın dışını","ONT'nin ekranını","Duvarları","Ek Yapma (Splicing) ve Konnektörler"],
+["Splice tepsisi (splice tray) içindeki fiberler neden gevşek halka (loop) şeklinde düzenlenir?","Aşırı bükülmeyi (bend loss) önlemek ve fiziksel stresi azaltmak için","Sadece estetik","Hız artırmak için","Zorunlu değildir","Ek Yapma (Splicing) ve Konnektörler"],
+["Konnektörün \"end-face\" (uç yüzeyi) neden mikroskopla incelenir (fiber scope)?","Çizik, kir veya hasar olup olmadığını kontrol etmek için","Rengini kontrol etmek için","Uzunluğunu ölçmek için","Zorunlu değildir","Ek Yapma (Splicing) ve Konnektörler"],
+["Bir fiber splice/konnektör işleminden sonra sinyal seviyesini doğrulamak için ne kullanılır?","Optik güç ölçer (power meter)","Voltmetre","Termometre","Manometre","Ek Yapma (Splicing) ve Konnektörler"],
+["ONT genellikle evde nereye monte edilir?","Fiber girişine yakın, elektrik prizi olan, korumalı bir noktaya (genelde garaj, bodrum veya dolap)","Her zaman çatıya","Her zaman bahçeye","Her zaman banyoya","ONT ve Router Kurulumu"],
+["ONT'nin temel görevi nedir?","Optik (ışık) sinyalini elektriksel Ethernet sinyaline dönüştürmek","Sadece WiFi yaymak","Sadece elektrik dağıtmak","Sadece kabloyu kesmek","ONT ve Router Kurulumu"],
+["Bazı kurulumlarda ONT ve router aynı cihaz olarak birleştirilebilir mi?","Evet, \"gateway\" adı verilen entegre cihazlarda ikisi birleştirilebilir","Hayır, asla birleştirilemez","Sadece ticari binalarda birleştirilir","Sadece kablosuz olur","ONT ve Router Kurulumu"],
+["ONT ile router arasında genellikle hangi kablo tipi kullanılır?","Ethernet (Cat5e/Cat6) kablosu","Coaxial kablo","Fiber kablo her zaman","Telefon kablosu","ONT ve Router Kurulumu"],
+["WiFi router kurulumunda sinyal kalitesini artırmak için router genelde nereye yerleştirilmelidir?","Evin merkezi, açık, yüksekçe ve engelsiz bir noktasına","Bodrumda kilitli bir dolaba","Metal kutunun içine","Su altına","ONT ve Router Kurulumu"],
+["WiFi sinyalini zayıflatan yaygın engellerden biri hangisidir?","Kalın beton/metal duvarlar ve büyük metal eşyalar","Ahşap kapılar","Cam pencereler","İnce perdeler","ONT ve Router Kurulumu"],
+["2.4 GHz ile 5 GHz WiFi bantları arasındaki temel fark nedir?","2.4 GHz daha uzun menzilli ama yavaş, 5 GHz daha hızlı ama kısa menzilli","Aralarında fark yoktur","5 GHz her zaman daha uzun menzillidir","2.4 GHz sadece gece çalışır","ONT ve Router Kurulumu"],
+["Müşteri evinde WiFi kapsama alanını genişletmek için sıklıkla ne kurulur?","Mesh WiFi sistemi veya extender/access point","İkinci bir ONT","Yeni bir fiber hattı","Sadece daha uzun bir kablo","ONT ve Router Kurulumu"],
+["Router kurulumunda güvenlik için ilk yapılması gereken temel adımlardan biri nedir?","Varsayılan (default) WiFi şifresini güçlü bir şifreyle değiştirmek","Şifreyi tamamen kaldırmak","Router'ı resetlemeden bırakmak","Hiçbir şey yapmamak","ONT ve Router Kurulumu"],
+["Bir müşteri kurulum sırasında \"static IP\" istiyorsa bu ne anlama gelir?","Cihazın internet adresinin (IP) sabit kalması, değişmemesi","İnternetin daha hızlı olması","WiFi şifresinin sabit kalması","Sadece kablolu bağlantı","ONT ve Router Kurulumu"],
+["Kurulum sonrası hız testi (speed test) neden yapılır?","Müşterinin aldığı hizmetin satın aldığı hız paketine uyduğunu doğrulamak için","Sadece formalite için","WiFi şifresini görmek için","ONT'yi resetlemek için","ONT ve Router Kurulumu"],
+["Router firmware güncellemesi neden önemlidir?","Güvenlik açıklarını kapatmak ve performansı iyileştirmek için","Sadece görünümü değiştirmek için","Zorunlu değildir hiçbir zaman","Sadece hızı yavaşlatmak için","ONT ve Router Kurulumu"],
+["ONT'nin üzerindeki LED ışıkları teknisyene ne hakkında bilgi verir?","Güç, fiber sinyali (PON) ve bağlantı durumu hakkında","Sadece dekoratiftir","Hava durumu hakkında","Elektrik faturası hakkında","ONT ve Router Kurulumu"],
+["Bir ONT'de \"LOS\" (Loss of Signal) LED'i yanıyorsa bu ne anlama gelir?","Optik sinyal alınamıyor, fiber hattında sorun var","Her şey normal çalışıyor","WiFi şifresi yanlış","Router bozuk","ONT ve Router Kurulumu"],
+["Battery backup (yedek pil) ünitesi ONT'ye neden bağlanabilir?","Elektrik kesintisinde (örn. acil durum aramaları için) hizmetin bir süre daha çalışmasını sağlamak için","WiFi hızını artırmak için","Sinyali güçlendirmek için","Sadece dekoratif amaçla","ONT ve Router Kurulumu"],
+["Müşteri kurulumunda modem/router'ın reset (fabrika ayarlarına döndürme) butonu ne işe yarar?","Cihazı fabrika ayarlarına sıfırlamak","Elektriği kesmek","WiFi'yi güçlendirmek","Hızı iki katına çıkarmak","ONT ve Router Kurulumu"],
+["Ethernet kablosu üzerinde bulunan konnektör tipine ne ad verilir?","RJ45","RJ11","BNC","F-type","ONT ve Router Kurulumu"],
+["Bir müşteri evinde birden fazla oda için kablolu internet isterse teknisyen genelde ne yapar?","Ethernet switch kullanarak veya mevcut ev içi kablolamayı kullanarak dağıtım yapar","Her odaya ayrı ONT kurar","Bunu yapmak imkansızdır","Sadece WiFi kullanılır her zaman","ONT ve Router Kurulumu"],
+["Kurulum sırasında müşterinin mevcut cihazlarını (TV, akıllı ev cihazları vb.) yeni ağa bağlamak neden önemli olabilir?","Müşteri deneyiminin sorunsuz devam etmesi için","Zorunlu değildir hiçbir zaman","Sadece fatura için","Sadece estetik için","ONT ve Router Kurulumu"],
+["Bir kurulumda \"self-install kit\" ne anlama gelir?","Müşterinin teknisyen olmadan kendi kendine kurabileceği, önceden hazırlanmış ekipman seti","Sadece profesyonel kurulum","Sadece ticari kurulum","Sadece tamir seti","ONT ve Router Kurulumu"],
+["Optik güç ölçer (optical power meter) ne ölçer?","Fiber hattındaki ışık sinyalinin gücünü (dBm cinsinden)","Elektrik voltajını","Kablonun uzunluğunu","WiFi hızını","Sinyal Test ve Ölçüm"],
+["dBm nedir?","Optik/elektriksel gücü 1 milliwatt'a göre logaritmik olarak ifade eden birim","Bir mesafe birimi","Bir zaman birimi","Bir ağırlık birimi","Sinyal Test ve Ölçüm"],
+["Bir GPON hattında ONT'ye gelen tipik kabul edilebilir alım gücü (Rx power) aralığı genellikle nedir?","Yaklaşık -8 dBm ile -28 dBm arası (ekipmana göre değişir)","+50 dBm ile +100 dBm","0 volt ile 5 volt","Her zaman tam olarak 0 dBm","Sinyal Test ve Ölçüm"],
+["Sinyal seviyesi çok düşükse (aşırı negatif dBm) müşteri ne yaşayabilir?","Bağlantı kopmaları, yavaşlık veya hiç bağlantı olmaması","Daha hızlı internet","Daha güçlü WiFi","Hiçbir sorun","Sinyal Test ve Ölçüm"],
+["VFL (Visual Fault Locator) nedir?","Fiber hattındaki kırık veya büyük hasarları görünür kırmızı ışıkla tespit etmeye yarayan alet","Bir tür router","Bir splice makinesi","Bir elektrik test cihazı","Sinyal Test ve Ölçüm"],
+["OTDR (Optical Time Domain Reflectometer) ne için kullanılır?","Fiber hattı boyunca kayıp noktalarını ve mesafeyi tespit etmek için","WiFi şifresini bulmak için","Elektrik akımını ölçmek için","Sadece renk testi için","Sinyal Test ve Ölçüm"],
+["Attenuation (zayıflama) nedir?","Sinyalin mesafe/bağlantılar boyunca kaybettiği güç miktarı","Sinyalin hızlanması","Kablonun uzaması","Rengin değişmesi","Sinyal Test ve Ölçüm"],
+["Fiber hattında aşırı bükülme (tight bend) sinyale ne yapar?","Ek kayba (bend loss/macrobend) neden olur","Sinyali güçlendirir","Hiçbir etkisi yoktur","Rengini değiştirir","Sinyal Test ve Ölçüm"],
+["Bir kurulum sonrası ONT aktive olmuyorsa teknisyen ilk olarak neyi kontrol eder?","Optik sinyal seviyesini (power) ve fiziksel bağlantıları","Doğrudan yeni cihaz siparişi verir","Müşteriyi taşınmaya yönlendirir","Elektrik faturasını kontrol eder","Sinyal Test ve Ölçüm"],
+["\"Ranging\" işlemi GPON ağında ne anlama gelir?","OLT'nin her ONT'nin mesafesini ölçüp zamanlama senkronizasyonu yapması","Kablo uzunluğunu fiziksel olarak ölçmek","Router'ı sıfırlamak","WiFi kanalını değiştirmek","Sinyal Test ve Ölçüm"],
+["Bir splitter'da fazla sayıda çıkış (split ratio yüksek, örn. 1:64) kullanmanın sinyale etkisi nedir?","Her çıkıştaki sinyal gücü azalır (daha fazla paylaşım = daha fazla kayıp)","Sinyal güçlenir","Hiçbir etki olmaz","Hız iki katına çıkar","Sinyal Test ve Ölçüm"],
+["Ping testi ne ölçer?","Bir cihazdan hedefe veri gidip gelme süresini (gecikme/latency)","WiFi şifresinin gücünü","Kablonun rengini","Elektrik voltajını","Sinyal Test ve Ölçüm"],
+["Jitter nedir?","Ağ gecikmesindeki (latency) tutarsızlık/değişkenlik","Kablonun fiziksel titreşimi","WiFi rengi","Router'ın ısısı","Sinyal Test ve Ölçüm"],
+["Bir fiber hattında beklenmedik yüksek kayıp (loss) tespit edildiğinde olası nedenlerden biri nedir?","Kirli/hasarlı konnektör veya kötü splice","Elektrik kesintisi","Yanlış WiFi şifresi","Router'ın rengi","Sinyal Test ve Ölçüm"],
+["Kurulum sonrası test raporunda genellikle hangi değerler kaydedilir?","Optik güç seviyesi (Rx/Tx dBm), hız testi sonucu, ONT seri numarası gibi bilgiler","Sadece müşterinin adı","Sadece hava durumu","Sadece teknisyenin doğum tarihi","Sinyal Test ve Ölçüm"],
+["Bir fiber bağlantısında \"return loss\" (geri yansıma kaybı) neden önemlidir?","Yüksek geri yansıma sinyal kalitesini bozabilir ve lazer kaynağına zarar verebilir","Hiçbir önemi yoktur","Sadece estetik bir ölçümdür","Sadece ısıyı etkiler","Sinyal Test ve Ölçüm"],
+["Kablo test edilirken süreklilik (continuity) test ne amaçla yapılır?","Fiberin uçtan uca kesintisiz olup olmadığını kontrol etmek için","Rengini kontrol etmek için","Uzunluğunu tahmin etmek için","Hızını ölçmek için","Sinyal Test ve Ölçüm"],
+["Bir teknisyen sahada dBm ölçümünü hangi noktalarda tipik olarak yapar?","ONT girişinde ve gerekirse splitter/dağıtım noktalarında","Sadece merkez ofiste","Sadece müşterinin telefonunda","Hiçbir yerde","Sinyal Test ve Ölçüm"],
+["Düşük sinyal seviyesi tespit edilirse ve nedeninin ONT'den kaynaklanmadığı biliniyorsa teknisyen ne yapar?","Hattı OTDR ile tarayarak sorunlu splice/konnektör noktasını bulur","Doğrudan yeni ONT takar","Müşteriye yeni router satar","Hiçbir şey yapmaz","Sinyal Test ve Ölçüm"],
+["Kurulum tamamlandıktan sonra sinyal ve hız testleri neden dokümante edilir?","Gelecekteki arıza durumlarında referans olması ve kalite kontrolü için","Zorunlu değildir","Sadece fatura için","Sadece formalite","Sinyal Test ve Ölçüm"],
+["ONT'nin ağa \"aktive\" olması ne anlama gelir?","OLT tarafından tanınıp hizmet için yapılandırılmasının tamamlanması","Sadece elektriğe takılması","Sadece WiFi'nin açılması","Sadece kutudan çıkarılması","Aktivasyon ve Provisioning"],
+["Her ONT'nin benzersiz bir tanımlayıcısı olan \"serial number\" veya \"GPON ID\" neden önemlidir?","Sistemin doğru ONT'yi doğru müşteri hesabıyla eşleştirmesi için","Sadece garanti takibi için","Hiçbir önemi yoktur","Sadece renk kodu için","Aktivasyon ve Provisioning"],
+["Bir ONT'yi müşteri hesabına bağlama (provisioning) işlemi genellikle nasıl yapılır?","Merkezi bir yazılım/sistem üzerinden ONT'nin seri numarası hesaba tanımlanarak","Sadece fiziksel olarak kabloyu bağlayarak","Sadece router'ı resetleyerek","Sadece müşteriye sorarak","Aktivasyon ve Provisioning"],
+["Aktivasyon sırasında ONT ağa bağlanamıyorsa olası nedenlerden biri nedir?","Yanlış/eksik provisioning veya zayıf optik sinyal","Müşterinin adının yanlış yazılması","Router'ın rengi","Evdeki oda sayısı","Aktivasyon ve Provisioning"],
+["Bir kurulumda \"work order\" (iş emri) neyi ifade eder?","Teknisyene atanan, yapılacak kurulum/servis işinin detaylarını içeren belge/görev","Sadece fatura","Sadece garanti belgesi","Sadece hava durumu raporu","Aktivasyon ve Provisioning"],
+["Saha teknisyeni bir kurulumu tamamladıktan sonra sistemde işlemi neden \"kapatır\" (closes out)?","İşin tamamlandığını merkez sisteme bildirmek ve faturalamanın/takibin başlaması için","Zorunlu değildir","Sadece formalite","Hiçbir etkisi yoktur","Aktivasyon ve Provisioning"],
+["Provisioning sırasında müşteriye atanan internet hız paketi nereden belirlenir?","Müşterinin satın aldığı hizmet planına göre merkezi sistemde tanımlanır","Teknisyen sahada rastgele belirler","Router'ın markasına göre","Evin büyüklüğüne göre","Aktivasyon ve Provisioning"],
+["Bir ONT değiştirildiğinde (arıza nedeniyle) yeni cihazın sisteme tekrar provision edilmesi neden gereklidir?","Yeni cihazın seri numarasının hesapla eşleştirilmesi gerekir","Gerekli değildir","Sadece görsel kontrol yeterlidir","Otomatik olarak hiçbir şey yapılmadan çalışır","Aktivasyon ve Provisioning"],
+["Kurulum sırasında \"truck roll\" terimi neyi ifade eder?","Bir teknisyenin fiziksel olarak sahaya/müşteriye gitmesi","Kamyonun bakımı","Depo sayımı","Elektrik kesintisi","Aktivasyon ve Provisioning"],
+["Aktivasyon sonrası müşteri hesabında hizmetin \"aktif\" görünmesi neden önemlidir?","Faturalandırma ve destek sistemlerinin doğru çalışması için","Hiçbir önemi yoktur","Sadece estetik","Sadece teknisyenin bilgisi için","Aktivasyon ve Provisioning"],
+["Bir kurulumda birden fazla hizmet (internet, TV, telefon) aynı ONT üzerinden sağlanabilir mi?","Evet, GPON altyapısı genellikle \"triple play\" hizmetleri destekler","Hayır, her hizmet için ayrı fiber hattı gerekir","Sadece internet sağlanabilir","Sadece TV sağlanabilir","Aktivasyon ve Provisioning"],
+["Kurulum öncesi teknisyenin sistemde adresi/iş emrini kontrol etmesi neden önemlidir?","Doğru adrese, doğru hizmet ve ekipmanla gitmek için","Gerekli değildir","Sadece navigasyon için","Sadece yakıt hesaplama için","Aktivasyon ve Provisioning"],
+["Bir müşteri taşındığında veya hizmeti iptal ettiğinde ONT genellikle ne olur?","Deaktive edilir ve mümkünse geri toplanır (bazı şirketlerde müşteride kalır)","Otomatik olarak patlar","Hiçbir işlem yapılmaz","Router'a dönüştürülür","Aktivasyon ve Provisioning"],
+["Kurulum sırasında müşteriden alınan onay/imza (work order completion) neyi doğrular?","Hizmetin kurulduğunu ve müşterinin kabul ettiğini","Sadece teknisyenin izni","Sadece hava durumunu","Sadece fatura tutarını","Aktivasyon ve Provisioning"],
+["Bir GPON ağında OLT üzerindeki her port kaç ONT'ye hizmet verebilir (split oranına bağlı olarak)?","Split oranına göre genelde 32 veya 64 ONT'ye kadar","Sadece 1 ONT'ye","Sınırsız sayıda","Sadece 2 ONT'ye","Aktivasyon ve Provisioning"],
+["Provisioning hatası nedeniyle müşteri hız paketinde sorun yaşarsa teknisyen genelde neyi kontrol eder/eskale eder?","Merkezi sistemdeki hesap/hız paketi ayarlarını, gerekirse backoffice/NOC ile iletişime geçer","Sadece router'ı değiştirir","Sadece WiFi şifresini değiştirir","Hiçbir şey yapmaz","Aktivasyon ve Provisioning"],
+["\"NOC\" (Network Operations Center) neyi ifade eder?","Ağın merkezi olarak izlendiği ve yönetildiği operasyon merkezi","Bir router markası","Bir konnektör tipi","Bir kablo türü","Aktivasyon ve Provisioning"],
+["Kurulumu tamamlayan teknisyen, işin doğru tamamlandığını doğrulamak için hangi son adımı yapar?","Hız testi ve sinyal seviyesi kontrolü ile müşteriye hizmeti gösterme","Sadece kutuları toplar ve gider","Sadece fatura keser","Hiçbir şey yapmaz","Aktivasyon ve Provisioning"],
+["Bir iş emrinde belirtilen \"SLA\" (Service Level Agreement) neyi ifade eder?","Hizmetin ne kadar sürede tamamlanması/sağlanması gerektiğine dair anlaşılan standart","Bir kablo tipi","Bir router modeli","Bir konnektör türü","Aktivasyon ve Provisioning"],
+["Aktivasyon sonrası teknisyenin müşteriye WiFi ağ adı ve şifresini bildirmesi neden önemlidir?","Müşterinin kendi cihazlarını ağa bağlayabilmesi için","Zorunlu değildir","Sadece formalite","Hiçbir işe yaramaz","Aktivasyon ve Provisioning"],
+["Merdiven (ladder) kullanırken temel güvenlik kurallarından biri nedir?","Merdiveni sağlam, düz zemine yerleştirmek ve 3 nokta teması (3-point contact) korumak","Merdiveni her zaman ıslak zemine koymak","Tek elle tırmanmak önemli değildir","Merdiven kullanmadan tırmanmak","Güvenlik ve Müşteri Hizmeti"],
+["Elektrik hatlarına yakın çalışırken (örneğin direk üzerinde) neye dikkat edilmelidir?","Güvenli mesafe korunmalı, elektrik hatlarıyla temastan kaçınılmalıdır","Elektrik hatlarına yaklaşmak sorun değildir","Sadece yağmurda dikkat edilir","Hiçbir önlem gerekmez","Güvenlik ve Müşteri Hizmeti"],
+["Kazı (kablo döşeme) öncesi \"call before you dig\" (811 gibi hizmetler) neden önemlidir?","Yer altındaki gaz, elektrik, su hatlarına zarar vermemek için","Sadece yasal formalite","Gerekli değildir","Sadece müşteri isterse yapılır","Güvenlik ve Müşteri Hizmeti"],
+["Fiber optik lazer ışığı doğrudan göze bakıldığında neden tehlikeli olabilir?","Görünmez olsa bile göze zarar verebilir (retina hasarı riski)","Hiçbir zararı yoktur","Sadece rahatsız edicidir","Sadece gündüz tehlikelidir","Güvenlik ve Müşteri Hizmeti"],
+["Fiber sonlandırma sırasında ortaya çıkan küçük cam parçacıkları (fiber shards) neden dikkatli toplanmalıdır?","Cilde batabilir ve görünmesi zor olduğu için tehlikelidir","Zararsızdır","Sadece görüntü için toplanır","Geri dönüştürülemez","Güvenlik ve Müşteri Hizmeti"],
+["Müşterinin evine girerken teknisyenin kimliğini göstermesi neden önemlidir?","Müşteri güvenliği ve şirketin profesyonel imajı için","Zorunlu değildir","Sadece formalite","Hiçbir önemi yoktur","Güvenlik ve Müşteri Hizmeti"],
+["Kurulum sırasında müşterinin evine verilebilecek hasarları önlemek için teknisyen ne yapmalıdır?","Dikkatli çalışmak, ayakkabı örtüsü/koruyucu kullanmak, alanı temiz bırakmak","Hızlı bitirmek her şeyden önemlidir","Hasar önemli değildir","Sadece kendi güvenliğini düşünmek","Güvenlik ve Müşteri Hizmeti"],
+["Merdivenle çalışırken elektrik hatlarına karşı neden metal merdiven yerine genelde fiberglass/ahşap merdiven tercih edilir?","Metal merdivenler elektriği iletir, elektrik çarpması riskini artırır","Metal merdivenler daha hafiftir","Renk tercihi","Fiyat farkı","Güvenlik ve Müşteri Hizmeti"],
+["Bir teknisyen müşteriyle iletişimde zor/sinirli bir müşteriyle karşılaştığında ilk yaklaşımı ne olmalıdır?","Sakin kalmak, aktif dinlemek ve profesyonel/empatik yaklaşmak","Tartışmaya girmek","Hemen işi bırakıp gitmek","Sesini yükseltmek","Güvenlik ve Müşteri Hizmeti"],
+["Kurulum öncesi müşteriye süreç hakkında bilgi vermek (ne kadar süreceği, evde nereye girileceği gibi) neden önemlidir?","Müşteri memnuniyetini artırır ve beklenmedik sürprizleri önler","Gerekli değildir","Zaman kaybıdır","Sadece formalite","Güvenlik ve Müşteri Hizmeti"],
+["Kişisel koruyucu ekipman (PPE) fiber/telekom saha çalışmasında neleri içerebilir?","Eldiven, gözlük, kask, güvenlik ayakkabısı (göreve göre değişir)","Sadece şapka","Hiçbir ekipman gerekmez","Sadece kolluk","Güvenlik ve Müşteri Hizmeti"],
+["Bir teknisyen sahada beklenmedik bir tehlike (örneğin köpek, hasarlı yapı) fark ederse ne yapmalıdır?","Durumu değerlendirip gerekirse işi durdurup müşteri/amirine bildirmeli","Görmezden gelip devam etmeli","Hiçbir şey yapmamalı","Sadece hızlanmalı","Güvenlik ve Müşteri Hizmeti"],
+["Müşteriye kurulum sonrası temel kullanım bilgisi (WiFi şifresi, router resetleme gibi) vermek neden önemlidir?","Müşterinin kendi başına basit sorunları çözebilmesini sağlar, memnuniyeti artırır","Gerekli değildir","Zaman kaybıdır","Müşteri zaten bilir","Güvenlik ve Müşteri Hizmeti"],
+["Araç güvenliği açısından, teknisyenin işe giderken/dönerken dikkat etmesi gereken temel kural nedir?","Trafik kurallarına uymak ve dikkatli sürüş yapmak","Hız yapmak sorun değildir","Telefon kullanmak serbesttir","Kurallar önemli değildir","Güvenlik ve Müşteri Hizmeti"],
+["Bir teknisyen kablo çekerken merdiven/vinç kullanmadan yüksek bir noktaya ulaşmaya çalışırsa ne risk oluşur?","Düşme riski ve yaralanma","Hiçbir risk yoktur","Sadece zaman kaybı","Sadece yorgunluk","Güvenlik ve Müşteri Hizmeti"],
+["Müşteri şikayeti durumunda (örneğin yavaş internet) teknisyenin ilk yapması gereken nedir?","Sorunu anlamak için sinyal/hız testi yaparak teşhis koymak","Doğrudan yeni ekipman satmak","Şikayeti görmezden gelmek","Müşteriyi suçlamak","Güvenlik ve Müşteri Hizmeti"],
+["Kurulum sırasında evcil hayvan bulunan bir evde teknisyen neye dikkat etmelidir?","Müşteriden hayvanı güvenli bir alana almasını istemek, kapıların açık bırakılmamasına dikkat etmek","Hayvanla oynamak","Hiçbir önlem almamak","Kapıyı açık bırakmak önemli değil","Güvenlik ve Müşteri Hizmeti"],
+["Sıcak/soğuk hava koşullarında dış mekan (outdoor) çalışırken teknisyenin dikkat etmesi gereken nedir?","Uygun giyim, hidrasyon ve hava koşullarına göre çalışma sürelerini ayarlamak","Hava koşulları önemli değildir","Her zaman aynı şekilde çalışmak","Sadece hızlı bitirmeye odaklanmak","Güvenlik ve Müşteri Hizmeti"],
+["Bir kurulumun sonunda müşteriye fatura/hizmet sözleşmesi hakkında sorular sorulursa teknisyen ne yapmalıdır?","Bildiği kadarıyla doğru bilgi vermeli, emin olmadığı konularda müşteri hizmetlerine yönlendirmeli","Rastgele cevap vermeli","Soruları görmezden gelmeli","Kendi fikrini fatura gibi sunmalı","Güvenlik ve Müşteri Hizmeti"],
+["Genel olarak bir saha teknisyeninin işindeki başarısını en çok ne belirler?","Teknik doğruluk (sağlam sinyal, düzgün kurulum) ile birlikte iyi müşteri iletişimi","Sadece hız","Sadece konuşkanlık","Sadece görünüm","Güvenlik ve Müşteri Hizmeti"],
+];
 </script>
 <script>
 /* ===== Language toggle (TR/EN) ===== */
@@ -9445,6 +9601,9 @@ const UI_STRINGS = {
     irc2021_topic_label: "Konu Seç",
     tab_cdl: "CDL",
     cdl_label: "CDL Soruları",
+    tab_fidium: "Fidium Installation",
+    fidium_label: "Fidium Installation Soruları",
+    fidium_hint: "Fiber internet kurulum teknisyenliği için temel bilgiler — fiber optik temelleri, drop kablo çekme, ek yapma (splicing), ONT/router kurulumu, sinyal test ve ölçüm, aktivasyon ve müşteri hizmeti/güvenlik konularında ~140 soru.",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
     fbr_label: "Fooled by Randomness Kelimeleri",
     fbr_hint: "Nassim Taleb'in Fooled by Randomness kitabından seçilmiş ~280 ileri düzey (C1/C2) kelime ve deyim — şans, olasılık, piyasalar ve insan davranışı üzerine.",
@@ -9524,6 +9683,9 @@ const UI_STRINGS = {
     irc2021_topic_label: "Choose a Topic",
     tab_cdl: "CDL",
     cdl_label: "CDL Questions",
+    tab_fidium: "Fidium Installation",
+    fidium_label: "Fidium Installation Questions",
+    fidium_hint: "Core knowledge for fiber internet installation technicians — fiber optics basics, drop cable pulling, splicing, ONT/router setup, signal testing, activation, and safety/customer service. About 140 questions.",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
     fbr_label: "Fooled by Randomness Vocabulary",
     fbr_hint: "About 280 advanced (C1/C2) words and phrases curated from Nassim Taleb's Fooled by Randomness — on luck, probability, markets, and human behavior.",
@@ -9572,7 +9734,7 @@ let LANG = "tr";
 function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
 
 function refreshCurrentQuestionLanguage(){
-  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl)) return;
+  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium)) return;
   let idx, src, labelKey;
   if(current.wealth){
     idx = parseInt(current.id.replace("wf",""), 10);
@@ -9586,6 +9748,10 @@ function refreshCurrentQuestionLanguage(){
     idx = parseInt(current.id.replace("cdl_",""), 10);
     src = LANG === "en" ? CDL_QUESTIONS_EN : CDL_QUESTIONS;
     labelKey = "tab_cdl";
+  } else if(current.fidium){
+    idx = parseInt(current.id.replace("fidium_",""), 10);
+    src = FIDIUM_QUESTIONS;
+    labelKey = "tab_fidium";
   } else if(current.irc){
     idx = parseInt(current.id.replace("irc",""), 10);
     src = LANG === "en" ? IRC_QUESTIONS_EN : IRC_QUESTIONS;
@@ -9627,7 +9793,7 @@ function refreshCurrentQuestionLanguage(){
   if(answered){
     const fb = document.getElementById("feedback");
     const wasRight = fb.classList.contains("right");
-    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
+    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
     document.getElementById("nextHint").textContent = t("next_hint");
   }
 }
@@ -9670,6 +9836,7 @@ function applyLanguage(lang){
   document.getElementById("ircCount").textContent = t("total_questions").replace("{n}", IRC_QUESTIONS.length);
   document.getElementById("irc2021Count").textContent = t("total_questions").replace("{n}", IRC2021_QUESTIONS.length);
   document.getElementById("cdlCount").textContent = t("total_questions").replace("{n}", CDL_QUESTIONS.length);
+  document.getElementById("fidiumCount").textContent = t("total_questions").replace("{n}", FIDIUM_QUESTIONS.length);
   document.getElementById("fbrCount").textContent = t("total_words").replace("{n}", FBR_WORDS.length);
   document.getElementById("ox3kCount").textContent = t("total_words").replace("{n}", OXFORD3000_WORDS.length);
 
@@ -9691,6 +9858,7 @@ function applyLanguage(lang){
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
   const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
   const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
+  const fidiumTabActive = !document.getElementById("fidium").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -9703,6 +9871,7 @@ function applyLanguage(lang){
   if(ircTabActive) renderIRCTab();
   if(irc2021TabActive) renderIRC2021Tab();
   if(cdlTabActive) renderCDLTab();
+  if(fidiumTabActive) renderFidiumTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -9948,7 +10117,7 @@ function nextQuestion(){
   }
   answered = false;
   current = pickWord();
-  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl) ? buildFinlitOptions(current) : buildOptions(current);
+  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? buildFinlitOptions(current) : buildOptions(current);
 
   document.getElementById("levelBadge").textContent = current.l;
   const wordEnEl = document.getElementById("wordEn");
@@ -9994,7 +10163,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
+    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -10036,6 +10205,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.cdl){
     await saveCDLQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushCDLStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.fidium){
+    await saveFidiumQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushFidiumStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else {
     await saveWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushWordStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -10076,6 +10248,7 @@ function getPanelCategories(){
     {key:"irc", col:"irc", nameTr:"Ev Yapı Kodu", nameEn:"Home Building Code", total: IRC_QUESTIONS.length, keys: listIRCKeys, load: loadIRCQuestion, prefix: IRC_STORE_PREFIX},
     {key:"irc2021", col:"irc2021", nameTr:"IRC 2021 Code", nameEn:"IRC 2021 Code", total: IRC2021_QUESTIONS.length, keys: listIRC2021Keys, load: loadIRC2021Question, prefix: IRC2021_STORE_PREFIX},
     {key:"cdl", col:"cdl", nameTr:"CDL", nameEn:"CDL", total: CDL_QUESTIONS.length, keys: listCDLKeys, load: loadCDLQuestion, prefix: CDL_STORE_PREFIX},
+    {key:"fidium", col:"fidium", nameTr:"Fidium Installation", nameEn:"Fidium Installation", total: FIDIUM_QUESTIONS.length, keys: listFidiumKeys, load: loadFidiumQuestion, prefix: FIDIUM_STORE_PREFIX},
     {key:"fbr", col:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
   ];
 }
@@ -10251,6 +10424,7 @@ function switchTab(tab){
   document.getElementById("irc").classList.toggle("hidden", tab!=="irc");
   document.getElementById("irc2021").classList.toggle("hidden", tab!=="irc2021");
   document.getElementById("cdl").classList.toggle("hidden", tab!=="cdl");
+  document.getElementById("fidium").classList.toggle("hidden", tab!=="fidium");
   document.getElementById("fbr").classList.toggle("hidden", tab!=="fbr");
   document.getElementById("ox3k").classList.toggle("hidden", tab!=="ox3k");
   document.getElementById("panel").classList.toggle("hidden", tab!=="panel");
@@ -10266,6 +10440,7 @@ function switchTab(tab){
   if(tab === "irc") renderIRCTab();
   if(tab === "irc2021") renderIRC2021Tab();
   if(tab === "cdl") renderCDLTab();
+  if(tab === "fidium") renderFidiumTab();
   if(tab === "fbr") renderFBRTab();
   if(tab === "ox3k") renderOX3KTab();
   if(tab === "panel") renderPanelTab();
@@ -11244,6 +11419,88 @@ document.getElementById("cdlDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== Fidium Installation (fiber internet install technician training) ===== */
+const FIDIUM_STORE_PREFIX = "fidium5k:";
+
+function listFidiumKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(FIDIUM_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(FIDIUM_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(FIDIUM_STORE_PREFIX)); }
+}
+async function loadFidiumQuestion(id){
+  const raw = await rawGet(FIDIUM_STORE_PREFIX+id);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveFidiumQuestion(id, val){
+  await rawSet(FIDIUM_STORE_PREFIX+id, JSON.stringify(val));
+}
+
+/* ===== Fidium Installation: topic grid (mirrors IRC 2021/CDL topic selection) ===== */
+const FIDIUM_TOPICS = [...new Set(FIDIUM_QUESTIONS.map(r => r[5]))];
+let selectedFidiumTopics = new Set([FIDIUM_TOPICS[0]]);
+const fidiumLevelGrid = document.getElementById("fidiumLevelGrid");
+FIDIUM_TOPICS.forEach((topic, idx)=>{
+  const count = FIDIUM_QUESTIONS.filter(r => r[5] === topic).length;
+  const btn = document.createElement("button");
+  btn.className = "level-btn" + (idx===0 ? " active":"");
+  btn.dataset.key = topic;
+  btn.innerHTML = `<span class="lvl-name">${topic}</span><span class="lvl-count">${count} soru</span>`;
+  btn.addEventListener("click", ()=>{
+    fidiumLevelGrid.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedFidiumTopics = new Set([topic]);
+    renderFidiumTab();
+  });
+  fidiumLevelGrid.appendChild(btn);
+});
+
+async function renderFidiumTab(){
+  const listEl = document.getElementById("fidiumList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const rows = [];
+  for(let i=0; i<FIDIUM_QUESTIONS.length; i++){
+    if(!selectedFidiumTopics.has(FIDIUM_QUESTIONS[i][5])) continue;
+    const id = "fidium_"+i;
+    const stat = await loadFidiumQuestion(id);
+    rows.push({q:FIDIUM_QUESTIONS[i][0], wrong: stat ? (stat.wrong||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <div class="mistake-tr">${r.q}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("fidiumDrillBtn").addEventListener("click", async ()=>{
+  pool = [];
+  for(let i=0; i<FIDIUM_QUESTIONS.length; i++){
+    if(!selectedFidiumTopics.has(FIDIUM_QUESTIONS[i][5])) continue;
+    const [q, correct, w1, w2, w3] = FIDIUM_QUESTIONS[i];
+    const id = "fidium_"+i;
+    const stat = await loadFidiumQuestion(id);
+    pool.push({
+      id, e:q, p:"", t:correct, l: t("tab_fidium"),
+      wrongOpts:[w1,w2,w3],
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      fidium: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("fidium").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* Panel is the default active tab on page load — populate it now.
    (Must come after every category's STORE_PREFIX/load* helpers are defined above.) */
 renderPanelTab();
@@ -11277,11 +11534,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -11339,6 +11596,7 @@ window.onAuthChanged = async function(user){
     const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
     const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
     const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
+    const fidiumTabActive = !document.getElementById("fidium").classList.contains("hidden");
     const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
     const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
@@ -11351,6 +11609,7 @@ window.onAuthChanged = async function(user){
     if(ircTabActive) renderIRCTab();
     if(irc2021TabActive) renderIRC2021Tab();
     if(cdlTabActive) renderCDLTab();
+    if(fidiumTabActive) renderFidiumTab();
     if(fbrTabActive) renderFBRTab();
     if(ox3kTabActive) renderOX3KTab();
     const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -11640,6 +11899,34 @@ async function syncWithCloud(uid){
     window.FB.pushCDLStat(uid, id, merged);
   }
 
+  // --- Fidium Installation question stats, merged the same way ---
+  const cloudFidium = await window.FB.fetchAllCloudFidium(uid);
+  const localFidiumKeys = listFidiumKeys();
+  const localFidiumMap = {};
+  for(const k of localFidiumKeys){
+    const id = k.slice(FIDIUM_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localFidiumMap[id] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allFidiumId = new Set([...Object.keys(localFidiumMap), ...Object.keys(cloudFidium)]);
+  for(const id of allFidiumId){
+    const l = localFidiumMap[id], c = cloudFidium[id];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveFidiumQuestion(id, merged);
+    window.FB.pushFidiumStat(uid, id, merged);
+  }
+
   // --- Fooled by Randomness word stats, merged the same way as Oxford/RE/ASVAB words ---
   const cloudFBR = await window.FB.fetchAllCloudFBR(uid);
   const localFBRKeys = listFBRKeys();
@@ -11706,6 +11993,7 @@ async function syncWithCloud(uid){
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
   const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
   const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
+  const fidiumTabActive = !document.getElementById("fidium").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -11718,6 +12006,7 @@ async function syncWithCloud(uid){
   if(ircTabActive) renderIRCTab();
   if(irc2021TabActive) renderIRC2021Tab();
   if(cdlTabActive) renderCDLTab();
+  if(fidiumTabActive) renderFidiumTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -11841,6 +12130,12 @@ async function fetchAllCloudCDL(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudFidium(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "fidium"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function fetchAllCloudFBR(uid){
   const out = {};
   const snap = await getDocs(collection(db, "users", uid, "fbr"));
@@ -11889,6 +12184,10 @@ async function pushCDLStat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "cdl", id), data); }
   catch(e){ console.error("CDL sorusu buluta yazılamadı:", e); }
 }
+async function pushFidiumStat(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "fidium", id), data); }
+  catch(e){ console.error("Fidium Installation sorusu buluta yazılamadı:", e); }
+}
 async function pushFBRStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "fbr", en), data); }
   catch(e){ console.error("Fooled by Randomness kelimesi buluta yazılamadı:", e); }
@@ -11908,7 +12207,7 @@ async function deleteCustomWordCloud(uid, id){
 
 /* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
-const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","finlit","wealth","irc","irc2021","cdl","fbr","custom"];
+const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","finlit","wealth","irc","irc2021","cdl","fidium","fbr","custom"];
 
 async function pushUserProfile(uid, email, displayName){
   try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
@@ -11974,8 +12273,8 @@ async function fetchAdminStats(){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFBRStat, pushOX3KStat,
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFidium, fetchAllCloudFBR, fetchAllCloudOX3K,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFidiumStat, pushFBRStat, pushOX3KStat,
   pushUserProfile, fetchAdminStats
 };
 
