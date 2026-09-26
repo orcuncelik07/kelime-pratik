@@ -9560,6 +9560,149 @@ const FIDIUM_QUESTIONS = [
 ["Bir kurulumun sonunda müşteriye fatura/hizmet sözleşmesi hakkında sorular sorulursa teknisyen ne yapmalıdır?","Bildiği kadarıyla doğru bilgi vermeli, emin olmadığı konularda müşteri hizmetlerine yönlendirmeli","Rastgele cevap vermeli","Soruları görmezden gelmeli","Kendi fikrini fatura gibi sunmalı","Güvenlik ve Müşteri Hizmeti"],
 ["Genel olarak bir saha teknisyeninin işindeki başarısını en çok ne belirler?","Teknik doğruluk (sağlam sinyal, düzgün kurulum) ile birlikte iyi müşteri iletişimi","Sadece hız","Sadece konuşkanlık","Sadece görünüm","Güvenlik ve Müşteri Hizmeti"],
 ];
+
+const FIDIUM_QUESTIONS_EN = [
+["What medium carries data inside a fiber optic cable?","Light (through a glass or plastic fiber)","Electric current","Radio waves","Magnetic field","Fiber Optik Temelleri"],
+["What does GPON stand for?","Gigabit Passive Optical Network","General Public Optical Node","Global Passive Ohm Network","Gigabit Protocol Output Node","Fiber Optik Temelleri"],
+["In a GPON network, what is the main device located at the central office (CO)?","OLT (Optical Line Terminal)","ONT","NID","Splitter","Fiber Optik Temelleri"],
+["What is the fiber termination device installed at the customer's home/building called?","ONT (Optical Network Terminal)","OLT","OTDR","VFL","Fiber Optik Temelleri"],
+["In a GPON network, how many homes can a single fiber line serve through a splitter?","Typically up to 32 or 64 homes","Only 2 homes","Only 4 homes","Unlimited","Fiber Optik Temelleri"],
+["In a \"passive\" optical network, does the splitter need electricity to operate?","No, the splitter is completely passive and needs no power","Yes, it always needs 220V","Only at night","Only when it rains","Fiber Optik Temelleri"],
+["What is the key difference between single-mode and multi-mode fiber?","Single-mode has a thinner core and suffers less signal loss over long distances","Multi-mode is always faster","Single-mode is only used over short distances","They are the same thing","Fiber Optik Temelleri"],
+["Which fiber type is the standard for home/business internet connections (FTTH)?","Single-mode fiber","Multi-mode fiber","Coaxial cable","Cat5 cable","Fiber Optik Temelleri"],
+["What is typically used as the light source in fiber optic cable?","A laser diode or LED","A halogen bulb","A magnetic coil","An infrared thermostat","Fiber Optik Temelleri"],
+["What does FTTH stand for?","Fiber to the Home","Fiber to the Hub","Fast Transfer to Home","Fiber Transmission Handler","Fiber Optik Temelleri"],
+["What is the outer plastic covering of a fiber called?","Jacket","Core","Cladding","Buffer only","Fiber Optik Temelleri"],
+["What is the innermost part of a fiber optic cable that carries the light called?","Core","Cladding","Jacket","Strength member","Fiber Optik Temelleri"],
+["What is the main function of the cladding in fiber optics?","To keep light contained within the core (via total internal reflection)","To color the cable","To insulate electricity","To absorb water","Fiber Optik Temelleri"],
+["What is a drop cable?","The final connection cable run directly from the distribution point to the customer's home","Only the main citywide backbone cable","Only an electrical cable","The cable inside the router","Fiber Optik Temelleri"],
+["What is the difference between aerial and buried drop cable installation?","Aerial runs overhead via poles, buried runs underground","Aerial is only done in summer","Buried is only used in buildings","They are the same method","Fiber Optik Temelleri"],
+["What does NID (Network Interface Device) refer to?","The box outside the building where the fiber line terminates and responsibility splits between customer and provider","Just a router model","Just a WiFi antenna","Just an electrical fuse","Fiber Optik Temelleri"],
+["What is a demarcation point (demarc)?","The point where the service provider's responsibility ends and the customer's in-home wiring responsibility begins","Just the building housing the OLT","Just the splitter box","Just the modem","Fiber Optik Temelleri"],
+["In a GPON network, are downstream and upstream traffic carried on different wavelengths?","Yes, on different wavelengths (via WDM) over the same fiber","No, the same wavelength is used","Only downstream uses fiber","Both are carried over copper","Fiber Optik Temelleri"],
+["What is one advantage of fiber optic cable over copper regarding electromagnetic interference (EMI)?","Fiber optic is immune to EMI","Fiber optic is more affected by EMI than copper","Both are affected equally","Fiber is only affected by heat","Fiber Optik Temelleri"],
+["What is the typical fiber count of a drop cable used for home connections?","Usually 1-2 fibers (sometimes a few more)","Always 144 fibers","Always 48 fibers","Only 1000 fibers","Fiber Optik Temelleri"],
+["What generally determines the minimum ground clearance for an aerial drop cable running from a pole to a house?","Local National Electrical Safety Code (NESC) rules","The technician's preference","Only the customer's request","The weather","Drop Kablo Çekme ve Kurulum"],
+["What can happen if drop cable tension is too high?","The fiber can break or suffer excessive signal loss (attenuation)","Speed increases","The color changes","No effect at all","Drop Kablo Çekme ve Kurulum"],
+["Why is minimum bend radius important for fiber cable?","Excessive bending causes light loss (macrobend loss) and can break the fiber","It's purely cosmetic","It heats the cable","It increases speed","Drop Kablo Çekme ve Kurulum"],
+["What should be considered when choosing a cable entry point at a house?","Water sealing, shortest interior distance, and proximity to where the ONT will be installed","Only its color","Only the color of the customer's room","Only the door number","Drop Kablo Çekme ve Kurulum"],
+["When pulling fiber cable through conduit, what does excessive pulling tension risk?","Damaging the cable's strength member and breaking the fiber","Only fading the paint","Only changing the cable's color","Nothing","Drop Kablo Çekme ve Kurulum"],
+["What is used to prevent water/moisture ingress where a cable passes from outside to inside?","Sealant/gasket and a properly angled entry","Tape only","Silicone spray only","Nothing is needed","Drop Kablo Çekme ve Kurulum"],
+["What typically determines the minimum burial depth for underground drop cable?","Local regulations and soil type (usually a few inches to 2 feet)","Always 10 feet","Always 1 inch","Depth doesn't matter","Drop Kablo Çekme ve Kurulum"],
+["What should be considered when routing fiber cable around sharp corners?","Protecting the cable with conduit or corner guards","Pressing the cable directly against the corner","Tape alone is sufficient","It doesn't matter","Drop Kablo Çekme ve Kurulum"],
+["What should be considered when running cable through shared areas of a multi-unit building?","Building management permissions and fire code compliance (fire-rated cable, firestop)","Only speed","Only color matching","No rules apply","Drop Kablo Çekme ve Kurulum"],
+["Why is a \"slack loop\" left in the cable?","To provide extra cable for future repairs/re-termination","For aesthetics","To increase speed","It's not necessary","Drop Kablo Çekme ve Kurulum"],
+["Why does the sag of a drop cable running from a pole to a house matter?","Too tight and it can break; too loose and it can snag vehicles/pedestrians","Only for appearance","It never matters","Only matters in winter","Drop Kablo Çekme ve Kurulum"],
+["What is a \"fish tape\" or \"pull string\" used for when pulling fiber cable?","Helping pull the cable through conduit/walls","Cutting the cable","Heating the cable","Testing the signal","Drop Kablo Çekme ve Kurulum"],
+["Why can tree branches touching a drop cable be a problem?","They can cause abrasion/wear or breakage","They boost the signal","No effect at all","They change the color","Drop Kablo Çekme ve Kurulum"],
+["When running cable indoors, what is often preferred over going through the wall itself?","Hiding it along wall edges/baseboards (using raceway/molding)","Always cutting into the wall","Always leaving the cable exposed","It doesn't matter","Drop Kablo Çekme ve Kurulum"],
+["Why does proximity to an electrical outlet matter when choosing an ONT installation spot?","The ONT needs power to operate (it's an active device)","Only for appearance","The ONT works without power","Only for heating","Drop Kablo Çekme ve Kurulum"],
+["What is done to avoid damaging existing underground utilities (gas, water, electric) when burying drop cable?","Utility lines are marked beforehand via a \"call before you dig\" / utility locate service","Digging randomly","Only checking a map","No precaution is taken","Drop Kablo Çekme ve Kurulum"],
+["What should be considered when drilling a new fiber entry hole into a building?","The wall's structural integrity, avoiding existing cables, and drilling at a downward angle (to prevent water ingress)","Only speed","Only appearance","None of these","Drop Kablo Çekme ve Kurulum"],
+["What is typically done when fiber cable is cut or damaged?","The damaged section is cut out and re-spliced, or the cable is replaced","It's wrapped in tape and left","Nothing is done","It's painted","Drop Kablo Çekme ve Kurulum"],
+["What is the \"strand\" used for aerial drop cable?","The steel support wire that physically carries the cable between poles","The fiber itself","An electrical cable","A grounding wire","Drop Kablo Çekme ve Kurulum"],
+["Why should the cable routing path be discussed with the customer beforehand on a new install?","To get approval on where the cable will run through the house and which room it enters","It's not necessary","Only for billing","Only for weather planning","Drop Kablo Çekme ve Kurulum"],
+["What is fusion splicing?","Permanently joining two fiber ends by melting them with heat","Taping two fiber ends together","Painting the fiber","Soldering the fiber","Ek Yapma (Splicing) ve Konnektörler"],
+["How does a mechanical splice generally compare to a fusion splice?","It's faster but usually has higher signal loss","It's always more permanent","It never needs electricity","It's always cheaper and lower-loss than fusion","Ek Yapma (Splicing) ve Konnektörler"],
+["How does a fusion splicer join fiber ends?","By heating and melting them with an electric arc","With adhesive","By freezing them","By pressing them together","Ek Yapma (Splicing) ve Konnektörler"],
+["What is commonly used to clean a fiber end before splicing/connectorizing?","Isopropyl alcohol and a lint-free wipe","Soap and water","Oil","Sandpaper","Ek Yapma (Splicing) ve Konnektörler"],
+["What is the tool used to cleanly cut a fiber end called?","Cleaver","Pliers","Screwdriver","Scissors","Ek Yapma (Splicing) ve Konnektörler"],
+["What is the main difference between an SC connector and an LC connector?","LC has a smaller form factor (used in high-density connection points)","SC is no longer used at all","LC is only for electrical use","There is no difference","Ek Yapma (Splicing) ve Konnektörler"],
+["What is the most notable difference between an APC (Angled Physical Contact) and a UPC (Ultra Physical Contact) connector?","APC's end-face is angled at 8 degrees, reducing return loss","APC is always green instead of blue","UPC is always more expensive","There is no difference","Ek Yapma (Splicing) ve Konnektörler"],
+["What color are APC connectors typically manufactured as (industry standard)?","Green","Blue","Red","Yellow","Ek Yapma (Splicing) ve Konnektörler"],
+["What color are UPC connectors typically manufactured as?","Blue","Green","Black","Orange","Ek Yapma (Splicing) ve Konnektörler"],
+["What does a dirty connector end-face do to the signal?","Causes light loss (attenuation) and even reflections that can damage equipment","Boosts the signal","Has no effect","Changes its color","Ek Yapma (Splicing) ve Konnektörler"],
+["What does a fusion splicer typically display to estimate the quality of a splice?","An estimated splice loss (dB) value","The cable's color","The fiber's length","The cable's manufacture date","Ek Yapma (Splicing) ve Konnektörler"],
+["Why are fiber splice points typically protected inside a splice tray/box?","To protect against physical damage and moisture, and to keep them organized","Only for looks","It's not required","Only for labeling","Ek Yapma (Splicing) ve Konnektörler"],
+["What is a typical acceptable fusion splice loss?","Generally 0.1 dB or less","10 dB","50 dB","100 dB","Ek Yapma (Splicing) ve Konnektörler"],
+["What is a typical acceptable insertion loss per connector?","Generally around 0.3-0.5 dB","20 dB","50 dB","Always 5 dB","Ek Yapma (Splicing) ve Konnektörler"],
+["What is a pigtail?","A short fiber segment with a factory-installed connector on one end, joined to the main cable by splicing","The router's antenna","An electrical cable","Just a type of tape","Ek Yapma (Splicing) ve Konnektörler"],
+["What does a field technician typically do if a connector is dirty or damaged?","Clean the connector or re-terminate it if necessary","Ignore it","Paint it","Wrap it in electrical tape","Ek Yapma (Splicing) ve Konnektörler"],
+["What does a fiber cleaning pen/click cleaner clean?","Dust and oil off connector end-faces","The outside of the router","The ONT's screen","Walls","Ek Yapma (Splicing) ve Konnektörler"],
+["Why are fibers in a splice tray arranged in a loose loop?","To prevent excessive bending (bend loss) and reduce physical stress","Purely for looks","To increase speed","It's not necessary","Ek Yapma (Splicing) ve Konnektörler"],
+["Why is a connector's end-face inspected under a microscope (fiber scope)?","To check for scratches, dirt, or damage","To check its color","To measure its length","It's not required","Ek Yapma (Splicing) ve Konnektörler"],
+["What is used to verify signal level after a fiber splice/connector job?","An optical power meter","A voltmeter","A thermometer","A manometer","Ek Yapma (Splicing) ve Konnektörler"],
+["Where is the ONT typically mounted in a home?","Near the fiber entry point, close to a power outlet, in a protected spot (often garage, basement, or closet)","Always on the roof","Always in the yard","Always in the bathroom","ONT ve Router Kurulumu"],
+["What is the ONT's core function?","Converting the optical (light) signal into an electrical Ethernet signal","Just broadcasting WiFi","Just distributing power","Just cutting the cable","ONT ve Router Kurulumu"],
+["Can the ONT and router be combined into a single device?","Yes, in an integrated device called a \"gateway\"","No, never","Only in commercial buildings","Only wirelessly","ONT ve Router Kurulumu"],
+["What type of cable typically connects the ONT to the router?","Ethernet (Cat5e/Cat6) cable","Coaxial cable","Always fiber cable","Telephone cable","ONT ve Router Kurulumu"],
+["Where should the WiFi router generally be placed to improve signal quality?","A central, open, elevated, unobstructed spot in the home","A locked closet in the basement","Inside a metal box","Underwater","ONT ve Router Kurulumu"],
+["What is one common obstacle that weakens WiFi signal?","Thick concrete/metal walls and large metal objects","Wooden doors","Glass windows","Thin curtains","ONT ve Router Kurulumu"],
+["What is the fundamental difference between the 2.4 GHz and 5 GHz WiFi bands?","2.4 GHz has longer range but is slower; 5 GHz is faster but shorter range","There's no difference","5 GHz always has longer range","2.4 GHz only works at night","ONT ve Router Kurulumu"],
+["What is often installed to extend WiFi coverage in a customer's home?","A mesh WiFi system or extender/access point","A second ONT","A new fiber line","Just a longer cable","ONT ve Router Kurulumu"],
+["What's one of the first security steps in a router setup?","Changing the default WiFi password to a strong one","Removing the password entirely","Leaving the router unreset","Doing nothing","ONT ve Router Kurulumu"],
+["What does it mean if a customer requests a \"static IP\" during installation?","The device's internet address (IP) stays fixed and doesn't change","The internet will be faster","The WiFi password stays fixed","Only wired connection is possible","ONT ve Router Kurulumu"],
+["Why is a speed test performed after installation?","To verify the customer is getting the speed they paid for","Just a formality","To see the WiFi password","To reset the ONT","ONT ve Router Kurulumu"],
+["Why is router firmware updated?","To patch security vulnerabilities and improve performance","Just to change its appearance","It's never required","Just to slow it down","ONT ve Router Kurulumu"],
+["What do the LEDs on the ONT tell a technician?","Power, optical (PON) signal, and connection status","They're purely decorative","The weather","The electric bill","ONT ve Router Kurulumu"],
+["What does a \"LOS\" (Loss of Signal) LED on an ONT mean?","No optical signal is being received; there's an issue with the fiber line","Everything is working normally","The WiFi password is wrong","The router is broken","ONT ve Router Kurulumu"],
+["Why might a battery backup unit be connected to an ONT?","To keep service running for a while during a power outage (e.g., for emergency calls)","To boost WiFi speed","To amplify the signal","Purely decorative","ONT ve Router Kurulumu"],
+["What does the reset button on a modem/router do?","Resets the device to factory settings","Cuts the power","Boosts the WiFi","Doubles the speed","ONT ve Router Kurulumu"],
+["What connector type is found on an Ethernet cable?","RJ45","RJ11","BNC","F-type","ONT ve Router Kurulumu"],
+["What does a technician typically do if a customer wants wired internet in multiple rooms?","Uses an Ethernet switch or the home's existing in-wall wiring to distribute it","Installs a separate ONT for each room","It's impossible","WiFi is always used instead","ONT ve Router Kurulumu"],
+["Why can it be important to connect a customer's existing devices (TV, smart home devices, etc.) to the new network during install?","To ensure a smooth continuation of the customer's experience","Never necessary","Just for billing","Just for looks","ONT ve Router Kurulumu"],
+["What does a \"self-install kit\" mean in an installation context?","A pre-packaged equipment set the customer can install themselves without a technician","Only professional installation","Only commercial installation","Only a repair kit","ONT ve Router Kurulumu"],
+["What does an optical power meter measure?","The strength of the light signal in a fiber line (in dBm)","Electrical voltage","Cable length","WiFi speed","Sinyal Test ve Ölçüm"],
+["What is dBm?","A logarithmic unit expressing optical/electrical power relative to 1 milliwatt","A unit of distance","A unit of time","A unit of weight","Sinyal Test ve Ölçüm"],
+["What is a typical acceptable receive power (Rx power) range at the ONT on a GPON line?","Roughly -8 dBm to -28 dBm (varies by equipment)","+50 dBm to +100 dBm","0 volts to 5 volts","Always exactly 0 dBm","Sinyal Test ve Ölçüm"],
+["What might a customer experience if the signal level is too low (excessively negative dBm)?","Dropped connections, slowness, or no connection at all","Faster internet","Stronger WiFi","No problem at all","Sinyal Test ve Ölçüm"],
+["What is a VFL (Visual Fault Locator)?","A tool that uses visible red light to detect breaks or major damage in a fiber line","A type of router","A splicing machine","An electrical test device","Sinyal Test ve Ölçüm"],
+["What is an OTDR (Optical Time Domain Reflectometer) used for?","Detecting loss points and distance along a fiber line","Finding the WiFi password","Measuring electric current","Only a color test","Sinyal Test ve Ölçüm"],
+["What is attenuation?","The amount of signal power lost over distance/connections","The signal speeding up","The cable getting longer","The color changing","Sinyal Test ve Ölçüm"],
+["What does an overly tight bend in a fiber line do to the signal?","Causes additional loss (bend loss/macrobend)","Boosts the signal","Has no effect","Changes its color","Sinyal Test ve Ölçüm"],
+["If an ONT doesn't activate after installation, what does a technician typically check first?","The optical signal level (power) and physical connections","Immediately orders a new device","Tells the customer to move","Checks the electric bill","Sinyal Test ve Ölçüm"],
+["What does \"ranging\" mean in a GPON network?","The OLT measuring each ONT's distance to synchronize timing","Physically measuring cable length","Resetting the router","Changing the WiFi channel","Sinyal Test ve Ölçüm"],
+["What effect does a high split ratio (e.g. 1:64) on a splitter have on signal?","The signal power at each output decreases (more sharing = more loss)","The signal gets stronger","No effect at all","Speed doubles","Sinyal Test ve Ölçüm"],
+["What does a ping test measure?","The round-trip time for data to travel from a device to a target (latency)","WiFi password strength","The cable's color","Electrical voltage","Sinyal Test ve Ölçüm"],
+["What is jitter?","Inconsistency/variation in network latency","Physical vibration of the cable","The color of WiFi","The router's temperature","Sinyal Test ve Ölçüm"],
+["What is one possible cause of unexpectedly high loss detected on a fiber line?","A dirty/damaged connector or a bad splice","A power outage","The wrong WiFi password","The color of the router","Sinyal Test ve Ölçüm"],
+["What values are typically recorded in a post-installation test report?","Optical power level (Rx/Tx dBm), speed test result, ONT serial number, etc.","Only the customer's name","Only the weather","Only the technician's birthday","Sinyal Test ve Ölçüm"],
+["Why does \"return loss\" matter in a fiber connection?","High reflection can degrade signal quality and even damage the laser source","It doesn't matter at all","It's purely a cosmetic measurement","It only affects heat","Sinyal Test ve Ölçüm"],
+["What is a continuity test performed for?","To check that the fiber is unbroken end to end","To check its color","To estimate its length","To measure its speed","Sinyal Test ve Ölçüm"],
+["Where does a technician typically take dBm readings in the field?","At the ONT input, and at splitter/distribution points if needed","Only at the central office","Only on the customer's phone","Nowhere","Sinyal Test ve Ölçüm"],
+["If low signal is detected and it's known not to be caused by the ONT, what does the technician do?","Scan the line with an OTDR to find the faulty splice/connector point","Immediately replace the ONT","Sell the customer a new router","Do nothing","Sinyal Test ve Ölçüm"],
+["Why are signal and speed tests documented after an install is completed?","For future troubleshooting reference and quality control","Not required","Just for billing","Just a formality","Sinyal Test ve Ölçüm"],
+["What does it mean for an ONT to be \"activated\" on the network?","It has been recognized by the OLT and fully configured for service","It's just plugged into power","The WiFi is just turned on","It's just been unboxed","Aktivasyon ve Provisioning"],
+["Why does every ONT's unique \"serial number\" or \"GPON ID\" matter?","So the system correctly matches the right ONT to the right customer account","Only for warranty tracking","It doesn't matter","Only for a color code","Aktivasyon ve Provisioning"],
+["How is an ONT typically linked to a customer account (provisioning)?","By assigning the ONT's serial number to the account through a central software system","Only by physically connecting the cable","Only by resetting the router","Only by asking the customer","Aktivasyon ve Provisioning"],
+["What is one possible reason an ONT fails to connect to the network during activation?","Incorrect/incomplete provisioning or weak optical signal","The customer's name being misspelled","The router's color","The number of rooms in the house","Aktivasyon ve Provisioning"],
+["What does a \"work order\" refer to in an installation context?","A document/task assigned to a technician detailing the installation/service work to be done","Just an invoice","Just a warranty document","Just a weather report","Aktivasyon ve Provisioning"],
+["Why does a field technician \"close out\" a job in the system after completing an install?","To notify the central system the work is done, so billing/tracking can begin","It's not required","Just a formality","It has no effect","Aktivasyon ve Provisioning"],
+["Where is the internet speed tier assigned to a customer determined during provisioning?","It's defined centrally based on the plan the customer purchased","The technician decides randomly in the field","Based on the router's brand","Based on the size of the house","Aktivasyon ve Provisioning"],
+["Why does a replaced ONT (due to a fault) need to be re-provisioned in the system?","The new device's serial number needs to be matched to the account","It's not necessary","Visual inspection alone is enough","It works automatically without anything being done","Aktivasyon ve Provisioning"],
+["What does the term \"truck roll\" refer to?","A technician physically traveling to the field/customer","Truck maintenance","Warehouse inventory","A power outage","Aktivasyon ve Provisioning"],
+["Why does it matter that a service shows as \"active\" on a customer's account after activation?","For billing and support systems to work correctly","It doesn't matter","Purely cosmetic","Only for the technician's own records","Aktivasyon ve Provisioning"],
+["Can multiple services (internet, TV, phone) be delivered through the same ONT?","Yes, GPON infrastructure generally supports \"triple play\" services","No, each service needs a separate fiber line","Only internet can be delivered","Only TV can be delivered","Aktivasyon ve Provisioning"],
+["Why is it important for a technician to check the address/work order in the system before an install?","To go to the correct address with the correct service and equipment","Not necessary","Only for navigation","Only for calculating fuel","Aktivasyon ve Provisioning"],
+["What typically happens to the ONT when a customer moves or cancels service?","It's deactivated and, when possible, retrieved (some companies leave it with the customer)","It automatically explodes","Nothing happens","It turns into a router","Aktivasyon ve Provisioning"],
+["What does the customer's approval/signature (work order completion) confirm during an install?","That the service was installed and the customer accepts it","Only the technician's permission","Only the weather","Only the invoice amount","Aktivasyon ve Provisioning"],
+["How many ONTs can a single OLT port serve (depending on the split ratio) in a GPON network?","Generally up to 32 or 64 ONTs depending on split ratio","Only 1 ONT","Unlimited","Only 2 ONTs","Aktivasyon ve Provisioning"],
+["If a customer has a speed tier issue due to a provisioning error, what does the technician typically check/escalate?","The account/speed plan settings in the central system, contacting backoffice/NOC if needed","Just replaces the router","Just changes the WiFi password","Does nothing","Aktivasyon ve Provisioning"],
+["What does \"NOC\" (Network Operations Center) refer to?","The central operations center where the network is monitored and managed","A router brand","A connector type","A cable type","Aktivasyon ve Provisioning"],
+["What is the final step a technician takes to confirm an installation was completed correctly?","A speed test and signal level check, showing the service to the customer","Just picking up boxes and leaving","Just issuing an invoice","Nothing","Aktivasyon ve Provisioning"],
+["What does the \"SLA\" (Service Level Agreement) referenced in a work order mean?","An agreed standard for how quickly the service must be completed/provided","A cable type","A router model","A connector type","Aktivasyon ve Provisioning"],
+["Why is it important for the technician to give the customer the WiFi network name and password after activation?","So the customer can connect their own devices to the network","Not necessary","Just a formality","Serves no purpose","Aktivasyon ve Provisioning"],
+["What is one basic safety rule when using a ladder?","Placing it on solid, level ground and maintaining 3-point contact","Always placing it on wet ground","Climbing with one hand doesn't matter","Climbing without a ladder","Güvenlik ve Müşteri Hizmeti"],
+["What should be observed when working near power lines (e.g., on a pole)?","Maintaining a safe distance and avoiding contact with power lines","Approaching power lines is not a problem","Only cautious in the rain","No precautions needed","Güvenlik ve Müşteri Hizmeti"],
+["Why is \"call before you dig\" (services like 811) important before excavation?","To avoid damaging underground gas, electric, and water lines","Just a legal formality","Not necessary","Only done if the customer asks","Güvenlik ve Müşteri Hizmeti"],
+["Why can direct exposure to fiber optic laser light be dangerous to the eyes?","Even though invisible, it can damage the eye (risk of retinal damage)","It's completely harmless","Only mildly irritating","Only dangerous during the day","Güvenlik ve Müşteri Hizmeti"],
+["Why should small glass fragments (fiber shards) created during fiber termination be carefully cleaned up?","They can pierce skin and are hard to see, making them dangerous","They're harmless","Only collected for appearance","Not recyclable","Güvenlik ve Müşteri Hizmeti"],
+["Why is it important for a technician to show ID when entering a customer's home?","For customer safety and the company's professional image","Not necessary","Just a formality","Doesn't matter","Güvenlik ve Müşteri Hizmeti"],
+["What should a technician do to avoid damaging a customer's home during installation?","Work carefully, use shoe covers/protective gear, and leave the area clean","Finishing quickly is more important than anything","Damage doesn't matter","Only think about their own safety","Güvenlik ve Müşteri Hizmeti"],
+["Why is fiberglass/wood ladder generally preferred over metal near power lines?","Metal ladders conduct electricity, increasing the risk of electric shock","Metal ladders are lighter","Color preference","Price difference","Güvenlik ve Müşteri Hizmeti"],
+["What should a technician's first approach be when dealing with a difficult/upset customer?","Stay calm, listen actively, and approach professionally/with empathy","Get into an argument","Immediately leave the job","Raise their voice","Güvenlik ve Müşteri Hizmeti"],
+["Why is it important to inform the customer about the process beforehand (how long it will take, where in the home access is needed)?","It increases customer satisfaction and prevents unexpected surprises","Not necessary","A waste of time","Just a formality","Güvenlik ve Müşteri Hizmeti"],
+["What might personal protective equipment (PPE) include for fiber/telecom fieldwork?","Gloves, safety glasses, a hard hat, safety footwear (varies by task)","Just a hat","No equipment is needed","Just armbands","Güvenlik ve Müşteri Hizmeti"],
+["What should a technician do if they notice an unexpected hazard in the field (e.g., a dog, damaged structure)?","Assess the situation and, if necessary, stop work and notify the customer/supervisor","Ignore it and continue","Do nothing","Just work faster","Güvenlik ve Müşteri Hizmeti"],
+["Why is it important to give the customer basic usage information after installation (WiFi password, how to reset the router)?","It lets the customer resolve simple issues on their own, increasing satisfaction","Not necessary","A waste of time","The customer already knows","Güvenlik ve Müşteri Hizmeti"],
+["What is a basic rule of vehicle safety a technician should follow while driving to/from a job?","Following traffic laws and driving carefully","Speeding is not a problem","Using a phone while driving is fine","Rules don't matter","Güvenlik ve Müşteri Hizmeti"],
+["What risk arises if a technician tries to reach a high point without a ladder/lift while pulling cable?","Risk of falling and injury","No risk at all","Only wastes time","Only causes fatigue","Güvenlik ve Müşteri Hizmeti"],
+["In the case of a customer complaint (e.g., slow internet), what should the technician do first?","Diagnose the issue by running a signal/speed test","Immediately try to sell new equipment","Ignore the complaint","Blame the customer","Güvenlik ve Müşteri Hizmeti"],
+["What should a technician be mindful of when installing in a home with a pet?","Asking the customer to secure the pet in a safe area and being careful not to leave doors open","Playing with the pet","Taking no precautions","Leaving the door open doesn't matter","Güvenlik ve Müşteri Hizmeti"],
+["What should a technician keep in mind when working outdoors in hot/cold weather?","Appropriate clothing, hydration, and adjusting work duration to conditions","Weather doesn't matter","Always working the same way regardless","Just focusing on finishing quickly","Güvenlik ve Müşteri Hizmeti"],
+["If a customer asks questions about their bill/service agreement at the end of an install, what should the technician do?","Give accurate information where they're confident, and refer the customer to customer service for anything they're unsure about","Answer randomly","Ignore the questions","Present their own opinion as if it were the bill","Güvenlik ve Müşteri Hizmeti"],
+["Overall, what most determines a field technician's success in this job?","Technical accuracy (solid signal, proper installation) combined with good customer communication","Only speed","Only being talkative","Only appearance","Güvenlik ve Müşteri Hizmeti"],
+];
 </script>
 <script>
 /* ===== Language toggle (TR/EN) ===== */
@@ -9750,7 +9893,7 @@ function refreshCurrentQuestionLanguage(){
     labelKey = "tab_cdl";
   } else if(current.fidium){
     idx = parseInt(current.id.replace("fidium_",""), 10);
-    src = FIDIUM_QUESTIONS;
+    src = LANG === "en" ? FIDIUM_QUESTIONS_EN : FIDIUM_QUESTIONS;
     labelKey = "tab_fidium";
   } else if(current.irc){
     idx = parseInt(current.id.replace("irc",""), 10);
@@ -11458,12 +11601,13 @@ FIDIUM_TOPICS.forEach((topic, idx)=>{
 async function renderFidiumTab(){
   const listEl = document.getElementById("fidiumList");
   listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const src = LANG === "en" ? FIDIUM_QUESTIONS_EN : FIDIUM_QUESTIONS;
   const rows = [];
   for(let i=0; i<FIDIUM_QUESTIONS.length; i++){
     if(!selectedFidiumTopics.has(FIDIUM_QUESTIONS[i][5])) continue;
     const id = "fidium_"+i;
     const stat = await loadFidiumQuestion(id);
-    rows.push({q:FIDIUM_QUESTIONS[i][0], wrong: stat ? (stat.wrong||0) : 0});
+    rows.push({q:src[i][0], wrong: stat ? (stat.wrong||0) : 0});
   }
   listEl.innerHTML = rows.map(r => `
     <div class="mistake-row">
@@ -11476,10 +11620,11 @@ async function renderFidiumTab(){
 }
 
 document.getElementById("fidiumDrillBtn").addEventListener("click", async ()=>{
+  const src = LANG === "en" ? FIDIUM_QUESTIONS_EN : FIDIUM_QUESTIONS;
   pool = [];
   for(let i=0; i<FIDIUM_QUESTIONS.length; i++){
     if(!selectedFidiumTopics.has(FIDIUM_QUESTIONS[i][5])) continue;
-    const [q, correct, w1, w2, w3] = FIDIUM_QUESTIONS[i];
+    const [q, correct, w1, w2, w3] = src[i];
     const id = "fidium_"+i;
     const stat = await loadFidiumQuestion(id);
     pool.push({
