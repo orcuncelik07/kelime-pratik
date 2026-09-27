@@ -519,6 +519,7 @@ body{
       <option value="trwords" data-i18n="tab_trwords">Turkish Words</option>
       <option value="realestate">Real Estate</option>
       <option value="asvab">ASVAB</option>
+      <option value="inspect" data-i18n="tab_inspect">Inspection Literature</option>
       <option value="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</option>
       <option value="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</option>
       <option value="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</option>
@@ -587,6 +588,15 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="as_hint">ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.</p>
     <button class="start-btn" id="asDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="asList"></div>
+  </div>
+
+  <!-- INSPECTION LITERATURE -->
+  <div id="inspect" class="panel hidden">
+    <p class="section-label" data-i18n="insp_label">İnşaat ve Ev İnceleme Terimleri</p>
+    <p class="tab-count" id="inspectCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="insp_hint">Ev inceleme (home inspection) raporlarında ve inşaat literatüründe sık geçen ~160 terim — çatı, dış cephe, elektrik, tesisat, ısıtma, baca, temel/bodrum ve genel inceleme terminolojisi.</p>
+    <button class="start-btn" id="inspectDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="inspectList"></div>
   </div>
 
   <!-- FINANCIAL LITERACY -->
@@ -3841,6 +3851,169 @@ const ASVAB_WORDS = [
 ["volatile","değişken, patlamaya hazır (durum/kişi)"],
 ["wary","temkinli, ihtiyatlı"],
 ["zealous","hevesli, gayretli (aşırı istekli)"],
+];
+
+const INSPECTION_WORDS = [
+["flashing","su yalıtım bandı (çatı/duvar birleşim noktalarında su sızıntısını önleyen metal/lastik şerit)"],
+["kickout flashing","çatı-duvar birleşim noktasında suyu duvardan uzaklaştıran özel flashing parçası"],
+["headwall flashing","çatının düz bir duvara dik olarak birleştiği noktadaki su yalıtım bandı"],
+["sidewall flashing","çatının yan duvara paralel birleştiği noktadaki su yalıtım bandı"],
+["valley flashing","iki çatı yüzeyinin birleştiği vadi (valley) bölgesindeki su yalıtım bandı"],
+["drip edge","çatı kenarındaki suyu oluğa yönlendiren metal şerit"],
+["ridge vent","çatı mahyasındaki havalandırma boşluğu"],
+["ridge pole / ridge beam","çatının en üst noktasını boydan boya destekleyen ana kiriş"],
+["rafter","çatı kaplamasını taşıyan eğimli ahşap kiriş"],
+["sistered rafter","takviye amacıyla yanına ikinci bir kiriş eklenmiş rafter"],
+["collar tie","çatının iki eğimli kirişini yatay olarak birbirine bağlayan destek elemanı"],
+["truss","çatı yükünü taşıyan, önceden üretilmiş üçgen kafes kiriş sistemi"],
+["roof pitch / slope","çatının eğim derecesi"],
+["underlayment","çatı kaplamasının altına serilen su yalıtım tabakası"],
+["architectural shingles","çok katmanlı, dayanıklı asfalt çatı kiremiti türü"],
+["corrugated metal roofing","oluklu metal çatı kaplaması"],
+["re-sheathing","çatı kaplama tahtasının yenilenmesi"],
+["gable","üçgen şeklindeki çatı-duvar birleşim yüzeyi"],
+["hip roof","dört yüzü de eğimli olan çatı tipi"],
+["soffit","çatı saçağının alt (yatay) yüzeyi"],
+["fascia","çatı saçağının ön (dikey) kapama tahtası"],
+["eave","çatının duvardan dışarı taşan alt kenarı"],
+["gutter","çatıdan gelen yağmur suyunu toplayan oluk"],
+["downspout","oluktan gelen suyu yere/temele indiren dikey boru"],
+["non-professional install","usta olmayan biri tarafından yapılmış hatalı montaj"],
+["siding","dış cephe kaplaması"],
+["vinyl siding","PVC (vinil) dış cephe kaplaması"],
+["lap siding","üst üste binen şerit tarzı dış cephe kaplaması"],
+["wall covering","duvar kaplaması (genel terim)"],
+["trim","pencere/kapı çevresi süsleme/kapama tahtası"],
+["house wrap","dış cephe altına serilen nem/rüzgar bariyeri"],
+["negative grade","zeminin binaya doğru eğimli olması (istenmeyen durum)"],
+["site grading","arazinin sudan uzaklaştıracak şekilde eğimlendirilmesi"],
+["retaining wall","toprak/dolguyu tutan istinat duvarı"],
+["sillcock","dış mekanda kullanılan musluk/hortum bağlantı vanası"],
+["frost-free sillcock","donmaya karşı korumalı dış musluk"],
+["service drop","elektrik direğinden binaya gelen havai elektrik hattı"],
+["service entrance","elektrik hattının binaya giriş noktası"],
+["weatherhead","havai elektrik hattının bina girişindeki koruyucu başlık"],
+["GFCI","toprak kaçağı algılayıp elektriği kesen priz/sigorta (Ground Fault Circuit Interrupter)"],
+["AFCI","elektrik arkı (kıvılcım) algılayıp devreyi kesen sigorta (Arc Fault Circuit Interrupter)"],
+["exhaust hood","havalandırma menfezi kapağı (kurutma makinesi vb. için)"],
+["window well","bodrum katı penceresinin önündeki toprak çukuru"],
+["foundation clearance","dış cephe kaplaması ile zemin arasında bırakılması gereken mesafe"],
+["joist","döşemeyi taşıyan yatay ahşap/çelik kiriş"],
+["stud","duvar iskeletini oluşturan dikey ahşap dikme"],
+["header","kapı/pencere boşluğunun üzerindeki taşıyıcı kiriş"],
+["sill plate","temel üzerine oturan ve duvar iskeletinin başladığı yatay kiriş"],
+["sole plate","duvar dikmelerinin alt ucunun oturduğu yatay taban kirişi"],
+["top plate","duvar dikmelerinin üst ucunu birleştiren yatay kiriş"],
+["king stud","header'ı iki yandan taşıyan tam boy dikme"],
+["jack stud","header'ı doğrudan destekleyen kısa dikme"],
+["cripple stud","header ile top plate arasındaki kısa dikme"],
+["beam","büyük açıklıkları geçen ana taşıyıcı kiriş"],
+["girder","birden fazla kirişi taşıyan ana ağır kiriş"],
+["lally column","bodrum/bahçe katında kirişi taşıyan dikey çelik/beton dolgu kolon"],
+["screw jack","yüksekliği ayarlanabilen geçici destek kolonu"],
+["subfloor","ana döşeme kaplamasının altındaki yapısal döşeme tahtası"],
+["sheathing","duvar/çatı/döşeme iskeletinin üzerini kapatan tahta kaplama"],
+["plywood","kontrplak (yonga levhaların preslenmesiyle oluşan ahşap levha)"],
+["OSB","yönlendirilmiş yonga levha (Oriented Strand Board)"],
+["beam joint unsupported","kirişin birleşim noktasının altında destek kolonu olmaması"],
+["rim joist","döşeme kirişlerinin dış çevresini kapatan kiriş"],
+["shim","küçük boşlukları doldurmak için kullanılan ince takoz"],
+["bow (foundation)","temel duvarının dışa doğru kavis yapması"],
+["foundation wall","binanın temel duvarı"],
+["footing","temel duvarının altına dökülen geniş beton kaide"],
+["slab","zemine dökülen düz beton döşeme"],
+["crawlspace","bodrumsuz evlerde zemin ile döşeme arasındaki alçak boşluk"],
+["sump pump","bodruma sızan suyu dışarı pompalayan tulumba"],
+["dehumidifier","nem alma cihazı"],
+["vapor barrier / retarder","nem geçişini engelleyen membran"],
+["water infiltration","dış sudan yapıya sızma"],
+["hydrostatic pressure","toprak/su basıncının temel duvarına uyguladığı basınç"],
+["efflorescence","tuğla/beton yüzeyinde nem nedeniyle oluşan beyaz tuz birikintisi"],
+["repoint / repointing","eskimiş harcın kazınıp yenisiyle değiştirilmesi"],
+["mortar","tuğla/taş birleştirmede kullanılan harç"],
+["parging","temel duvarının dışına uygulanan ince koruyucu sıva tabakası"],
+["weep hole","duvar arkasındaki nemi dışarı tahliye eden küçük delik"],
+["brick veneer","taşıyıcı olmayan, dekoratif tuğla kaplama"],
+["masonry","tuğla, taş, blok gibi malzemelerle yapılan yapı işleri"],
+["hump or sag in floor","döşemede oluşan kabarma veya çökme"],
+["carpenter ant","ahşabı oyarak yuva yapan büyük karınca türü"],
+["frass","böceklerin ahşabı kemirmesi sonucu oluşan talaş/döküntü"],
+["wood-destroying insect","ahşabı tahrip eden böcek (karınca, termit vb.)"],
+["missing brick (foundation)","temel duvarındaki iç tuğla katmanının eksik olması"],
+["electric panel","elektrik dağıtım (sigorta) panosu"],
+["circuit breaker","devre kesici (sigorta)"],
+["panel capacity","panonun taşıyabileceği maksimum akım (amper)"],
+["branch wiring","ana panodan çıkan devre kabloları"],
+["grounding","elektrik sisteminin topraklanması"],
+["bonding","metal parçaların elektriksel olarak birbirine bağlanması"],
+["junction box","kabloların güvenli şekilde birleştirildiği kutu"],
+["receptacle","elektrik prizi"],
+["cover plate","priz/anahtar üzerindeki kapak plakası"],
+["NM cable (Romex)","plastik kılıflı standart ev içi elektrik kablosu"],
+["supply line","suyu getiren besleme hattı"],
+["drain-waste-vent (DWV) system","atık suyu tahliye eden ve havalandıran tesisat sistemi"],
+["PEX pipe","esnek plastik su tesisatı borusu"],
+["copper pipe","bakır su tesisatı borusu"],
+["shutoff valve","su/gaz akışını kesen vana"],
+["pressure tank","su basıncını dengeleyen tank (kuyu sistemlerinde)"],
+["well cap","kuyunun üstünü kapatan koruyucu kapak"],
+["septic system","kanalizasyona bağlı olmayan evlerde kullanılan foseptik sistemi"],
+["mixing valve","sıcak ve soğuk suyu karıştırıp sabit sıcaklık sağlayan vana"],
+["backflow preventer","suyun ters yönde akmasını önleyen tesisat parçası"],
+["furnace","sıcak hava üfleyerek ısıtma yapan cihaz"],
+["boiler","su ısıtarak radyatör/döşemeden ısıtma sağlayan kazan"],
+["forced air heating","fanla sıcak havanın kanallar yoluyla dağıtıldığı ısıtma sistemi"],
+["ductwork","havalandırma/ısıtma kanalları"],
+["flue","yanma gazlarını dışarı atan baca borusu"],
+["combustion air","yanma için gereken hava"],
+["heat pump","hem ısıtma hem soğutma yapabilen elektrikli sistem"],
+["mini-split (ductless)","kanalsız iç/dış ünite ile çalışan klima/ısı pompası sistemi"],
+["HRV / ERV","ısı/nem geri kazanımlı havalandırma cihazı"],
+["oil tank","yakıt (fuel oil) deposu"],
+["chimney","baca"],
+["flue liner","baca içindeki koruyucu astar/gömlek"],
+["damper","bacadaki hava akışını kontrol eden kapak"],
+["hearth","şömine önündeki taş/tuğla zemin"],
+["chimney cap","baca üstündeki koruyucu kapak"],
+["mortar deterioration","baca/duvar harcının aşınıp dökülmesi"],
+["negative slope (flue)","baca borusunun yanlış yönde eğimli olması"],
+["egress window","acil çıkış standartlarını karşılayan pencere"],
+["jamb","kapı/pencere çerçevesinin yan kısmı"],
+["casing","kapı/pencere çevresindeki süsleme kaplaması"],
+["threshold","kapı eşiği"],
+["weatherstripping","kapı/pencere kenarlarına yalıtım için takılan conta"],
+["double-hung window","her iki kanadı da dikey kayan pencere tipi"],
+["casement window","menteşeyle dışa açılan pencere tipi"],
+["fogged glass","çift camın arasındaki yalıtım gazının kaçması sonucu oluşan buğulu görünüm"],
+["graspable handrail","elle kolayca kavranabilir tipte korkuluk/tırabzan"],
+["guard / guardrail","düşmeyi önlemek için yapılan korkuluk"],
+["window fall protection","çocukların pencereden düşmesini önleyen güvenlik düzeneği"],
+["headroom","tavan ile basamak arasındaki dikey açıklık"],
+["storm door","ana kapının dışına eklenen ikinci koruyucu kapı"],
+["auto-closer","kapıyı otomatik kapatan menteşe/mekanizma"],
+["garage fire separation","garaj ile ev arasında yangının yayılmasını geciktiren yalıtım"],
+["safety cable (garage door)","garaj kapısı yayı koptuğunda tehlikeyi önleyen güvenlik teli"],
+["vermiculite","bazı eski evlerde yalıtım amacıyla kullanılan, asbest içerebilen mineral malzeme"],
+["asbestos","eskiden yapı malzemelerinde kullanılan, sağlığa zararlı lif yapılı mineral"],
+["radon","topraktan sızabilen, sağlığa zararlı görünmez bir gaz"],
+["mold","küf"],
+["moisture management","bina içindeki/çevresindeki nemin kontrol altında tutulması"],
+["home inspection","ev inceleme/ekspertiz hizmeti"],
+["pre-sale inspection","satış öncesi yapılan ev incelemesi"],
+["inspector","bina/ev müfettişi (ekspertiz uzmanı)"],
+["deferred maintenance","ertelenmiş/ihmal edilmiş bakım"],
+["safety hazard","güvenlik tehlikesi"],
+["action recommended","müfettişin düzeltilmesini önerdiği bulgu"],
+["maintenance / minor repair","küçük bakım/onarım gerektiren bulgu"],
+["limitation (inspection)","incelemenin erişemediği/kapsamadığı alan"],
+["recommendation","müfettişin önerdiği çözüm/uzman yönlendirmesi"],
+["standards of practice","müfettişlerin uyması gereken mesleki inceleme standartları"],
+["occupancy","mülkün o an dolu/boş olma durumu"],
+["appurtenance","mülke bağlı ek yapı/unsur (veranda, teras vb.)"],
+["corrugated","oluklu/dalgalı yüzey şekli"],
+["active leak","o anda devam eden su sızıntısı"],
+["hidden / concealed damage","gözle görülmeyen, kapalı alanlardaki hasar"],
+["intrusive inspection","yapıyı kısmen açarak yapılan detaylı inceleme"],
 ];
 
 const FBR_WORDS = [
@@ -9734,6 +9907,9 @@ const UI_STRINGS = {
     re_hint: "ABD emlak lisans sınavlarında en sık geçen ~150 terim — mülkiyet, temsilcilik, sözleşme, finansman, değerleme, kapanış, imar ve kiralama kategorilerinden.",
     as_label: "ASVAB Word Knowledge Kelimeleri",
     as_hint: "ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.",
+    tab_inspect: "Inspection Literature",
+    insp_label: "İnşaat ve Ev İnceleme Terimleri",
+    insp_hint: "Ev inceleme (home inspection) raporlarında ve inşaat literatüründe sık geçen ~160 terim — çatı, dış cephe, elektrik, tesisat, ısıtma, baca, temel/bodrum ve genel inceleme terminolojisi.",
     fl_label: "Finansal Okuryazarlık Soruları",
     fl_hint: "Bileşik faiz, enflasyon, kredi puanı, bütçeleme, yatırım ve sigorta gibi temel finans kavramlarını test eden çoktan seçmeli sorular.",
     wealth_label: "Zenginlik, Servet ve Davranışsal Finans",
@@ -9816,6 +9992,9 @@ const UI_STRINGS = {
     re_hint: "About 150 of the most common terms on U.S. real estate licensing exams — covering property, agency, contracts, financing, appraisal, closing, zoning, and leasing.",
     as_label: "ASVAB Word Knowledge Terms",
     as_hint: "About 300 of the most common words on the ASVAB Word Knowledge section — this section counts double toward your AFQT score.",
+    tab_inspect: "Inspection Literature",
+    insp_label: "Construction & Home Inspection Terms",
+    insp_hint: "About 160 terms common in home inspection reports and construction literature — roofing, exterior, electrical, plumbing, heating, chimney, foundation/basement, and general inspection terminology.",
     fl_label: "Financial Literacy Questions",
     fl_hint: "Multiple-choice questions testing core finance concepts like compound interest, inflation, credit scores, budgeting, investing, and insurance.",
     wealth_label: "Wealth, Net Worth & Behavioral Finance Questions",
@@ -9991,6 +10170,7 @@ function applyLanguage(lang){
   document.getElementById("trwCount").textContent = t("total_words").replace("{n}", TURKISH_WORDS.length);
   document.getElementById("reCount").textContent = t("total_words").replace("{n}", REAL_ESTATE_WORDS.length);
   document.getElementById("asCount").textContent = t("total_words").replace("{n}", ASVAB_WORDS.length);
+  document.getElementById("inspectCount").textContent = t("total_words").replace("{n}", INSPECTION_WORDS.length);
   document.getElementById("flCount").textContent = t("total_questions").replace("{n}", FINLIT_QUESTIONS.length);
   document.getElementById("wealthCount").textContent = t("total_questions").replace("{n}", WEALTH_QUESTIONS.length);
   document.getElementById("ircCount").textContent = t("total_questions").replace("{n}", IRC_QUESTIONS.length);
@@ -10013,6 +10193,7 @@ function applyLanguage(lang){
   const trwTabActive = !document.getElementById("trwords").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
+  const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -10026,6 +10207,7 @@ function applyLanguage(lang){
   if(trwTabActive) renderTRWTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
+  if(inspectTabActive) renderInspectTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
@@ -10116,6 +10298,7 @@ const ALL_TRW_WORDS = TURKISH_WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:"Turkis
 const ALL_RE_WORDS = REAL_ESTATE_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_RE_WORDS_EN = REAL_ESTATE_WORDS_EN.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_AS_WORDS = ASVAB_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"ASVAB"}));
+const ALL_INSPECT_WORDS = INSPECTION_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Inspection Literature"}));
 const ALL_FBR_WORDS = FBR_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Fooled by Randomness"}));
 const ALL_OX3K_WORDS = OXFORD3000_WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
 let currentDistractorPool = ALL_WORDS;
@@ -10278,7 +10461,7 @@ let reverseMode = false;
 // (setup) and Mistakes carry no flag at all, so they're the fallback case.
 function isReversibleType(w){
   if(!w) return false;
-  if(w.custom || w.trw || w.re || w.asv || w.ox3k) return true;
+  if(w.custom || w.trw || w.re || w.asv || w.ox3k || w.insp) return true;
   if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium || w.fbr) return false;
   return true;
 }
@@ -10377,6 +10560,9 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.asv){
     await saveASWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushASVABStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.insp){
+    await saveInspectWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushInspectStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.fbr){
     await saveFBRWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushFBRStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -10436,6 +10622,7 @@ function getPanelCategories(){
     {key:"trwords", col:"trwords", nameTr:"Turkish Words", nameEn:"Turkish Words", total: TURKISH_WORDS.length, keys: listTRWKeys, load: loadTRWWord, prefix: TRW_STORE_PREFIX},
     {key:"realestate", col:"realestate", nameTr:"Real Estate", nameEn:"Real Estate", total: REAL_ESTATE_WORDS.length, keys: listREKeys, load: loadREWord, prefix: RE_STORE_PREFIX},
     {key:"asvab", col:"asvab", nameTr:"ASVAB", nameEn:"ASVAB", total: ASVAB_WORDS.length, keys: listASKeys, load: loadASWord, prefix: AS_STORE_PREFIX},
+    {key:"inspect", col:"inspect", nameTr:"Inspection Literature", nameEn:"Inspection Literature", total: INSPECTION_WORDS.length, keys: listInspectKeys, load: loadInspectWord, prefix: INSPECT_STORE_PREFIX},
     {key:"finlit", col:"finlit", nameTr:"Finansal Okuryazarlık", nameEn:"Financial Literacy", total: FINLIT_QUESTIONS.length, keys: listFLKeys, load: loadFLQuestion, prefix: FL_STORE_PREFIX},
     {key:"wealth", col:"wealth", nameTr:"Zenginlik ve Davranışsal Finans", nameEn:"Wealth & Behavioral Finance", total: WEALTH_QUESTIONS.length, keys: listWFKeys, load: loadWFQuestion, prefix: WF_STORE_PREFIX},
     {key:"irc", col:"irc", nameTr:"Ev Yapı Kodu", nameEn:"Home Building Code", total: IRC_QUESTIONS.length, keys: listIRCKeys, load: loadIRCQuestion, prefix: IRC_STORE_PREFIX},
@@ -10612,6 +10799,7 @@ function switchTab(tab){
   document.getElementById("trwords").classList.toggle("hidden", tab!=="trwords");
   document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
   document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
+  document.getElementById("inspect").classList.toggle("hidden", tab!=="inspect");
   document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
   document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
   document.getElementById("irc").classList.toggle("hidden", tab!=="irc");
@@ -10628,6 +10816,7 @@ function switchTab(tab){
   if(tab === "trwords") renderTRWTab();
   if(tab === "realestate") renderRealEstateTab();
   if(tab === "asvab") renderASVABTab();
+  if(tab === "inspect") renderInspectTab();
   if(tab === "finlit") renderFinlitTab();
   if(tab === "wealth") renderWealthTab();
   if(tab === "irc") renderIRCTab();
@@ -11102,6 +11291,66 @@ document.getElementById("asDrillBtn").addEventListener("click", async ()=>{
   sessionCorrect = 0; sessionWrong = 0;
   document.getElementById("setup").classList.add("hidden");
   document.getElementById("asvab").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
+/* ===== Inspection Literature tab (fixed curated list, mirrors Real Estate / ASVAB) ===== */
+const INSPECT_STORE_PREFIX = "insp5k:";
+
+function listInspectKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(INSPECT_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(INSPECT_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(INSPECT_STORE_PREFIX)); }
+}
+async function loadInspectWord(en){
+  const raw = await rawGet(INSPECT_STORE_PREFIX+en);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveInspectWord(en, val){
+  await rawSet(INSPECT_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+async function renderInspectTab(){
+  const listEl = document.getElementById("inspectList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const rows = [];
+  for(const w of INSPECTION_WORDS){
+    const stat = await loadInspectWord(w[0]);
+    rows.push({en:w[0], tr:w[1], wrong: stat ? (stat.wrong||0) : 0, correct: stat ? (stat.correct||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <span class="mistake-en">${r.en}</span>
+        <div class="mistake-tr">${r.tr}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+}
+
+document.getElementById("inspectDrillBtn").addEventListener("click", async ()=>{
+  reverseMode = false;
+  currentDistractorPool = ALL_INSPECT_WORDS;
+  pool = [];
+  for(const w of INSPECTION_WORDS){
+    const stat = await loadInspectWord(w[0]);
+    pool.push({
+      e:w[0], p:"", t:w[1], l:"Inspection Literature",
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      insp: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("inspect").classList.add("hidden");
   document.getElementById("tabbar").classList.add("hidden");
   document.getElementById("quiz").classList.remove("hidden");
   document.getElementById("statTotal").textContent = pool.length;
@@ -11786,11 +12035,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -11843,6 +12092,7 @@ window.onAuthChanged = async function(user){
     const trwTabActive = !document.getElementById("trwords").classList.contains("hidden");
     const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
+    const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
     const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
     const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -11856,6 +12106,7 @@ window.onAuthChanged = async function(user){
     if(trwTabActive) renderTRWTab();
     if(reTabActive) renderRealEstateTab();
     if(asTabActive) renderASVABTab();
+    if(inspectTabActive) renderInspectTab();
     if(flTabActive) renderFinlitTab();
     if(wealthTabActive) renderWealthTab();
     if(ircTabActive) renderIRCTab();
@@ -12009,6 +12260,34 @@ async function syncWithCloud(uid){
     }
     await saveASWord(en, merged);
     window.FB.pushASVABStat(uid, en, merged);
+  }
+
+  // --- Inspection Literature word stats, merged the same way ---
+  const cloudInspect = await window.FB.fetchAllCloudInspect(uid);
+  const localInspectKeys = listInspectKeys();
+  const localInspectMap = {};
+  for(const k of localInspectKeys){
+    const en = k.slice(INSPECT_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localInspectMap[en] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allInspectEn = new Set([...Object.keys(localInspectMap), ...Object.keys(cloudInspect)]);
+  for(const en of allInspectEn){
+    const l = localInspectMap[en], c = cloudInspect[en];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveInspectWord(en, merged);
+    window.FB.pushInspectStat(uid, en, merged);
   }
 
   // --- Financial Literacy question stats, merged the same way ---
@@ -12240,6 +12519,7 @@ async function syncWithCloud(uid){
   const trwTabActive = !document.getElementById("trwords").classList.contains("hidden");
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
+  const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -12253,6 +12533,7 @@ async function syncWithCloud(uid){
   if(trwTabActive) renderTRWTab();
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
+  if(inspectTabActive) renderInspectTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
@@ -12352,6 +12633,12 @@ async function fetchAllCloudASVAB(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudInspect(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "inspect"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function fetchAllCloudFinlit(uid){
   const out = {};
   const snap = await getDocs(collection(db, "users", uid, "finlit"));
@@ -12416,6 +12703,10 @@ async function pushASVABStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "asvab", en), data); }
   catch(e){ console.error("ASVAB kelimesi buluta yazılamadı:", e); }
 }
+async function pushInspectStat(uid, en, data){
+  try{ await setDoc(doc(db, "users", uid, "inspect", en), data); }
+  catch(e){ console.error("Inspection Literature kelimesi buluta yazılamadı:", e); }
+}
 async function pushFinlitStat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "finlit", id), data); }
   catch(e){ console.error("Finansal okuryazarlık sorusu buluta yazılamadı:", e); }
@@ -12459,7 +12750,7 @@ async function deleteCustomWordCloud(uid, id){
 
 /* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
-const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","finlit","wealth","irc","irc2021","cdl","fidium","fbr","custom"];
+const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","inspect","finlit","wealth","irc","irc2021","cdl","fidium","fbr","custom"];
 
 async function pushUserProfile(uid, email, displayName){
   try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
@@ -12525,8 +12816,8 @@ async function fetchAdminStats(){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFidium, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFidiumStat, pushFBRStat, pushOX3KStat,
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudInspect, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFidium, fetchAllCloudFBR, fetchAllCloudOX3K,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushInspectStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFidiumStat, pushFBRStat, pushOX3KStat,
   pushUserProfile, fetchAdminStats
 };
 
