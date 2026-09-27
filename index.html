@@ -11588,7 +11588,7 @@ FIDIUM_TOPICS.forEach((topic, idx)=>{
   const btn = document.createElement("button");
   btn.className = "level-btn" + (idx===0 ? " active":"");
   btn.dataset.key = topic;
-  btn.innerHTML = `<span class="lvl-name">${topic}</span><span class="lvl-count">${count} soru</span>`;
+  btn.innerHTML = `<span class="lvl-name">${topic}</span><span class="lvl-count" data-fidium-topic="${topic}">${count} soru</span>`;
   btn.addEventListener("click", ()=>{
     fidiumLevelGrid.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
@@ -11597,6 +11597,22 @@ FIDIUM_TOPICS.forEach((topic, idx)=>{
   });
   fidiumLevelGrid.appendChild(btn);
 });
+refreshFidiumTopicProgress();
+
+async function refreshFidiumTopicProgress(){
+  for(const topic of FIDIUM_TOPICS){
+    const badge = fidiumLevelGrid.querySelector(`.lvl-count[data-fidium-topic="${CSS.escape(topic)}"]`);
+    if(!badge) continue;
+    let total = 0, mastered = 0;
+    for(let i=0; i<FIDIUM_QUESTIONS.length; i++){
+      if(FIDIUM_QUESTIONS[i][5] !== topic) continue;
+      total++;
+      const stat = await loadFidiumQuestion("fidium_"+i);
+      if(stat && stat.weight <= 1 && stat.correct > 0) mastered++;
+    }
+    badge.textContent = `${mastered}/${total} öğrenildi`;
+  }
+}
 
 async function renderFidiumTab(){
   const listEl = document.getElementById("fidiumList");
@@ -11617,6 +11633,7 @@ async function renderFidiumTab(){
       ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
     </div>
   `).join("");
+  refreshFidiumTopicProgress();
 }
 
 document.getElementById("fidiumDrillBtn").addEventListener("click", async ()=>{
