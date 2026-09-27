@@ -184,6 +184,7 @@ body{
   transition:opacity .12s ease, transform .12s ease;
 }
 .icon-btn:hover{opacity:1;transform:scale(1.1);}
+.icon-btn.active{opacity:1;color:var(--moss-dark);}
 /* Quiz card */
 .card{
   background:var(--card);
@@ -690,6 +691,7 @@ body{
     <div class="stats-bar">
       <button class="icon-btn" id="backBtn" title="Seviye seçimine dön" aria-label="Seviye seçimine dön">🏠</button>
       <span data-i18n-html="stats_line">Doğru: <b id="statCorrect">0</b> &nbsp;·&nbsp; Yanlış: <b id="statWrong">0</b> &nbsp;·&nbsp; Öğrenildi: <b id="statMastered">0</b>/<span id="statTotal">0</span></span>
+      <button class="icon-btn hidden" id="reverseBtn" title="Yön Değiştir (TR → EN)" aria-label="Yön Değiştir">⇄</button>
       <button class="icon-btn" id="resetBtn" title="İlerlemeyi sıfırla" aria-label="İlerlemeyi sıfırla">🔄</button>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -9968,6 +9970,8 @@ function applyLanguage(lang){
   document.getElementById("backBtn").setAttribute("aria-label", document.getElementById("backBtn").title);
   document.getElementById("resetBtn").title = lang === "tr" ? "İlerlemeyi sıfırla" : "Reset progress";
   document.getElementById("resetBtn").setAttribute("aria-label", document.getElementById("resetBtn").title);
+  document.getElementById("reverseBtn").title = lang === "tr" ? "Yön Değiştir (TR ⇄ EN)" : "Switch Direction (EN ⇄ TR)";
+  document.getElementById("reverseBtn").setAttribute("aria-label", document.getElementById("reverseBtn").title);
 
   document.getElementById("oxfordCount").textContent = t("total_words_oxford")
     .replace("{n}", b2Count + c1Count).replace("{b2}", b2Count).replace("{c1}", c1Count);
@@ -10252,6 +10256,37 @@ function buildFinlitOptions(correctWord){
   return opts;
 }
 
+let reverseMode = false;
+
+function renderQuestion(){
+  const isReversed = reverseMode && current.custom;
+  document.getElementById("levelBadge").textContent = current.l;
+  const wordEnEl = document.getElementById("wordEn");
+  const promptText = isReversed ? current.t : current.e;
+  wordEnEl.textContent = promptText;
+  wordEnEl.classList.toggle("small-text", promptText.length > 40);
+  document.getElementById("wordPos").textContent = current.p;
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("feedback").className = "feedback";
+  document.getElementById("nextHint").textContent = "";
+
+  const reverseBtn = document.getElementById("reverseBtn");
+  if(reverseBtn){
+    reverseBtn.classList.toggle("hidden", !current.custom);
+    reverseBtn.classList.toggle("active", isReversed);
+  }
+
+  const optsDiv = document.getElementById("options");
+  optsDiv.innerHTML = "";
+  currentOptions.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = isReversed ? opt.e : opt.t;
+    btn.addEventListener("click", ()=>handleAnswer(opt, btn));
+    optsDiv.appendChild(btn);
+  });
+}
+
 function nextQuestion(){
   if(pool.length < 1){
     document.getElementById("wordEn").textContent = t("not_enough_words");
@@ -10261,35 +10296,25 @@ function nextQuestion(){
   answered = false;
   current = pickWord();
   currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? buildFinlitOptions(current) : buildOptions(current);
-
-  document.getElementById("levelBadge").textContent = current.l;
-  const wordEnEl = document.getElementById("wordEn");
-  wordEnEl.textContent = current.e;
-  wordEnEl.classList.toggle("small-text", current.e.length > 40);
-  document.getElementById("wordPos").textContent = current.p;
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("feedback").className = "feedback";
-  document.getElementById("nextHint").textContent = "";
-
-  const optsDiv = document.getElementById("options");
-  optsDiv.innerHTML = "";
-  currentOptions.forEach(opt=>{
-    const btn = document.createElement("button");
-    btn.className = "opt";
-    btn.textContent = opt.t;
-    btn.addEventListener("click", ()=>handleAnswer(opt, btn));
-    optsDiv.appendChild(btn);
-  });
+  renderQuestion();
 }
+
+document.getElementById("reverseBtn").addEventListener("click", ()=>{
+  if(!current || !current.custom) return;
+  reverseMode = !reverseMode;
+  answered = false;
+  renderQuestion();
+});
 
 async function handleAnswer(chosenOpt, btnEl){
   if(answered) return;
   answered = true;
+  const isReversed = reverseMode && current.custom;
   const isCorrect = chosenOpt.e === current.e;
   const allBtns = Array.from(document.querySelectorAll(".opt"));
 
   allBtns.forEach(b=>{
-    const wasCorrectBtn = b.textContent === current.t;
+    const wasCorrectBtn = b.textContent === (isReversed ? current.e : current.t);
     if(wasCorrectBtn) b.classList.add("correct");
     else if(b === btnEl && !isCorrect) b.classList.add("wrong");
     else b.classList.add("dim");
@@ -10306,7 +10331,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`;
+    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${isReversed ? current.e : current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -10857,6 +10882,7 @@ document.getElementById("customForm").addEventListener("submit", async (e)=>{
 
 document.getElementById("customDrillBtn").addEventListener("click", async ()=>{
   if(!customWordsCache.length) return;
+  reverseMode = false;
   currentDistractorPool = ALL_WORDS;
   pool = customWordsCache.map(w => ({
     id:w.id, e:w.en, p:w.pos||"", t:w.tr, l:"Kelimelerim",
