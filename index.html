@@ -10193,6 +10193,7 @@ async function startSession(){
   const startBtn = document.getElementById("startBtn");
   startBtn.disabled = true;
   startBtn.textContent = "Yükleniyor…";
+  reverseMode = false;
   currentDistractorPool = ALL_WORDS;
 
   const chosen = WORDS.filter(w => selectedLevels.has(w[3]));
@@ -10258,8 +10259,19 @@ function buildFinlitOptions(correctWord){
 
 let reverseMode = false;
 
+// Reverse-direction toggle is only meaningful for plain word→meaning vocab
+// pools (they carry both .e and .t for every option). Question-bank types
+// (finlit/wealth/irc/irc2021/cdl/fidium) and FBR are excluded; Oxford 5000
+// (setup) and Mistakes carry no flag at all, so they're the fallback case.
+function isReversibleType(w){
+  if(!w) return false;
+  if(w.custom || w.trw || w.re || w.asv || w.ox3k) return true;
+  if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium || w.fbr) return false;
+  return true;
+}
+
 function renderQuestion(){
-  const isReversed = reverseMode && current.custom;
+  const isReversed = reverseMode && isReversibleType(current);
   document.getElementById("levelBadge").textContent = current.l;
   const wordEnEl = document.getElementById("wordEn");
   const promptText = isReversed ? current.t : current.e;
@@ -10272,7 +10284,7 @@ function renderQuestion(){
 
   const reverseBtn = document.getElementById("reverseBtn");
   if(reverseBtn){
-    reverseBtn.classList.toggle("hidden", !current.custom);
+    reverseBtn.classList.toggle("hidden", !isReversibleType(current));
     reverseBtn.classList.toggle("active", isReversed);
   }
 
@@ -10300,7 +10312,7 @@ function nextQuestion(){
 }
 
 document.getElementById("reverseBtn").addEventListener("click", ()=>{
-  if(!current || !current.custom) return;
+  if(!isReversibleType(current)) return;
   reverseMode = !reverseMode;
   answered = false;
   renderQuestion();
@@ -10309,7 +10321,7 @@ document.getElementById("reverseBtn").addEventListener("click", ()=>{
 async function handleAnswer(chosenOpt, btnEl){
   if(answered) return;
   answered = true;
-  const isReversed = reverseMode && current.custom;
+  const isReversed = reverseMode && isReversibleType(current);
   const isCorrect = chosenOpt.e === current.e;
   const allBtns = Array.from(document.querySelectorAll(".opt"));
 
@@ -10672,6 +10684,7 @@ async function loadMistakes(){
 
 document.getElementById("drillBtn").addEventListener("click", ()=>{
   if(!mistakeRowsCache.length) return;
+  reverseMode = false;
   currentDistractorPool = ALL_WORDS;
   pool = mistakeRowsCache.map(r => ({
     e:r.en, p:r.p, t:r.t, l:r.l,
@@ -10938,6 +10951,7 @@ async function renderTRWTab(){
 }
 
 document.getElementById("trwDrillBtn").addEventListener("click", async ()=>{
+  reverseMode = false;
   currentDistractorPool = ALL_TRW_WORDS;
   pool = [];
   for(const w of TURKISH_WORDS){
@@ -10998,6 +11012,7 @@ async function renderRealEstateTab(){
 }
 
 document.getElementById("reDrillBtn").addEventListener("click", async ()=>{
+  reverseMode = false;
   const reSrc = LANG === "en" ? REAL_ESTATE_WORDS_EN : REAL_ESTATE_WORDS;
   currentDistractorPool = LANG === "en" ? ALL_RE_WORDS_EN : ALL_RE_WORDS;
   pool = [];
@@ -11058,6 +11073,7 @@ async function renderASVABTab(){
 }
 
 document.getElementById("asDrillBtn").addEventListener("click", async ()=>{
+  reverseMode = false;
   currentDistractorPool = ALL_AS_WORDS;
   pool = [];
   for(const w of ASVAB_WORDS){
@@ -11208,6 +11224,7 @@ async function renderOX3KTab(){
 }
 
 document.getElementById("ox3kDrillBtn").addEventListener("click", async ()=>{
+  reverseMode = false;
   currentDistractorPool = ALL_OX3K_WORDS;
   pool = [];
   const chosen = OXFORD3000_WORDS.filter(w => selectedOX3KLevels.has(w[3]));
