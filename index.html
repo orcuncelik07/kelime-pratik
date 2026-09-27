@@ -9878,43 +9878,56 @@ const UI_STRINGS = {
 let LANG = "tr";
 function t(key){ return (UI_STRINGS[LANG] && UI_STRINGS[LANG][key]) || UI_STRINGS.tr[key] || key; }
 
-function refreshCurrentQuestionLanguage(){
-  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium)) return;
+function refreshQuestionBankItemLanguage(item){
+  if(!item) return false;
   let idx, src, labelKey;
-  if(current.wealth){
-    idx = parseInt(current.id.replace("wf",""), 10);
+  if(item.wealth){
+    idx = parseInt(item.id.replace("wf",""), 10);
     src = LANG === "en" ? WEALTH_QUESTIONS_EN : WEALTH_QUESTIONS;
     labelKey = "tab_wealth";
-  } else if(current.irc2021){
-    idx = parseInt(current.id.replace("irc2021_",""), 10);
+  } else if(item.irc2021){
+    idx = parseInt(item.id.replace("irc2021_",""), 10);
     src = LANG === "en" ? IRC2021_QUESTIONS_EN : IRC2021_QUESTIONS;
     labelKey = "tab_irc2021";
-  } else if(current.cdl){
-    idx = parseInt(current.id.replace("cdl_",""), 10);
+  } else if(item.cdl){
+    idx = parseInt(item.id.replace("cdl_",""), 10);
     src = LANG === "en" ? CDL_QUESTIONS_EN : CDL_QUESTIONS;
     labelKey = "tab_cdl";
-  } else if(current.fidium){
-    idx = parseInt(current.id.replace("fidium_",""), 10);
+  } else if(item.fidium){
+    idx = parseInt(item.id.replace("fidium_",""), 10);
     src = LANG === "en" ? FIDIUM_QUESTIONS_EN : FIDIUM_QUESTIONS;
     labelKey = "tab_fidium";
-  } else if(current.irc){
-    idx = parseInt(current.id.replace("irc",""), 10);
+  } else if(item.irc){
+    idx = parseInt(item.id.replace("irc",""), 10);
     src = LANG === "en" ? IRC_QUESTIONS_EN : IRC_QUESTIONS;
     labelKey = "tab_irc";
-  } else {
-    idx = parseInt(current.id.replace("fl",""), 10);
+  } else if(item.finlit){
+    idx = parseInt(item.id.replace("fl",""), 10);
     src = LANG === "en" ? FINLIT_QUESTIONS_EN : FINLIT_QUESTIONS;
     labelKey = "tab_finlit";
+  } else {
+    return false; // not a bilingual question-bank item — nothing to refresh
   }
   const entry = src[idx];
-  if(!entry) return;
+  if(!entry) return false;
   const [q, correct, w1, w2, w3] = entry;
+  item.e = q;
+  item.t = correct;
+  item.wrongOpts = [w1, w2, w3];
+  item.l = t(labelKey);
+  return true;
+}
 
-  const wasCorrectText = current.t; // before update, to detect which button was marked correct
-  current.e = q;
-  current.t = correct;
-  current.wrongOpts = [w1, w2, w3];
-  current.l = t(labelKey);
+function refreshCurrentQuestionLanguage(){
+  // Refresh every question-bank item still in the pool, not just the one on
+  // screen — otherwise pool entries not yet drawn stay cached in whichever
+  // language was active when the quiz session started, and "next" can show
+  // a question in the wrong language after toggling mid-session.
+  if(pool && pool.length){
+    for(const item of pool) refreshQuestionBankItemLanguage(item);
+  }
+
+  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium)) return;
 
   currentOptions.forEach(opt=>{
     if(opt === current) return; // same object as current, already updated above
