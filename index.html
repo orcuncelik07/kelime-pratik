@@ -11288,8 +11288,8 @@ let reverseMode = false;
 // (setup) and Mistakes carry no flag at all, so they're the fallback case.
 function isReversibleType(w){
   if(!w) return false;
-  if(w.custom || w.trw || w.re || w.asv || w.ox3k || w.insp) return true;
-  if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium || w.fbr) return false;
+  if(w.custom || w.trw || w.re || w.asv || w.ox3k || w.insp || w.fbr) return true;
+  if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium) return false;
   return true;
 }
 
