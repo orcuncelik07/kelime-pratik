@@ -13196,6 +13196,26 @@ function dfAcPick(i){
   if(inp) inp.value = x.full;
   dfAcClose(); dfSave(); dfRender();
 }
+const DF_STREET_ABBR = {st:"street",rd:"road",ave:"avenue",av:"avenue",dr:"drive",ln:"lane",ct:"court",blvd:"boulevard",hwy:"highway",pl:"place",cir:"circle",ter:"terrace",pkwy:"parkway",trl:"trail",sq:"square",mt:"mount",ft:"fort"};
+const DF_STATE_BY_ABBR = Object.fromEntries(Object.entries(DF_STATES).map(([n,a]) => [a.toLowerCase(), n]));
+// "521 northfield rd hinsdale NH" -> "521 northfield road hinsdale New Hampshire"
+function dfNormQuery(q){
+  const toks = q.replace(/[,.]/g, " ").split(/\s+/).filter(Boolean);
+  return toks.map((w, i) => {
+    const lw = w.toLowerCase();
+    if(i > 0 && DF_STREET_ABBR[lw]) return DF_STREET_ABBR[lw];
+    if(i > 1 && DF_STATE_BY_ABBR[lw] && w.length === 2) return DF_STATE_BY_ABBR[lw];
+    return w;
+  }).join(" ");
+}
+async function dfPhoton(q, signal){
+  // bbox limits the search to the US (incl. Alaska/Hawaii) so foreign "Northfield Rd"s don't crowd out the results
+  const url = "https://photon.komoot.io/api/?limit=12&lang=en&bbox=-179.3,18.7,-66.8,71.6&q=" + encodeURIComponent(q);
+  const res = await fetch(url, {signal});
+  if(!res.ok) throw new Error(res.status);
+  const data = await res.json();
+  return (data.features || []).filter(f => ((f.properties || {}).countrycode || "").toUpperCase() === "US");
+}
 function dfSuggest(q){
   clearTimeout(dfAcTimer);
   q = q.trim();
@@ -13203,21 +13223,26 @@ function dfSuggest(q){
   dfAcTimer = setTimeout(async () => {
     if(dfAcCtl) dfAcCtl.abort();
     dfAcCtl = new AbortController();
+    const signal = dfAcCtl.signal;
     try{
-      const url = "https://photon.komoot.io/api/?limit=10&lang=en&q=" + encodeURIComponent(q);
-      const res = await fetch(url, {signal: dfAcCtl.signal});
-      if(!res.ok) throw new Error(res.status);
-      const data = await res.json();
+      const norm = dfNormQuery(q);
+      const m = norm.match(/^(\d+[a-zA-Z]?)\s+(.+)$/);
+      const userNum = m ? m[1] : "";
+      let feats = await dfPhoton(norm, signal);
+      // OpenStreetMap often lacks the exact house number: retry on the street and re-attach the number the user typed
+      if(!feats.length && userNum) feats = await dfPhoton(m[2], signal);
       const seen = new Set(), out = [];
-      for(const f of (data.features || [])){
+      for(const f of feats){
         const p = f.properties || {};
-        if((p.countrycode || "").toUpperCase() !== "US") continue;
         const l = dfAcLabel(f);
-        if(!l.line1 || seen.has(l.full)) continue;
-        seen.add(l.full); out.push(l);
+        let line1 = l.line1;
+        if(userNum && p.street && !p.housenumber) line1 = `${userNum} ${p.street}`;
+        if(!line1) continue;
+        const full = [line1, l.line2].filter(Boolean).join(", ");
+        if(seen.has(full)) continue;
+        seen.add(full); out.push({line1, line2: l.line2, full});
         if(out.length >= 6) break;
       }
-      // only show if the field still holds the same text
       const inp = document.querySelector('#dfForm [data-f="addr"]');
       if(inp && inp.value.trim() === q){ dfAcItems = out; dfAcIdx = -1; dfAcRender(); }
     }catch(e){ if(e.name !== "AbortError") dfAcClose(); }
