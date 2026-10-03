@@ -12934,6 +12934,22 @@ const DF_STR = {
   }
 };
 function dft(k){ return (DF_STR[LANG] && DF_STR[LANG][k]) || DF_STR.tr[k] || k; }
+Object.assign(DF_STR.tr, {
+  fetch_btn: "⬇ Adresten verileri otomatik getir", key_sum: "API anahtarı (RentCast)", key_ph: "RentCast API anahtarını yapıştır",
+  key_help: "Otomatik veri için ücretsiz bir RentCast hesabı aç (app.rentcast.io → API) ve anahtarı buraya yapıştır. Anahtar yalnızca bu cihazda saklanır.",
+  m_noaddr: "Önce adres gir (adres önerilerinden birini seçmen en iyisi).", m_nokey: "Önce RentCast API anahtarını gir.", m_loading: "Veriler getiriliyor…",
+  m_ok: "Getirildi", m_prop: "mülk bilgileri", m_comps: "emsal", m_avm: "RentCast tahmini (as-is değer, ARV değil)", m_cond: "Emsallerin durumu bilinmiyor: tadilatlı olanları 'Tamamen tadilatlı/Güncellenmiş' olarak işaretle, yoksa ARV tüm emsallerden hesaplanır.",
+  m_401: "API anahtarı geçersiz.", m_404: "Bu adres için kayıt bulunamadı.", m_429: "API kotası doldu.", m_net: "Servise ulaşılamadı (internet yok ya da tarayıcı isteği engelledi).", m_none: "Hiç veri bulunamadı.",
+  m_replace: "Mevcut emsallerin üzerine yazılsın mı?", m_paste: "Yapıştırılan ilandan doldurulan alan"
+});
+Object.assign(DF_STR.en, {
+  fetch_btn: "⬇ Fetch data from address", key_sum: "API key (RentCast)", key_ph: "Paste your RentCast API key",
+  key_help: "For automatic data, open a free RentCast account (app.rentcast.io → API) and paste the key here. The key is stored on this device only.",
+  m_noaddr: "Enter an address first (picking one of the suggestions works best).", m_nokey: "Enter your RentCast API key first.", m_loading: "Fetching data…",
+  m_ok: "Fetched", m_prop: "property details", m_comps: "comps", m_avm: "RentCast estimate (as-is value, not ARV)", m_cond: "Comp condition is unknown: mark renovated ones as 'Fully renovated/Updated', otherwise ARV uses all comps.",
+  m_401: "Invalid API key.", m_404: "No record found for this address.", m_429: "API quota reached.", m_net: "Could not reach the service (offline or blocked by the browser).", m_none: "No data found.",
+  m_replace: "Overwrite the existing comps?", m_paste: "Fields filled from the pasted listing"
+});
 
 const DF_KEY = "dealfinder:draft";
 const DF_DEFAULTS = {
@@ -13001,7 +13017,11 @@ function dfBuildForm(){
       ${dfField("sqft","f_sqft")}${dfField("year","f_year")}
       ${dfField("beds","f_beds")}${dfField("baths","f_baths")}
       <div class="df-f full"><label>${dft("f_areaNote")}</label><textarea data-f="areaNote">${dfEsc(DF.areaNote)}</textarea></div>
-    </div><p class="df-legend">${dft("leg")}</p></div>
+    </div>
+    <button type="button" class="df-add" id="dfFetch" style="margin-top:12px;">${dft("fetch_btn")}</button>
+    <div class="df-note" id="dfFetchMsg" style="min-height:1em;"></div>
+    <details class="df-key"><summary>${dft("key_sum")}</summary><input type="password" id="dfKey" placeholder="${dft("key_ph")}" autocomplete="off" style="width:100%;margin-top:6px;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:.85rem;"><p class="df-note">${dft("key_help")}</p></details>
+    <p class="df-legend">${dft("leg")}</p></div>
     <div class="df-sec"><h3>${dft("g_comps")}</h3><div id="dfComps">${DF.comps.map(dfCompHtml).join("")}</div>
       ${DF.comps.length < 10 ? `<button type="button" class="df-add" id="dfAddComp">${dft("add_comp")}</button>` : ""}</div>
     <div class="df-sec"><h3>${dft("g_arv")}</h3><div class="df-grid">${dfField("wComps","f_wComps")}${dfField("ppsf","f_ppsf")}</div></div>
@@ -13159,6 +13179,7 @@ async function renderDealFinderTab(){
   document.getElementById("dfHint").textContent = dft("hint");
   dfBuildForm();
   dfRender();
+  try{ const k = await rawGet(DF_RC_KEY); if(k) document.getElementById("dfKey").value = k; }catch(e){}
 }
 
 /* --- address autocomplete (Photon / OpenStreetMap data, no API key) --- */
@@ -13249,8 +13270,111 @@ function dfSuggest(q){
   }, 350);
 }
 
+/* --- automatic data from an address (RentCast API, user-supplied key) + listing paste parser --- */
+const DF_RC_KEY = "dealfinder:rckey";
+async function dfRcGet(path, params, key){
+  const u = new URL("https://api.rentcast.io/v1" + path);
+  Object.entries(params).forEach(([k, v]) => { if(v !== "" && v != null) u.searchParams.set(k, v); });
+  const r = await fetch(u, {headers: {"X-Api-Key": key, "Accept": "application/json"}});
+  if(!r.ok){ const e = new Error("http"); e.status = r.status; throw e; }
+  return r.json();
+}
+function dfLatest(obj){
+  if(!obj || typeof obj !== "object") return null;
+  const ks = Object.keys(obj).sort();
+  return ks.length ? obj[ks[ks.length - 1]] : null;
+}
+function dfSetMsg(txt, bad){
+  const el = document.getElementById("dfFetchMsg");
+  if(el){ el.textContent = txt; el.style.color = bad ? "var(--wrong)" : "var(--moss-dark)"; }
+}
+async function dfFetchData(){
+  const addr = DF.addr.trim();
+  if(!addr){ dfSetMsg(dft("m_noaddr"), true); return; }
+  const key = ((document.getElementById("dfKey") || {}).value || "").trim();
+  if(!key){ dfSetMsg(dft("m_nokey"), true); const d = document.querySelector("#dfForm .df-key"); if(d) d.open = true; return; }
+  await rawSet(DF_RC_KEY, key);
+  dfSetMsg(dft("m_loading"));
+  const filled = [];
+  let prop = null, avm = null, fatal = null;
+  try{
+    const props = await dfRcGet("/properties", {address: addr, limit: 1}, key);
+    prop = Array.isArray(props) ? props[0] : props;
+  }catch(e){ if(e.status === 401 || e.status === 429 || !e.status) fatal = e; }
+  if(fatal){ dfSetMsg(dft(fatal.status === 401 ? "m_401" : fatal.status === 429 ? "m_429" : "m_net"), true); return; }
+  if(prop){
+    const set = (k, v) => { if(v != null && v !== "") DF[k] = String(v); };
+    set("beds", prop.bedrooms); set("baths", prop.bathrooms); set("sqft", prop.squareFootage); set("year", prop.yearBuilt);
+    const tax = dfLatest(prop.propertyTaxes);
+    if(tax && tax.total) DF.tax = String(Math.round(tax.total / 12));
+    filled.push(dft("m_prop"));
+  }
+  try{
+    avm = await dfRcGet("/avm/value", {address: addr, compCount: 10, propertyType: prop && prop.propertyType, bedrooms: DF.beds, bathrooms: DF.baths, squareFootage: DF.sqft}, key);
+  }catch(e){
+    if(!prop){ dfSetMsg(dft(e.status === 401 ? "m_401" : e.status === 429 ? "m_429" : e.status === 404 ? "m_404" : "m_net"), true); return; }
+  }
+  const comps = (avm && avm.comparables) || [];
+  if(comps.length){
+    const hasData = DF.comps.some(c => dfNum(c.sqft) > 0 || dfNum(c.price) > 0);
+    if(!hasData || confirm(dft("m_replace"))){
+      DF.comps = comps.slice(0, 10).map(c => ({
+        addr: c.formattedAddress || "", dist: c.distance != null ? String(Math.round(c.distance * 100) / 100) : "",
+        date: String(c.removedDate || c.listedDate || "").slice(0, 7), beds: c.bedrooms != null ? String(c.bedrooms) : "", baths: c.bathrooms != null ? String(c.bathrooms) : "",
+        sqft: c.squareFootage != null ? String(c.squareFootage) : "", price: c.price != null ? String(c.price) : "", cond: "avg"
+      }));
+      while(DF.comps.length < 5) DF.comps.push(dfBlankComp());
+      filled.push(comps.length + " " + dft("m_comps"));
+    }
+  }
+  if(!filled.length && !(avm && avm.price)){ dfSetMsg(dft("m_none"), true); return; }
+  dfSave(); dfBuildForm(); dfRender();
+  try{ const k = await rawGet(DF_RC_KEY); if(k) document.getElementById("dfKey").value = k; }catch(e){}
+  let m = dft("m_ok") + ": " + filled.join(", ") + ".";
+  if(avm && avm.price) m += " " + dft("m_avm") + ": " + dfMoney(avm.price) + (avm.priceRangeLow ? " (" + dfMoney(avm.priceRangeLow) + " – " + dfMoney(avm.priceRangeHigh) + ")" : "") + ".";
+  if(comps.length) m += " " + dft("m_cond");
+  dfSetMsg(m);
+}
+
+// Pasting a whole listing (Zillow/Realtor/Redfin text) into the address box fills what it can find
+function dfParseListing(txt){
+  const out = {};
+  const num = x => x.replace(/,/g, "");
+  let m;
+  const addr = txt.match(/(\d{1,6}\s+[A-Za-z0-9 .'\-]{3,50}?)\s*[,\n]\s*([A-Za-z .'\-]{2,30}?)\s*,?\s+([A-Z]{2})\s+(\d{5})(?:-\d{4})?/);
+  if(addr) out.addr = `${addr[1].trim()}, ${addr[2].trim()}, ${addr[3]} ${addr[4]}`;
+  const prices = [...txt.matchAll(/\$\s?([\d,]{5,})/g)].map(x => parseInt(num(x[1]), 10)).filter(n => n >= 20000 && n < 50000000);
+  if(prices.length) out.price = String(prices[0]);
+  if((m = txt.match(/(\d+(?:\.\d+)?)\s*(?:bd|beds?|bedrooms?)\b/i))) out.beds = m[1];
+  if((m = txt.match(/(\d+(?:\.\d+)?)\s*(?:ba|baths?|bathrooms?)\b/i))) out.baths = m[1];
+  if((m = txt.match(/([\d,]{3,6})\s*(?:sq\.?\s?ft\.?|sqft|square\s+feet)/i))) out.sqft = num(m[1]);
+  if((m = txt.match(/(?:built\s+in|year\s+built:?)\s*(\d{4})/i))) out.year = m[1];
+  if((m = txt.match(/(?:property\s+)?tax(?:es)?[^$\n]{0,25}\$\s?([\d,]+)\s*(?:\/\s*(yr|year|mo|month)|per\s+(year|month))?/i))){
+    const v = parseInt(num(m[1]), 10), unit = (m[2] || m[3] || "").toLowerCase();
+    if(v > 0 && unit.startsWith("m")) out.tax = String(v);
+    else if(v > 0 && (unit.startsWith("y") || v > 800)) out.tax = String(Math.round(v / 12));
+  }
+  return out;
+}
+function dfApplyPaste(txt){
+  const f = dfParseListing(txt);
+  const keys = Object.keys(f);
+  if(!keys.length) return 0;
+  keys.forEach(k => { DF[k] = f[k]; });
+  dfSave(); dfBuildForm(); dfRender();
+  dfSetMsg(dft("m_paste") + ": " + keys.length + ".");
+  return keys.length;
+}
+
 (function(){
   const root = document.getElementById("dealfinder");
+  root.addEventListener("paste", ev => {
+    const el = ev.target;
+    if(!(el.dataset && el.dataset.f === "addr")) return;
+    const txt = (ev.clipboardData || window.clipboardData).getData("text") || "";
+    if(txt.length < 40 && txt.indexOf("\n") < 0) return;   // a normal address paste
+    if(dfApplyPaste(txt)) ev.preventDefault();
+  });
   root.addEventListener("input", ev => {
     const el = ev.target;
     if(el.dataset.f){ DF[el.dataset.f] = el.value; if(el.dataset.f === "addr") dfSuggest(el.value); }
@@ -13276,7 +13400,8 @@ function dfSuggest(q){
   }));
   root.addEventListener("click", async ev => {
     const t_ = ev.target;
-    if(t_.id === "dfAddComp"){ if(DF.comps.length < 10){ DF.comps.push(dfBlankComp()); dfSave(); dfBuildForm(); dfRender(); } }
+    if(t_.id === "dfFetch"){ dfFetchData(); }
+    else if(t_.id === "dfAddComp"){ if(DF.comps.length < 10){ DF.comps.push(dfBlankComp()); dfSave(); dfBuildForm(); dfRender(); } }
     else if(t_.dataset && t_.dataset.rm !== undefined){ DF.comps.splice(+t_.dataset.rm, 1); if(!DF.comps.length) DF.comps.push(dfBlankComp()); dfSave(); dfBuildForm(); dfRender(); }
     else if(t_.id === "dfCopy"){
       const txt = dfReport();
