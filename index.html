@@ -502,6 +502,50 @@ body{
 .fw-seg text{fill:#fff;pointer-events:none;font-family:"Helvetica Neue",Arial,sans-serif;}
 .fw-seg:hover path{filter:brightness(1.12);}
 .fw-seg.sel path{stroke:#1f2a24;stroke-width:4;filter:brightness(1.15);}
+/* Deal Finder */
+.df-sec{margin:0 0 18px;padding:14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);}
+.df-sec h3{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--clay);margin:0 0 12px;}
+.df-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.df-grid.c3{grid-template-columns:repeat(3,1fr);}
+.df-grid .full{grid-column:1/-1;}
+.df-f{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.df-f label{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.68rem;color:var(--moss-dark);opacity:.8;line-height:1.25;}
+.df-f input,.df-f select,.df-f textarea{width:100%;font:inherit;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.9rem;padding:9px 10px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);min-width:0;}
+.df-f textarea{resize:vertical;min-height:56px;}
+.df-comp{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px;background:#fffefb;}
+.df-comp-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.df-comp-head .df-f{flex:1;}
+.df-num{font-family:"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:.8rem;color:var(--clay);}
+.df-rm{border:none;background:none;color:var(--wrong);font-size:1.2rem;cursor:pointer;padding:4px 8px;}
+.df-badge{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.74rem;color:var(--moss-dark);margin-top:6px;}
+.df-add{width:100%;padding:10px;border:1.5px dashed var(--moss);background:none;color:var(--moss-dark);border-radius:10px;font-family:"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;}
+.df-legend{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.72rem;color:var(--moss-dark);line-height:1.5;margin:8px 0 0;}
+.df-legend b{color:var(--ink);}
+.df-verdict{border-radius:12px;padding:14px;margin-bottom:14px;font-family:"Helvetica Neue",Arial,sans-serif;}
+.df-verdict .vt{font-weight:800;font-size:1.1rem;letter-spacing:.04em;}
+.df-verdict .vs{font-size:.82rem;margin-top:4px;line-height:1.5;}
+.df-verdict.go{background:#e4f1e6;border:1.5px solid var(--right);color:#1f4a28;}
+.df-verdict.risk{background:#fbf0d9;border:1.5px solid var(--gold);color:#6b4d10;}
+.df-verdict.no{background:#f8e3df;border:1.5px solid var(--wrong);color:#6e231a;}
+.df-res h4{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin:16px 0 6px;}
+.df-kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-family:"Helvetica Neue",Arial,sans-serif;font-size:.84rem;}
+.df-kv:last-child{border-bottom:none;}
+.df-kv b{white-space:nowrap;}
+.df-kv.sub{padding-left:12px;opacity:.85;font-size:.8rem;}
+.df-kv.tot{font-weight:700;border-top:2px solid var(--ink);}
+.df-pass{color:var(--right);font-weight:800;} .df-fail{color:var(--wrong);font-weight:800;}
+.df-pos{color:var(--right);} .df-neg{color:var(--wrong);}
+.df-tw{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.df-tbl{border-collapse:collapse;width:100%;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.76rem;}
+.df-tbl th,.df-tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap;}
+.df-tbl th:first-child,.df-tbl td:first-child,.df-tbl td.l,.df-tbl th.l{text-align:left;}
+.df-tbl th{font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--moss-dark);}
+.df-note{font-family:"Helvetica Neue",Arial,sans-serif;font-size:.72rem;color:var(--moss-dark);opacity:.8;line-height:1.5;margin:6px 0;}
+.df-actions{display:flex;gap:8px;margin-top:14px;}
+.df-actions button{flex:1;padding:12px;border-radius:8px;border:1.5px solid var(--ink);background:var(--card);font-family:"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;color:var(--ink);}
+.df-bar{position:sticky;top:8px;z-index:5;background:var(--ink);color:var(--paper);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.8rem;display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:space-between;}
+.df-bar b{color:#fff;}
+.df-bar:empty{display:none;}
 .hidden{display:none !important;}
 @media(max-width:420px){
   .options{grid-template-columns:1fr;}
@@ -545,6 +589,7 @@ body{
       <option value="asvab">ASVAB</option>
       <option value="inspect" data-i18n="tab_inspect">Inspection Literature</option>
       <option value="feelings" data-i18n="tab_feelings">Feelings Wheel</option>
+      <option value="dealfinder">Deal Finder</option>
       <option value="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</option>
       <option value="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</option>
       <option value="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</option>
@@ -633,6 +678,15 @@ body{
     <div class="fw-info" id="fwInfo"></div>
     <div class="fw-tools"><button type="button" id="fwZoomOut" aria-label="−">−</button><span id="fwZoomVal">100%</span><button type="button" id="fwZoomIn" aria-label="+">+</button></div>
     <div class="fw-scroll" id="fwScroll"><div id="fwWheel"></div></div>
+  </div>
+
+  <!-- DEAL FINDER -->
+  <div id="dealfinder" class="panel hidden">
+    <p class="section-label">Deal Finder</p>
+    <p class="hint" id="dfHint" style="margin-top:0;margin-bottom:14px;"></p>
+    <div class="df-bar" id="dfBar"></div>
+    <div id="dfForm"></div>
+    <div class="df-res" id="dfResults"></div>
   </div>
 
   <!-- FINANCIAL LITERACY -->
@@ -11396,6 +11450,7 @@ function applyLanguage(lang){
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
   const feelTabActive = !document.getElementById("feelings").classList.contains("hidden");
+  const dealTabActive = !document.getElementById("dealfinder").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -11411,6 +11466,7 @@ function applyLanguage(lang){
   if(asTabActive) renderASVABTab();
   if(inspectTabActive) renderInspectTab();
   if(feelTabActive) renderFeelingsTab();
+  if(dealTabActive) renderDealFinderTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
@@ -12073,6 +12129,7 @@ function switchTab(tab){
   document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
   document.getElementById("inspect").classList.toggle("hidden", tab!=="inspect");
   document.getElementById("feelings").classList.toggle("hidden", tab!=="feelings");
+  document.getElementById("dealfinder").classList.toggle("hidden", tab!=="dealfinder");
   document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
   document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
   document.getElementById("irc").classList.toggle("hidden", tab!=="irc");
@@ -12091,6 +12148,7 @@ function switchTab(tab){
   if(tab === "asvab") renderASVABTab();
   if(tab === "inspect") renderInspectTab();
   if(tab === "feelings") renderFeelingsTab();
+  if(tab === "dealfinder") renderDealFinderTab();
   if(tab === "finlit") renderFinlitTab();
   if(tab === "wealth") renderWealthTab();
   if(tab === "irc") renderIRCTab();
@@ -12791,6 +12849,339 @@ document.getElementById("fwDrillBtn").addEventListener("click", async ()=>{
   updateStats();
   nextQuestion();
 });
+
+
+/* ===== Deal Finder tab: ARV (comps + $/SqFt), 70% rule gut check, itemized costs, 3 scenarios ===== */
+const DF_STR = {
+  tr: {
+    hint: "Fix & flip fırsatlarını hızlıca analiz et: emsal (comps) ve SqFt başı değer üzerinden ARV tahmini, %70 kuralı ile ilk eleme, kalem kalem gider ve 3 senaryo (Conservative / Realistic / Optimistic). Emsalleri kendin girersin (MLS/Zillow/Redfin'den son satışlar); hesaplamalar otomatik yapılır.",
+    g_subject: "1. Mülk ve Bölge", g_comps: "2. Emsal Satışlar (Comps) — en fazla 10", g_arv: "3. ARV Ayarları", g_rehab: "4. Tadilat", g_acq: "5. Alım ve Finansman", g_hold: "6. Elde Tutma (Holding) — aylık", g_sell: "7. Satış Maliyetleri ve Hedef",
+    f_addr: "Adres / Lokasyon", f_area: "Bölge sınıfı", f_areaNote: "Bölge gerekçesi (gelir düzeyi, suç, okul, ev sahipliği oranı, satış süresi…)",
+    f_beds: "Yatak", f_baths: "Banyo", f_sqft: "SqFt (yaşanabilir alan)", f_year: "Yapım yılı", f_price: "Alış / teklif fiyatı ($)",
+    f_dist: "Mesafe (mi)", f_date: "Satış ayı", f_cond: "Durum", f_cprice: "Satış fiyatı ($)",
+    c_reno: "Tamamen tadilatlı", c_updated: "Güncellenmiş", c_avg: "Orta / standart", c_needs: "Tadilat gerekli (as-is)",
+    f_wComps: "Comps ağırlığı (%) — kalanı SqFt bazlı", f_ppsf: "Elle $/SqFt (boşsa emsallerden)",
+    f_labor: "İşçilik / müteahhit ($)", f_materials: "Malzeme ($)", f_permits: "Ruhsat / izinler ($)", f_contPct: "Beklenmeyen gider payı (%)",
+    f_buyCostPct: "Alım closing (%) — title, escrow, kayıt, avukat", f_inspect: "Ekspertiz / appraisal / survey ($)",
+    f_ltv: "Kredi (LTV %) — nakitse 0", f_rate: "Yıllık faiz (%)", f_pts: "Points / kredi masrafı (%)",
+    f_months: "Elde tutma süresi (ay)", f_tax: "Emlak vergisi ($/ay)", f_ins: "Sigorta ($/ay)", f_util: "Faturalar / utilities ($/ay)", f_other: "Diğer: HOA, çim bakımı ($/ay)",
+    f_commPct: "Emlakçı komisyonu (%)", f_sellPct: "Satıcı closing + transfer vergisi (%)", f_staging: "Staging / pazarlama / fotoğraf ($)", f_target: "Hedef net kâr ($)",
+    add_comp: "+ Emsal ekle", comp: "Emsal", adj: "Düzeltilmiş", ppsf: "$/SqFt",
+    area_A: "A — Üst segment", area_B: "B — Orta-üst, istikrarlı", area_C: "C — İşçi/orta sınıf, eski stok", area_D: "D — Sorunlu bölge",
+    leg: "<b>A:</b> yüksek gelir, düşük suç, güçlü okullar, ev sahipliği yüksek, hızlı satış. <b>B:</b> istikrarlı orta-üst banliyö, sağlam okullar. <b>C:</b> işçi/orta sınıf, eski yapı stoku, kiracı oranı ve yatırımcı aktivitesi yüksek, satış daha yavaş. <b>D:</b> yüksek suç/boşluk oranı, düşük fiyatlar, kiracı ağırlıklı, finansman ve satış riski yüksek.",
+    r_title: "Analiz", empty: "Analiz için en az mülkün SqFt değerini ve emsal satışları (SqFt + satış fiyatı) gir.",
+    s1: "1. Mülk ve Bölge Özeti", s2: "2. Emsal Karşılaştırma Tablosu", s3: "3. ARV ve Maliyet Kalemleri", s4: "4. Senaryo Analizi",
+    k_addr: "Adres / Lokasyon", k_area: "Bölge sınıfı", k_rule: "%70 kuralı ön eleme (gut check)", k_mao: "MAO = ARV × 0.70 − tadilat", k_offer: "Teklifin", pass: "PASS", fail: "FAIL",
+    k_arvS: "SqFt bazlı ARV", k_arvC: "Comps bazlı ARV", k_arvB: "Harmanlanmış ARV", k_ppsfAvg: "Ortalama $/SqFt (kullanılan emsaller)", k_set: "Kullanılan emsal sayısı",
+    note_all: "Tadilatlı/Güncellenmiş emsal yok; tüm emsaller kullanıldı — gerçek ARV için tadilatlı emsaller girmelisin.",
+    note_adj: "Comps ARV: her emsal, SqFt farkı için emsalin $/SqFt değerinin %50'si kadar düzeltilir (yatak/banyo, arsa, garaj düzeltmeleri dahil değildir).",
+    cost_acq: "Alım", cost_buy: "Alış fiyatı", cost_bc: "Alım closing masrafları", cost_insp: "Ekspertiz / appraisal / survey",
+    cost_rehab: "Tadilat", cost_labor: "İşçilik / müteahhit", cost_mat: "Malzeme", cost_perm: "Ruhsat / izinler", cost_cont: "Beklenmeyen gider payı",
+    cost_fin: "Finansman", cost_loan: "Kredi tutarı", cost_pts: "Points / kredi masrafı", cost_int: "Faiz (sadece faiz ödemeli)",
+    cost_hold: "Elde tutma", cost_tax: "Emlak vergisi", cost_ins: "Sigorta", cost_util: "Faturalar", cost_oth: "Diğer",
+    cost_sell: "Satış", cost_comm: "Emlakçı komisyonu", cost_sc: "Satıcı closing + transfer vergisi", cost_stg: "Staging / pazarlama",
+    cost_total: "TOPLAM MALİYET", kv_profit: "Net kâr", kv_roi: "ROI (toplam maliyet üzerinden)", kv_coc: "Nakit getirisi (cash-on-cash)", kv_cash: "Nakit yatırım",
+    sc_cons: "Conservative", sc_real: "Realistic", sc_opt: "Optimistic",
+    r_arv: "Tahmini ARV", r_rehab: "Tadilat (+beklenmeyen)", r_hold: "Elde tutma süresi", r_cost: "Toplam gider", r_profit: "Net kâr", r_roi: "ROI", r_margin: "Kâr marjı (ARV'ye göre)",
+    mo: "ay", asm: "Varsayımlar: Conservative = ARV düşük olanın %97'si, tadilat ×1.20, beklenmeyen +5 puan, süre ×1.5. Realistic = girdiğin değerler. Optimistic = ARV yüksek olanın %102'si, tadilat ×0.95, beklenmeyen −7 puan, süre ×0.67.",
+    v_go: "GO — Fırsat görünüyor", v_risk: "RİSKLİ — Dikkatli teklif ver", v_marg: "MARJİNAL — Kâr hedefin altında", v_no: "NO-GO — Geç",
+    v_go_s: "Realistic kâr hedefi karşılıyor ve Conservative senaryoda zarar yok.", v_risk_s: "Realistic kâr hedefi karşılıyor ama Conservative senaryoda zarar var; tadilat/ARV riskini doğrula.", v_marg_s: "Realistic senaryoda kâr var ama hedef net kârın altında.", v_no_s: "Realistic senaryoda kâr yok veya negatif.",
+    maxoff: "Hedef net kâra göre maksimum teklif (Realistic)",
+    copy: "Raporu kopyala", clear: "Formu temizle", copied: "Kopyalandı ✓", clear_q: "Tüm girdiler silinsin mi?"
+  },
+  en: {
+    hint: "Quickly analyze fix & flip deals: ARV from comps and price per SqFt, 70% rule gut check, line-item costs and 3 scenarios (Conservative / Realistic / Optimistic). You enter the comps (recent sales from MLS/Zillow/Redfin); the math is automatic.",
+    g_subject: "1. Property & Area", g_comps: "2. Comparable Sales (Comps) — up to 10", g_arv: "3. ARV Settings", g_rehab: "4. Rehab", g_acq: "5. Acquisition & Financing", g_hold: "6. Holding Costs — monthly", g_sell: "7. Selling Costs & Target",
+    f_addr: "Address / Location", f_area: "Area class", f_areaNote: "Area rationale (income level, crime, schools, owner-occupancy, days on market…)",
+    f_beds: "Beds", f_baths: "Baths", f_sqft: "SqFt (living area)", f_year: "Year built", f_price: "Purchase / offer price ($)",
+    f_dist: "Distance (mi)", f_date: "Sold month", f_cond: "Condition", f_cprice: "Sale price ($)",
+    c_reno: "Fully renovated", c_updated: "Updated", c_avg: "Average / standard", c_needs: "Needs work (as-is)",
+    f_wComps: "Comps weight (%) — remainder is SqFt-based", f_ppsf: "Manual $/SqFt (blank = from comps)",
+    f_labor: "Labor / contractor ($)", f_materials: "Materials ($)", f_permits: "Permits ($)", f_contPct: "Contingency (%)",
+    f_buyCostPct: "Buy-side closing (%) — title, escrow, recording, attorney", f_inspect: "Inspection / appraisal / survey ($)",
+    f_ltv: "Loan (LTV %) — 0 if cash", f_rate: "Annual interest (%)", f_pts: "Points / loan fees (%)",
+    f_months: "Holding period (months)", f_tax: "Property tax ($/mo)", f_ins: "Insurance ($/mo)", f_util: "Utilities ($/mo)", f_other: "Other: HOA, lawn ($/mo)",
+    f_commPct: "Agent commissions (%)", f_sellPct: "Seller closing + transfer tax (%)", f_staging: "Staging / marketing / photos ($)", f_target: "Target net profit ($)",
+    add_comp: "+ Add comp", comp: "Comp", adj: "Adjusted", ppsf: "$/SqFt",
+    area_A: "A — Premium", area_B: "B — Upper-middle, stable", area_C: "C — Working/middle class, older stock", area_D: "D — Distressed",
+    leg: "<b>A:</b> high income, low crime, strong schools, high owner-occupancy, fast sales. <b>B:</b> stable upper-middle suburb, solid schools. <b>C:</b> working/middle class, older housing, high renter share and investor activity, slower sales. <b>D:</b> high crime/vacancy, low prices, renter-heavy, high financing and resale risk.",
+    r_title: "Analysis", empty: "Enter at least the subject SqFt and some comps (SqFt + sale price) to run the analysis.",
+    s1: "1. Property & Area Summary", s2: "2. Comparable Sales Table", s3: "3. ARV & Cost Items", s4: "4. Scenario Analysis",
+    k_addr: "Address / Location", k_area: "Area class", k_rule: "70% rule gut check", k_mao: "MAO = ARV × 0.70 − rehab", k_offer: "Your offer", pass: "PASS", fail: "FAIL",
+    k_arvS: "SqFt-based ARV", k_arvC: "Comps-based ARV", k_arvB: "Blended ARV", k_ppsfAvg: "Average $/SqFt (comps used)", k_set: "Comps used",
+    note_all: "No renovated/updated comps entered; all comps were used — enter renovated comps for a true ARV.",
+    note_adj: "Comps ARV: each comp is adjusted for SqFt difference at 50% of the comp's $/SqFt (bed/bath, lot and garage adjustments are not included).",
+    cost_acq: "Acquisition", cost_buy: "Purchase price", cost_bc: "Buy-side closing costs", cost_insp: "Inspection / appraisal / survey",
+    cost_rehab: "Rehab", cost_labor: "Labor / contractor", cost_mat: "Materials", cost_perm: "Permits", cost_cont: "Contingency",
+    cost_fin: "Financing", cost_loan: "Loan amount", cost_pts: "Points / loan fees", cost_int: "Interest (interest-only)",
+    cost_hold: "Holding", cost_tax: "Property tax", cost_ins: "Insurance", cost_util: "Utilities", cost_oth: "Other",
+    cost_sell: "Selling", cost_comm: "Agent commissions", cost_sc: "Seller closing + transfer tax", cost_stg: "Staging / marketing",
+    cost_total: "TOTAL COST", kv_profit: "Net profit", kv_roi: "ROI (on total cost)", kv_coc: "Cash-on-cash", kv_cash: "Cash invested",
+    sc_cons: "Conservative", sc_real: "Realistic", sc_opt: "Optimistic",
+    r_arv: "Estimated ARV", r_rehab: "Rehab (+contingency)", r_hold: "Holding period", r_cost: "Total cost", r_profit: "Net profit", r_roi: "ROI", r_margin: "Profit margin (of ARV)",
+    mo: "mo", asm: "Assumptions: Conservative = 97% of the lower ARV, rehab ×1.20, contingency +5 pts, duration ×1.5. Realistic = your inputs. Optimistic = 102% of the higher ARV, rehab ×0.95, contingency −7 pts, duration ×0.67.",
+    v_go: "GO — Looks like a deal", v_risk: "RISKY — Offer carefully", v_marg: "MARGINAL — Profit below target", v_no: "NO-GO — Pass",
+    v_go_s: "Realistic profit meets your target and the Conservative case does not lose money.", v_risk_s: "Realistic profit meets your target but the Conservative case loses money; verify rehab/ARV risk.", v_marg_s: "Realistic case is profitable but below your target net profit.", v_no_s: "The Realistic case shows no profit or a loss.",
+    maxoff: "Max offer to hit target net profit (Realistic)",
+    copy: "Copy report", clear: "Clear form", copied: "Copied ✓", clear_q: "Clear all inputs?"
+  }
+};
+function dft(k){ return (DF_STR[LANG] && DF_STR[LANG][k]) || DF_STR.tr[k] || k; }
+
+const DF_KEY = "dealfinder:draft";
+const DF_DEFAULTS = {
+  addr:"", area:"B", areaNote:"", beds:"", baths:"", sqft:"", year:"", price:"",
+  wComps:"60", ppsf:"",
+  labor:"", materials:"", permits:"", contPct:"10",
+  buyCostPct:"2", inspect:"800", ltv:"85", rate:"12", pts:"2",
+  months:"6", tax:"300", ins:"150", util:"200", other:"50",
+  commPct:"5", sellPct:"1.5", staging:"1500", target:"30000",
+  comps:[]
+};
+let DF = JSON.parse(JSON.stringify(DF_DEFAULTS));
+let dfLoaded = false;
+const dfBlankComp = () => ({addr:"", dist:"", date:"", beds:"", baths:"", sqft:"", price:"", cond:"reno"});
+
+async function dfLoad(){
+  if(dfLoaded) return;
+  dfLoaded = true;
+  try{
+    const raw = await rawGet(DF_KEY);
+    if(raw){ const o = JSON.parse(raw); DF = Object.assign(JSON.parse(JSON.stringify(DF_DEFAULTS)), o); }
+  }catch(e){}
+  while(DF.comps.length < 5) DF.comps.push(dfBlankComp());
+}
+function dfSave(){ rawSet(DF_KEY, JSON.stringify(DF)); }
+
+const dfNum = v => { const x = parseFloat(String(v == null ? "" : v).replace(/,/g, "")); return isFinite(x) ? x : 0; };
+const dfMoney = n => (n < 0 ? "−" : "") + "$" + Math.round(Math.abs(n)).toLocaleString("en-US");
+const dfPct = n => (isFinite(n) ? n.toFixed(1) : "0.0") + "%";
+const dfEsc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dfAvg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+
+function dfField(id, labelKey, opts){
+  opts = opts || {};
+  const val = dfEsc(DF[id]);
+  const cls = opts.full ? "df-f full" : "df-f";
+  return `<div class="${cls}"><label>${dft(labelKey)}</label><input type="text" inputmode="${opts.text ? "text" : "decimal"}" data-f="${id}" value="${val}" autocomplete="off"></div>`;
+}
+
+function dfCompHtml(c, i){
+  const conds = ["reno","updated","avg","needs"].map(k => `<option value="${k}"${c.cond===k?" selected":""}>${dft("c_"+k)}</option>`).join("");
+  return `<div class="df-comp" data-ci="${i}">
+    <div class="df-comp-head"><span class="df-num">#${i+1}</span>
+      <div class="df-f"><input type="text" data-c="addr" value="${dfEsc(c.addr)}" placeholder="${dft("f_addr")}" autocomplete="off"></div>
+      <button type="button" class="df-rm" data-rm="${i}" aria-label="×">×</button></div>
+    <div class="df-grid c3">
+      <div class="df-f"><label>${dft("f_dist")}</label><input type="text" inputmode="decimal" data-c="dist" value="${dfEsc(c.dist)}"></div>
+      <div class="df-f"><label>${dft("f_date")}</label><input type="month" data-c="date" value="${dfEsc(c.date)}"></div>
+      <div class="df-f"><label>${dft("f_cond")}</label><select data-c="cond">${conds}</select></div>
+      <div class="df-f"><label>${dft("f_beds")} / ${dft("f_baths")}</label><div style="display:flex;gap:6px"><input type="text" inputmode="decimal" data-c="beds" value="${dfEsc(c.beds)}"><input type="text" inputmode="decimal" data-c="baths" value="${dfEsc(c.baths)}"></div></div>
+      <div class="df-f"><label>SqFt</label><input type="text" inputmode="decimal" data-c="sqft" value="${dfEsc(c.sqft)}"></div>
+      <div class="df-f"><label>${dft("f_cprice")}</label><input type="text" inputmode="decimal" data-c="price" value="${dfEsc(c.price)}"></div>
+    </div>
+    <div class="df-badge" data-badge="${i}"></div>
+  </div>`;
+}
+
+function dfBuildForm(){
+  const areas = ["A","B","C","D"].map(k => `<option value="${k}"${DF.area===k?" selected":""}>${dft("area_"+k)}</option>`).join("");
+  document.getElementById("dfForm").innerHTML = `
+    <div class="df-sec"><h3>${dft("g_subject")}</h3><div class="df-grid">
+      ${dfField("addr","f_addr",{full:true,text:true})}
+      <div class="df-f"><label>${dft("f_area")}</label><select data-f="area">${areas}</select></div>
+      ${dfField("price","f_price")}
+      ${dfField("sqft","f_sqft")}${dfField("year","f_year")}
+      ${dfField("beds","f_beds")}${dfField("baths","f_baths")}
+      <div class="df-f full"><label>${dft("f_areaNote")}</label><textarea data-f="areaNote">${dfEsc(DF.areaNote)}</textarea></div>
+    </div><p class="df-legend">${dft("leg")}</p></div>
+    <div class="df-sec"><h3>${dft("g_comps")}</h3><div id="dfComps">${DF.comps.map(dfCompHtml).join("")}</div>
+      ${DF.comps.length < 10 ? `<button type="button" class="df-add" id="dfAddComp">${dft("add_comp")}</button>` : ""}</div>
+    <div class="df-sec"><h3>${dft("g_arv")}</h3><div class="df-grid">${dfField("wComps","f_wComps")}${dfField("ppsf","f_ppsf")}</div></div>
+    <div class="df-sec"><h3>${dft("g_rehab")}</h3><div class="df-grid">${dfField("labor","f_labor")}${dfField("materials","f_materials")}${dfField("permits","f_permits")}${dfField("contPct","f_contPct")}</div></div>
+    <div class="df-sec"><h3>${dft("g_acq")}</h3><div class="df-grid">${dfField("buyCostPct","f_buyCostPct")}${dfField("inspect","f_inspect")}${dfField("ltv","f_ltv")}${dfField("rate","f_rate")}${dfField("pts","f_pts")}</div></div>
+    <div class="df-sec"><h3>${dft("g_hold")}</h3><div class="df-grid">${dfField("months","f_months")}${dfField("tax","f_tax")}${dfField("ins","f_ins")}${dfField("util","f_util")}${dfField("other","f_other")}</div></div>
+    <div class="df-sec"><h3>${dft("g_sell")}</h3><div class="df-grid">${dfField("commPct","f_commPct")}${dfField("sellPct","f_sellPct")}${dfField("staging","f_staging")}${dfField("target","f_target")}</div></div>`;
+}
+
+/* --- calculation --- */
+function dfCosts(price, arv, rehabMult, contPct, months){
+  const n = k => dfNum(DF[k]);
+  const labor = n("labor")*rehabMult, mat = n("materials")*rehabMult, permits = n("permits");
+  const cont = (labor + mat) * contPct / 100;
+  const buyClosing = price * n("buyCostPct")/100, insp = n("inspect");
+  const loan = price * n("ltv")/100, points = loan * n("pts")/100, interest = loan * n("rate")/100/12 * months;
+  const tax = n("tax")*months, ins = n("ins")*months, util = n("util")*months, other = n("other")*months;
+  const comm = arv * n("commPct")/100, sellClose = arv * n("sellPct")/100, staging = n("staging");
+  const holdTotal = tax + ins + util + other;
+  const pre = price + buyClosing + insp + labor + mat + permits + cont + points + interest + holdTotal;
+  const sell = comm + sellClose + staging;
+  const total = pre + sell;
+  const profit = arv - total;
+  const cash = pre - loan;
+  return {price, buyClosing, insp, labor, mat, permits, cont, loan, points, interest, tax, ins, util, other, holdTotal, comm, sellClose, staging, pre, sell, total, profit, cash,
+    rehab: labor + mat + permits + cont, roi: total > 0 ? profit/total*100 : 0, margin: arv > 0 ? profit/arv*100 : 0, coc: cash > 0 ? profit/cash*100 : null, arv, months};
+}
+
+function dfCalc(){
+  const sqft = dfNum(DF.sqft), price = dfNum(DF.price);
+  const comps = DF.comps.map((c,i) => ({...c, idx:i, sqftN:dfNum(c.sqft), priceN:dfNum(c.price), distN:dfNum(c.dist)})).filter(c => c.sqftN > 0 && c.priceN > 0);
+  comps.forEach(c => { c.ppsf = c.priceN / c.sqftN; c.adj = sqft > 0 ? c.priceN + (sqft - c.sqftN) * c.ppsf * 0.5 : c.priceN; });
+  let set = comps.filter(c => c.cond === "reno" || c.cond === "updated"), usedAll = false;
+  if(!set.length){ set = comps; usedAll = true; }
+  const arvC = set.length && sqft > 0 ? dfAvg(set.map(c => c.adj)) : 0;
+  const ppsfAvg = set.length ? dfAvg(set.map(c => c.ppsf)) : 0;
+  const ppsfUse = dfNum(DF.ppsf) > 0 ? dfNum(DF.ppsf) : ppsfAvg;
+  const arvS = sqft > 0 && ppsfUse > 0 ? sqft * ppsfUse : 0;
+  const wC = Math.min(1, Math.max(0, dfNum(DF.wComps) / 100));
+  let arvB = 0;
+  if(arvC > 0 && arvS > 0) arvB = arvC*wC + arvS*(1-wC); else arvB = arvC || arvS;
+  const lo = Math.min(...[arvC, arvS].filter(x => x > 0)), hi = Math.max(arvC, arvS);
+  const baseM = Math.max(0, dfNum(DF.months)), baseCont = dfNum(DF.contPct);
+  const scn = {};
+  if(arvB > 0){
+    const arvCons = lo * 0.97, arvOpt = hi * 1.02;
+    const cm = Math.ceil(baseM * 1.5), om = baseM ? Math.max(2, Math.round(baseM * 0.67)) : 0;
+    scn.cons = dfCosts(price, arvCons, 1.20, baseCont + 5, cm);
+    scn.real = dfCosts(price, arvB, 1, baseCont, baseM);
+    scn.opt = dfCosts(price, arvOpt, 0.95, Math.max(3, baseCont - 7), om);
+  }
+  // 70% rule (uses blended ARV, rehab incl. contingency as entered)
+  const rehabBase = dfNum(DF.labor) + dfNum(DF.materials) + dfNum(DF.permits) + (dfNum(DF.labor) + dfNum(DF.materials)) * baseCont/100;
+  const mao = arvB * 0.70 - rehabBase;
+  // max offer for target profit (realistic): profit is linear in price
+  let maxOffer = null;
+  if(arvB > 0){
+    const f0 = dfCosts(0, arvB, 1, baseCont, baseM).profit, f1 = dfCosts(1e6, arvB, 1, baseCont, baseM).profit;
+    const slope = (f1 - f0) / 1e6;
+    if(slope < 0) maxOffer = (f0 - dfNum(DF.target)) / -slope;
+  }
+  return {sqft, price, comps, set, usedAll, arvC, arvS, arvB, ppsfAvg, ppsfUse, wC, scn, mao, rehabBase, maxOffer};
+}
+
+function dfVerdict(R){
+  if(!R.scn.real) return null;
+  const target = dfNum(DF.target), r = R.scn.real.profit, c = R.scn.cons.profit;
+  if(r >= target && c >= 0) return ["go","v_go","v_go_s"];
+  if(r >= target) return ["risk","v_risk","v_risk_s"];
+  if(r > 0) return ["risk","v_marg","v_marg_s"];
+  return ["no","v_no","v_no_s"];
+}
+
+const DF_COND_KEY = {reno:"c_reno", updated:"c_updated", avg:"c_avg", needs:"c_needs"};
+
+function dfRender(){
+  const R = dfCalc();
+  // per-comp badges
+  document.querySelectorAll("#dfComps .df-comp").forEach(el => {
+    const i = +el.dataset.ci, c = R.comps.find(x => x.idx === i), b = el.querySelector(".df-badge");
+    b.textContent = c ? `${dft("ppsf")}: ${dfMoney(c.ppsf)} · ${dft("adj")}: ${dfMoney(c.adj)}` : "";
+  });
+  const out = document.getElementById("dfResults");
+  const bar = document.getElementById("dfBar");
+  if(!R.arvB){ bar.innerHTML = ""; out.innerHTML = `<p class="df-note">${dft("empty")}</p>`; return; }
+  bar.innerHTML = `<span>ARV <b>${dfMoney(R.arvB)}</b></span><span>${dft("sc_real")}: <b>${dfMoney(R.scn.real.profit)}</b> (${dfPct(R.scn.real.roi)})</span><span>70%: <b>${R.price > 0 ? (R.price <= R.mao ? dft("pass") : dft("fail")) : "—"}</b></span>`;
+  const v = dfVerdict(R), re = R.scn.real;
+  const pass = R.price > 0 ? R.price <= R.mao : null;
+  const kv = (k, val, cls) => `<div class="df-kv ${cls||""}"><span>${k}</span><b>${val}</b></div>`;
+  const prof = n => `<span class="${n >= 0 ? "df-pos" : "df-neg"}">${dfMoney(n)}</span>`;
+  const compRows = R.comps.map((c,i) => `<tr><td>${i+1}</td><td class="l">${dfEsc(c.addr) || "—"}</td><td>${c.distN ? c.distN + " mi" : "—"}</td><td>${dfEsc(c.date) || "—"}</td><td>${dfEsc(c.beds) || "?"}/${dfEsc(c.baths) || "?"}</td><td>${c.sqftN.toLocaleString("en-US")}</td><td>${dfMoney(c.priceN)}</td><td>${dfMoney(c.ppsf)}</td><td class="l">${dft(DF_COND_KEY[c.cond])}</td><td>${dfMoney(c.adj)}</td></tr>`).join("");
+  const cost = (k, a) => a ? kv(dft(k), dfMoney(a), "sub") : "";
+  const sc = [["cons","sc_cons"],["real","sc_real"],["opt","sc_opt"]];
+  const scRow = (lbl, fn) => `<tr><td class="l">${lbl}</td>${sc.map(s => `<td>${fn(R.scn[s[0]])}</td>`).join("")}</tr>`;
+  out.innerHTML = `
+    ${v ? `<div class="df-verdict ${v[0]}"><div class="vt">${dft(v[1])}</div><div class="vs">${dft(v[2])}</div></div>` : ""}
+    <h4>${dft("s1")}</h4>
+    ${kv(dft("k_addr"), dfEsc(DF.addr) || "—")}
+    ${kv(dft("k_area"), `${DF.area}${DF.areaNote ? " — " + dfEsc(DF.areaNote) : ""}`)}
+    ${kv(dft("k_mao"), dfMoney(R.mao))}
+    ${kv(dft("k_rule"), pass === null ? "—" : `<span class="${pass ? "df-pass" : "df-fail"}">${pass ? dft("pass") : dft("fail")}</span> (${dft("k_offer")}: ${dfMoney(R.price)})`)}
+    <h4>${dft("s2")}</h4>
+    <div class="df-tw"><table class="df-tbl"><thead><tr><th>#</th><th class="l">${dft("f_addr")}</th><th>${dft("f_dist")}</th><th>${dft("f_date")}</th><th>${dft("f_beds")}/${dft("f_baths")}</th><th>SqFt</th><th>${dft("f_cprice")}</th><th>${dft("ppsf")}</th><th class="l">${dft("f_cond")}</th><th>${dft("adj")}</th></tr></thead><tbody>${compRows}</tbody></table></div>
+    ${R.usedAll ? `<p class="df-note">⚠ ${dft("note_all")}</p>` : ""}
+    <p class="df-note">${dft("note_adj")}</p>
+    <h4>${dft("s3")}</h4>
+    ${kv(dft("k_arvS"), `${dfMoney(R.arvS)} <small>(${dfMoney(R.ppsfUse)}/SqFt × ${R.sqft.toLocaleString("en-US")})</small>`)}
+    ${kv(dft("k_arvC"), dfMoney(R.arvC))}
+    ${kv(dft("k_arvB"), `${dfMoney(R.arvB)} <small>(${Math.round(R.wC*100)}% comps / ${Math.round((1-R.wC)*100)}% SqFt)</small>`, "tot")}
+    ${kv(dft("k_ppsfAvg"), dfMoney(R.ppsfAvg))}
+    ${kv(dft("k_set"), `${R.set.length} / ${R.comps.length}`)}
+    <h4>${dft("cost_acq")}</h4>${cost("cost_buy", re.price)}${cost("cost_bc", re.buyClosing)}${cost("cost_insp", re.insp)}
+    <h4>${dft("cost_rehab")}</h4>${cost("cost_labor", re.labor)}${cost("cost_mat", re.mat)}${cost("cost_perm", re.permits)}${cost("cost_cont", re.cont)}
+    <h4>${dft("cost_fin")} <small>(${dft("cost_loan")}: ${dfMoney(re.loan)})</small></h4>${cost("cost_pts", re.points)}${cost("cost_int", re.interest)}
+    <h4>${dft("cost_hold")} (${re.months} ${dft("mo")})</h4>${cost("cost_tax", re.tax)}${cost("cost_ins", re.ins)}${cost("cost_util", re.util)}${cost("cost_oth", re.other)}
+    <h4>${dft("cost_sell")}</h4>${cost("cost_comm", re.comm)}${cost("cost_sc", re.sellClose)}${cost("cost_stg", re.staging)}
+    ${kv(dft("cost_total"), dfMoney(re.total), "tot")}
+    <h4>${dft("s4")}</h4>
+    <div class="df-tw"><table class="df-tbl"><thead><tr><th class="l"></th>${sc.map(s => `<th>${dft(s[1])}</th>`).join("")}</tr></thead><tbody>
+      ${scRow(dft("r_arv"), s => dfMoney(s.arv))}
+      ${scRow(dft("r_rehab"), s => dfMoney(s.rehab))}
+      ${scRow(dft("r_hold"), s => s.months + " " + dft("mo"))}
+      ${scRow(dft("r_cost"), s => dfMoney(s.total))}
+      ${scRow(dft("r_profit"), s => prof(s.profit))}
+      ${scRow(dft("r_roi"), s => dfPct(s.roi))}
+      ${scRow(dft("r_margin"), s => dfPct(s.margin))}
+      ${re.loan > 0 ? scRow(dft("kv_coc"), s => s.coc == null ? "—" : dfPct(s.coc)) : ""}
+    </tbody></table></div>
+    <p class="df-note">${dft("asm")}</p>
+    ${R.maxOffer != null ? kv(dft("maxoff"), `<span class="${R.maxOffer >= 0 ? "df-pos" : "df-neg"}">${dfMoney(R.maxOffer)}</span>`, "tot") : ""}
+    <div class="df-actions"><button type="button" id="dfCopy">${dft("copy")}</button><button type="button" id="dfClear">${dft("clear")}</button></div>`;
+}
+
+function dfReport(){
+  const R = dfCalc();
+  if(!R.arvB) return "";
+  const re = R.scn.real, v = dfVerdict(R), L = [];
+  const pass = R.price > 0 ? (R.price <= R.mao ? dft("pass") : dft("fail")) : "—";
+  L.push("DEAL FINDER", "", dft("s1"), `${dft("k_addr")}: ${DF.addr || "—"}`, `${dft("k_area")}: ${DF.area}${DF.areaNote ? " — " + DF.areaNote : ""}`,
+    `${dft("k_rule")}: ${pass} (MAO ${dfMoney(R.mao)}, ${dft("k_offer")} ${dfMoney(R.price)})`, "", dft("s2"));
+  R.comps.forEach((c,i) => L.push(`${i+1}. ${c.addr || "—"} | ${c.distN || "—"} mi | ${c.date || "—"} | ${c.beds || "?"}/${c.baths || "?"} | ${c.sqftN} SqFt | ${dfMoney(c.priceN)} | ${dfMoney(c.ppsf)}/SqFt | ${dft(DF_COND_KEY[c.cond])}`));
+  L.push("", dft("s3"), `${dft("k_arvS")}: ${dfMoney(R.arvS)}`, `${dft("k_arvC")}: ${dfMoney(R.arvC)}`, `${dft("k_arvB")}: ${dfMoney(R.arvB)}`, "");
+  const li = (k, a) => { if(a) L.push(`- ${dft(k)}: ${dfMoney(a)}`); };
+  li("cost_buy", re.price); li("cost_bc", re.buyClosing); li("cost_insp", re.insp); li("cost_labor", re.labor); li("cost_mat", re.mat); li("cost_perm", re.permits); li("cost_cont", re.cont);
+  li("cost_pts", re.points); li("cost_int", re.interest); li("cost_tax", re.tax); li("cost_ins", re.ins); li("cost_util", re.util); li("cost_oth", re.other); li("cost_comm", re.comm); li("cost_sc", re.sellClose); li("cost_stg", re.staging);
+  L.push(`${dft("cost_total")}: ${dfMoney(re.total)}`, "", dft("s4"));
+  [["cons","sc_cons"],["real","sc_real"],["opt","sc_opt"]].forEach(s => { const x = R.scn[s[0]]; L.push(`${dft(s[1])}: ARV ${dfMoney(x.arv)} | ${dft("r_cost")} ${dfMoney(x.total)} | ${dft("r_profit")} ${dfMoney(x.profit)} | ROI ${dfPct(x.roi)}`); });
+  if(R.maxOffer != null) L.push("", `${dft("maxoff")}: ${dfMoney(R.maxOffer)}`);
+  if(v) L.push("", dft(v[1]));
+  return L.join("\n");
+}
+
+async function renderDealFinderTab(){
+  await dfLoad();
+  document.getElementById("dfHint").textContent = dft("hint");
+  dfBuildForm();
+  dfRender();
+}
+
+(function(){
+  const root = document.getElementById("dealfinder");
+  root.addEventListener("input", ev => {
+    const el = ev.target;
+    if(el.dataset.f){ DF[el.dataset.f] = el.value; }
+    else if(el.dataset.c){ const i = +el.closest(".df-comp").dataset.ci; DF.comps[i][el.dataset.c] = el.value; }
+    else return;
+    dfSave(); dfRender();
+  });
+  root.addEventListener("change", ev => {
+    const el = ev.target;
+    if(el.tagName === "SELECT"){ if(el.dataset.f) DF[el.dataset.f] = el.value; else if(el.dataset.c){ const i = +el.closest(".df-comp").dataset.ci; DF.comps[i][el.dataset.c] = el.value; } dfSave(); dfRender(); }
+  });
+  root.addEventListener("click", async ev => {
+    const t_ = ev.target;
+    if(t_.id === "dfAddComp"){ if(DF.comps.length < 10){ DF.comps.push(dfBlankComp()); dfSave(); dfBuildForm(); dfRender(); } }
+    else if(t_.dataset && t_.dataset.rm !== undefined){ DF.comps.splice(+t_.dataset.rm, 1); if(!DF.comps.length) DF.comps.push(dfBlankComp()); dfSave(); dfBuildForm(); dfRender(); }
+    else if(t_.id === "dfCopy"){
+      const txt = dfReport();
+      try{ await navigator.clipboard.writeText(txt); t_.textContent = dft("copied"); setTimeout(()=>{ t_.textContent = dft("copy"); }, 1500); }catch(e){ window.prompt("", txt); }
+    }
+    else if(t_.id === "dfClear"){
+      if(!confirm(dft("clear_q"))) return;
+      DF = JSON.parse(JSON.stringify(DF_DEFAULTS)); while(DF.comps.length < 5) DF.comps.push(dfBlankComp());
+      dfSave(); dfBuildForm(); dfRender();
+    }
+  });
+})();
 
 /* ===== Fooled by Randomness tab (page-range topic grid, mirrors Oxford 3000) ===== */
 const FBR_STORE_PREFIX = "fbr5k:";
@@ -13567,6 +13958,7 @@ window.onAuthChanged = async function(user){
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
     const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
     const feelTabActive = !document.getElementById("feelings").classList.contains("hidden");
+    const dealTabActive = !document.getElementById("dealfinder").classList.contains("hidden");
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
     const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
     const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -13582,6 +13974,7 @@ window.onAuthChanged = async function(user){
     if(asTabActive) renderASVABTab();
     if(inspectTabActive) renderInspectTab();
     if(feelTabActive) renderFeelingsTab();
+    if(dealTabActive) renderDealFinderTab();
     if(flTabActive) renderFinlitTab();
     if(wealthTabActive) renderWealthTab();
     if(ircTabActive) renderIRCTab();
@@ -13996,6 +14389,7 @@ async function syncWithCloud(uid){
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
   const feelTabActive = !document.getElementById("feelings").classList.contains("hidden");
+  const dealTabActive = !document.getElementById("dealfinder").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -14011,6 +14405,7 @@ async function syncWithCloud(uid){
   if(asTabActive) renderASVABTab();
   if(inspectTabActive) renderInspectTab();
   if(feelTabActive) renderFeelingsTab();
+  if(dealTabActive) renderDealFinderTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
