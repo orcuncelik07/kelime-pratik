@@ -478,6 +478,30 @@ body{
   opacity:.65;
   margin:-8px 0 14px;
 }
+/* Feelings Wheel */
+.fw-info{
+  position:sticky;top:8px;z-index:5;
+  background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+  padding:12px 14px;margin-bottom:12px;min-height:84px;
+  box-shadow:0 2px 10px rgba(31,42,36,.08);
+  font-family:"Helvetica Neue",Arial,sans-serif;
+}
+.fw-tap{font-size:.85rem;color:var(--moss-dark);opacity:.7;line-height:1.5;}
+.fw-crumb{font-size:.72rem;color:var(--moss-dark);opacity:.75;display:flex;align-items:center;gap:6px;}
+.fw-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+.fw-en{font-family:"Iowan Old Style","Georgia",serif;font-size:1.35rem;font-weight:700;margin-top:4px;}
+.fw-tr{font-size:1.05rem;color:var(--clay);font-weight:600;margin-top:2px;}
+.fw-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.fw-chip{border:none;color:#fff;font-size:.78rem;font-weight:600;padding:5px 10px;border-radius:14px;cursor:pointer;font-family:inherit;}
+.fw-tools{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:.8rem;color:var(--moss-dark);}
+.fw-tools button{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:var(--card);font-size:1.1rem;line-height:1;cursor:pointer;color:var(--ink);}
+.fw-scroll{overflow:auto;-webkit-overflow-scrolling:touch;border-radius:12px;max-height:80vh;margin-bottom:18px;}
+#fwSvg{display:block;margin:0 auto;max-width:none;height:auto;}
+.fw-seg{cursor:pointer;}
+.fw-seg path{stroke:#fff;stroke-width:1.6;transition:filter .12s;}
+.fw-seg text{fill:#fff;pointer-events:none;font-family:"Helvetica Neue",Arial,sans-serif;}
+.fw-seg:hover path{filter:brightness(1.12);}
+.fw-seg.sel path{stroke:#1f2a24;stroke-width:4;filter:brightness(1.15);}
 .hidden{display:none !important;}
 @media(max-width:420px){
   .options{grid-template-columns:1fr;}
@@ -520,6 +544,7 @@ body{
       <option value="realestate">Real Estate</option>
       <option value="asvab">ASVAB</option>
       <option value="inspect" data-i18n="tab_inspect">Inspection Literature</option>
+      <option value="feelings" data-i18n="tab_feelings">Feelings Wheel</option>
       <option value="finlit" data-i18n="tab_finlit">Finansal Okuryazarlık</option>
       <option value="wealth" data-i18n="tab_wealth">Zenginlik ve Davranışsal Finans</option>
       <option value="fbr" data-i18n="tab_fbr">Fooled by Randomness - Nassim Taleb</option>
@@ -597,6 +622,17 @@ body{
     <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="insp_hint">Ev inceleme (home inspection) raporlarında ve inşaat literatüründe sık geçen ~160 terim — çatı, dış cephe, elektrik, tesisat, ısıtma, baca, temel/bodrum ve genel inceleme terminolojisi.</p>
     <button class="start-btn" id="inspectDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="inspectList"></div>
+  </div>
+
+  <!-- FEELINGS WHEEL -->
+  <div id="feelings" class="panel hidden">
+    <p class="section-label" data-i18n="fw_label">Duygular Çarkı</p>
+    <p class="tab-count" id="fwCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:12px;" data-i18n="fw_hint">Duygular çarkı (Dr. Gloria Willcox): 7 ana duygu ve alt halkalarındaki kelimeler. Bir kelimeye dokununca Türkçesi görünür. Küçük ekranda +/− ile yakınlaştırabilirsin.</p>
+    <button class="start-btn" id="fwDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div class="fw-info" id="fwInfo"></div>
+    <div class="fw-tools"><button type="button" id="fwZoomOut" aria-label="−">−</button><span id="fwZoomVal">100%</span><button type="button" id="fwZoomIn" aria-label="+">+</button></div>
+    <div class="fw-scroll" id="fwScroll"><div id="fwWheel"></div></div>
   </div>
 
   <!-- FINANCIAL LITERACY -->
@@ -11065,6 +11101,10 @@ const UI_STRINGS = {
     as_label: "ASVAB Word Knowledge Kelimeleri",
     as_hint: "ASVAB'ın Word Knowledge (kelime bilgisi) bölümünde en sık çıkan ~300 kelime — bu bölüm AFQT puanında iki katı ağırlıkla sayılıyor.",
     tab_inspect: "Inspection Literature",
+    tab_feelings: "Feelings Wheel",
+    fw_label: "Duygular Çarkı",
+    fw_hint: "Duygular çarkı (Dr. Gloria Willcox): 7 ana duygu ve alt halkalarındaki kelimeler. Bir kelimeye dokununca Türkçesi görünür. Küçük ekranda +/− ile yakınlaştırabilirsin.",
+    fw_tap: "Çarktaki bir kelimeye dokun — Türkçesi burada görünecek.",
     insp_label: "İnşaat ve Ev İnceleme Terimleri",
     insp_hint: "Ev inceleme (home inspection) raporlarında ve inşaat literatüründe sık geçen ~160 terim — çatı, dış cephe, elektrik, tesisat, ısıtma, baca, temel/bodrum ve genel inceleme terminolojisi.",
     fl_label: "Finansal Okuryazarlık Soruları",
@@ -11150,6 +11190,10 @@ const UI_STRINGS = {
     as_label: "ASVAB Word Knowledge Terms",
     as_hint: "About 300 of the most common words on the ASVAB Word Knowledge section — this section counts double toward your AFQT score.",
     tab_inspect: "Inspection Literature",
+    tab_feelings: "Feelings Wheel",
+    fw_label: "Feelings Wheel",
+    fw_hint: "The Feelings Wheel (Dr. Gloria Willcox): 7 core emotions and the words in the rings around them. Tap a word to see its Turkish meaning. On small screens use +/− to zoom in.",
+    fw_tap: "Tap a word on the wheel — its Turkish meaning will appear here.",
     insp_label: "Construction & Home Inspection Terms",
     insp_hint: "About 160 terms common in home inspection reports and construction literature — roofing, exterior, electrical, plumbing, heating, chimney, foundation/basement, and general inspection terminology.",
     fl_label: "Financial Literacy Questions",
@@ -11351,6 +11395,7 @@ function applyLanguage(lang){
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
+  const feelTabActive = !document.getElementById("feelings").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -11365,6 +11410,7 @@ function applyLanguage(lang){
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(inspectTabActive) renderInspectTab();
+  if(feelTabActive) renderFeelingsTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
@@ -11455,6 +11501,73 @@ const ALL_TRW_WORDS = TURKISH_WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:"Turkis
 const ALL_RE_WORDS = REAL_ESTATE_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_RE_WORDS_EN = REAL_ESTATE_WORDS_EN.map(w => ({e:w[0], p:"", t:w[1], l:"Real Estate"}));
 const ALL_AS_WORDS = ASVAB_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"ASVAB"}));
+/* ===== Feelings Wheel (Dr. Gloria Willcox) — core › middle › outer, clockwise from 12 o'clock ===== */
+const FEEL_WHEEL = [
+ {en:"Fearful", tr:"Korku dolu", h:192, kids:[
+  ["Scared","Korkmuş",[["Helpless","Çaresiz"],["Frightened","Korkutulmuş"]]],
+  ["Anxious","Kaygılı",[["Overwhelmed","Bunalmış"],["Worried","Endişeli"]]],
+  ["Insecure","Güvensiz",[["Inadequate","Yetersiz"],["Inferior","Kendini aşağı hisseden"]]],
+  ["Weak","Zayıf",[["Worthless","Değersiz"],["Insignificant","Önemsiz"]]],
+  ["Rejected","Reddedilmiş",[["Excluded","Dışlanmış"],["Persecuted","Baskı/zulüm görmüş"]]],
+  ["Threatened","Tehdit altında",[["Nervous","Gergin, sinirli"],["Exposed","Açıkta kalmış, savunmasız"]]]
+ ]},
+ {en:"Angry", tr:"Kızgın", h:255, kids:[
+  ["Let down","Yüzüstü bırakılmış",[["Betrayed","İhanete uğramış"],["Resentful","Kırgın, kinli"]]],
+  ["Humiliated","Küçük düşürülmüş",[["Disrespected","Saygısızlığa uğramış"],["Ridiculed","Alay edilmiş"]]],
+  ["Bitter","Acı, küskün",[["Indignant","Haksızlığa öfkelenmiş"],["Violated","Hakkı çiğnenmiş"]]],
+  ["Mad","Çılgına dönmüş",[["Furious","Öfkeden deliye dönmüş"],["Jealous","Kıskanç"]]],
+  ["Aggressive","Saldırgan",[["Provoked","Kışkırtılmış"],["Hostile","Düşmanca"]]],
+  ["Frustrated","Hüsrana uğramış",[["Infuriated","Çok öfkelenmiş"],["Annoyed","Rahatsız olmuş, sinirlenmiş"]]],
+  ["Distant","Mesafeli",[["Withdrawn","İçine kapanık"],["Numb","Uyuşmuş, duygusuz"]]],
+  ["Critical","Eleştirel",[["Sceptical","Şüpheci"],["Dismissive","Küçümseyen, umursamaz"]]]
+ ]},
+ {en:"Disgusted", tr:"İğrenmiş", h:287, kids:[
+  ["Disapproving","Onaylamayan",[["Judgmental","Yargılayıcı"],["Embarrassed","Utanmış"]]],
+  ["Disappointed","Hayal kırıklığına uğramış",[["Appalled","Dehşete düşmüş"],["Revolted","Tiksinmiş"]]],
+  ["Awful","Berbat, korkunç",[["Nauseated","Midesi bulanmış"],["Detestable","Nefret edilesi, iğrenç"]]],
+  ["Repelled","Geri itilmiş, tiksinmiş",[["Horrified","Dehşete kapılmış"],["Hesitant","Tereddütlü"]]]
+ ]},
+ {en:"Sad", tr:"Üzgün", h:340, kids:[
+  ["Hurt","İncinmiş, kırılmış",[["Embarrassed","Utanmış"],["Disappointed","Hayal kırıklığına uğramış"]]],
+  ["Depressed","Çökmüş, depresif",[["Inferior","Kendini aşağı hisseden"],["Empty","Boşluk hisseden"]]],
+  ["Guilty","Suçluluk duyan",[["Remorseful","Pişman"],["Ashamed","Utanç duyan"]]],
+  ["Despair","Umutsuzluk",[["Powerless","Güçsüz"],["Grief","Yas, derin keder"]]],
+  ["Vulnerable","Savunmasız",[["Fragile","Kırılgan"],["Victimised","Mağdur edilmiş"]]],
+  ["Lonely","Yalnız",[["Abandoned","Terk edilmiş"],["Isolated","Tecrit edilmiş, yalnızlaşmış"]]]
+ ]},
+ {en:"Happy", tr:"Mutlu", h:8, kids:[
+  ["Optimistic","İyimser",[["Inspired","İlham almış"],["Hopeful","Umutlu"]]],
+  ["Trusting","Güvenen",[["Intimate","Yakın, samimi"],["Sensitive","Duyarlı, hassas"]]],
+  ["Peaceful","Huzurlu",[["Thankful","Minnettar"],["Loving","Sevgi dolu"]]],
+  ["Powerful","Güçlü",[["Creative","Yaratıcı"],["Courageous","Cesur"]]],
+  ["Accepted","Kabul görmüş",[["Valued","Değer verilen"],["Respected","Saygı gören"]]],
+  ["Proud","Gururlu",[["Confident","Kendinden emin"],["Successful","Başarılı"]]],
+  ["Interested","İlgili",[["Inquisitive","Sorgulayıcı, meraklı"],["Curious","Merak eden"]]],
+  ["Content","Memnun",[["Joyful","Neşeli"],["Free","Özgür"]]],
+  ["Playful","Oyuncu, şakacı",[["Cheeky","Arsız, şımarık"],["Aroused","Uyarılmış, heyecanlanmış"]]]
+ ]},
+ {en:"Surprised", tr:"Şaşırmış", h:34, kids:[
+  ["Excited","Heyecanlı",[["Energetic","Enerjik"],["Eager","Hevesli"]]],
+  ["Amazed","Hayrete düşmüş",[["Awe","Hayranlık, huşu"],["Astonished","Hayretler içinde"]]],
+  ["Confused","Kafası karışmış",[["Perplexed","Afallamış"],["Disillusioned","Büyüsü bozulmuş"]]],
+  ["Startled","Ürkmüş",[["Dismayed","Şaşkına dönmüş"],["Shocked","Şok olmuş"]]]
+ ]},
+ {en:"Bad", tr:"Kötü", h:158, kids:[
+  ["Tired","Yorgun",[["Unfocused","Odaklanamayan"],["Sleepy","Uykulu"]]],
+  ["Stressed","Stresli",[["Out of control","Kontrolden çıkmış"],["Overwhelmed","Bunalmış"]]],
+  ["Busy","Meşgul",[["Rushed","Aceleye getirilmiş"],["Pressured","Baskı altında"]]],
+  ["Bored","Sıkılmış",[["Apathetic","Duyarsız, ilgisiz"],["Indifferent","Kayıtsız"]]]
+ ]}
+];
+// Flat list (unique English words) used by the quiz
+const FEEL_WORDS = (()=>{
+  const seen = new Set(), out = [];
+  const add = (en, tr)=>{ if(seen.has(en)) return; seen.add(en); out.push([en, tr]); };
+  FEEL_WHEEL.forEach(c=>{ add(c.en, c.tr); c.kids.forEach(m=>{ add(m[0], m[1]); m[2].forEach(o=>add(o[0], o[1])); }); });
+  return out;
+})();
+const ALL_FEEL_WORDS = FEEL_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Feelings Wheel"}));
+
 const ALL_INSPECT_WORDS = INSPECTION_WORDS.map(w => ({e:w[0], p:"", t:w[1], l:"Inspection Literature"}));
 const ALL_FBR_WORDS = FBR_WORDS.map(w => ({e:w[0], p:"", t:w[2], l:"Fooled by Randomness"}));
 const ALL_OX3K_WORDS = OXFORD3000_WORDS.map(w => ({e:w[0], p:w[1], t:w[2], l:w[3]}));
@@ -11618,7 +11731,7 @@ let reverseMode = false;
 // (setup) and Mistakes carry no flag at all, so they're the fallback case.
 function isReversibleType(w){
   if(!w) return false;
-  if(w.custom || w.trw || w.re || w.asv || w.ox3k || w.insp || w.fbr) return true;
+  if(w.custom || w.trw || w.re || w.asv || w.ox3k || w.insp || w.fbr || w.fw) return true;
   if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium) return false;
   return true;
 }
@@ -11720,6 +11833,8 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.insp){
     await saveInspectWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushInspectStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.fw){
+    await saveFeelWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.fbr){
     await saveFBRWord(current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushFBRStat(window.currentUser.uid, current.e, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -11957,6 +12072,7 @@ function switchTab(tab){
   document.getElementById("realestate").classList.toggle("hidden", tab!=="realestate");
   document.getElementById("asvab").classList.toggle("hidden", tab!=="asvab");
   document.getElementById("inspect").classList.toggle("hidden", tab!=="inspect");
+  document.getElementById("feelings").classList.toggle("hidden", tab!=="feelings");
   document.getElementById("finlit").classList.toggle("hidden", tab!=="finlit");
   document.getElementById("wealth").classList.toggle("hidden", tab!=="wealth");
   document.getElementById("irc").classList.toggle("hidden", tab!=="irc");
@@ -11974,6 +12090,7 @@ function switchTab(tab){
   if(tab === "realestate") renderRealEstateTab();
   if(tab === "asvab") renderASVABTab();
   if(tab === "inspect") renderInspectTab();
+  if(tab === "feelings") renderFeelingsTab();
   if(tab === "finlit") renderFinlitTab();
   if(tab === "wealth") renderWealthTab();
   if(tab === "irc") renderIRCTab();
@@ -12508,6 +12625,166 @@ document.getElementById("inspectDrillBtn").addEventListener("click", async ()=>{
   sessionCorrect = 0; sessionWrong = 0;
   document.getElementById("setup").classList.add("hidden");
   document.getElementById("inspect").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
+
+/* ===== Feelings Wheel tab (colored wheel, tap a word to see its Turkish meaning) ===== */
+const FEEL_STORE_PREFIX = "fw5k:";
+
+function listFeelKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(FEEL_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(FEEL_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(FEEL_STORE_PREFIX)); }
+}
+async function loadFeelWord(en){
+  const raw = await rawGet(FEEL_STORE_PREFIX+en);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveFeelWord(en, val){
+  await rawSet(FEEL_STORE_PREFIX+en, JSON.stringify(val));
+}
+
+const FEEL_SEGS = [];
+let feelBuilt = false, feelZoom = (window.innerWidth < 600 ? 2 : 1), feelSel = -1;
+
+function feelPolar(r, a){
+  const t = a*Math.PI/180;
+  return [500 + r*Math.sin(t), 500 - r*Math.cos(t)];
+}
+function feelSector(r1, r2, a1, a2){
+  const f = n => n.toFixed(2);
+  const [x1,y1] = feelPolar(r2,a1), [x2,y2] = feelPolar(r2,a2);
+  const lg = (a2-a1) > 180 ? 1 : 0;
+  if(r1 === 0) return `M500 500L${f(x1)} ${f(y1)}A${r2} ${r2} 0 ${lg} 1 ${f(x2)} ${f(y2)}Z`;
+  const [x3,y3] = feelPolar(r1,a2), [x4,y4] = feelPolar(r1,a1);
+  return `M${f(x1)} ${f(y1)}A${r2} ${r2} 0 ${lg} 1 ${f(x2)} ${f(y2)}L${f(x3)} ${f(y3)}A${r1} ${r1} 0 ${lg} 0 ${f(x4)} ${f(y4)}Z`;
+}
+function feelColor(h, ring){
+  let L = ring === 0 ? 40 : (ring === 1 ? 52 : 44);
+  if(h > 20 && h < 60) L -= 5;          // orange/yellow needs to be darker for white text
+  else if(h > 130 && h < 180) L -= 4;   // green too
+  return `hsl(${h},${ring === 1 ? 52 : 56}%,${L}%)`;
+}
+function feelLabel(seg, r, size, weight){
+  const mid = (seg.a1 + seg.a2) / 2;
+  const [x,y] = feelPolar(r, mid);
+  const rot = mid > 180 ? mid + 90 : mid - 90;
+  return `<text transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)})" text-anchor="middle" dominant-baseline="central" font-size="${size}" font-weight="${weight}">${seg.en}</text>`;
+}
+
+function buildFeelWheel(){
+  FEEL_SEGS.length = 0;
+  const outerCount = FEEL_WHEEL.reduce((a,c)=>a+c.kids.reduce((b,m)=>b+m[2].length,0),0);
+  const unit = 360 / outerCount;
+  let a = 0;
+  FEEL_WHEEL.forEach((c, ci)=>{
+    const coreStart = a;
+    const coreIdx = FEEL_SEGS.length;
+    FEEL_SEGS.push({ring:0, en:c.en, tr:c.tr, h:c.h, a1:coreStart, a2:0, path:[], core:ci});
+    c.kids.forEach((m, mi)=>{
+      const midStart = a;
+      const midIdx = FEEL_SEGS.length;
+      FEEL_SEGS.push({ring:1, en:m[0], tr:m[1], h:c.h, a1:midStart, a2:0, path:[c.en], core:ci});
+      m[2].forEach(o=>{
+        FEEL_SEGS.push({ring:2, en:o[0], tr:o[1], h:c.h, a1:a, a2:a+unit, path:[c.en, m[0]], core:ci});
+        a += unit;
+      });
+      FEEL_SEGS[midIdx].a2 = a;
+      FEEL_SEGS[midIdx].kids = FEEL_SEGS.slice(midIdx+1).map((_,k)=>midIdx+1+k);
+    });
+    FEEL_SEGS[coreIdx].a2 = a;
+  });
+  // children index lists for core wedges (their middle-ring segments)
+  FEEL_SEGS.forEach((s, i)=>{
+    if(s.ring === 0) s.kids = FEEL_SEGS.map((x,j)=>j).filter(j => FEEL_SEGS[j].ring === 1 && FEEL_SEGS[j].core === s.core);
+  });
+  const radii = [[0,150,86,22,700],[150,310,230,15,600],[310,490,400,14.5,500]];
+  const parts = FEEL_SEGS.map((s, i)=>{
+    const [r1,r2,rt,fs,fw] = radii[s.ring];
+    return `<g class="fw-seg" data-i="${i}"><path d="${feelSector(r1,r2,s.a1,s.a2)}" fill="${feelColor(s.h, s.ring)}"/>${feelLabel(s, rt, fs, fw)}</g>`;
+  }).join("");
+  document.getElementById("fwWheel").innerHTML =
+    `<svg id="fwSvg" viewBox="0 0 1000 1000" role="img" aria-label="Feelings Wheel">${parts}</svg>`;
+  applyFeelZoom();
+  feelBuilt = true;
+}
+
+function applyFeelZoom(){
+  const svg = document.getElementById("fwSvg");
+  if(!svg) return;
+  svg.style.width = (feelZoom * 100) + "%";
+  document.getElementById("fwZoomVal").textContent = Math.round(feelZoom*100) + "%";
+  const sc = document.getElementById("fwScroll");
+  sc.scrollLeft = (sc.scrollWidth - sc.clientWidth) / 2;
+}
+
+function selectFeel(i){
+  feelSel = i;
+  const svg = document.getElementById("fwSvg");
+  svg.querySelectorAll(".fw-seg.sel").forEach(g => g.classList.remove("sel"));
+  const g = svg.querySelector(`.fw-seg[data-i="${i}"]`);
+  if(g){ g.classList.add("sel"); svg.appendChild(g); }
+  updateFeelInfo();
+}
+
+function updateFeelInfo(){
+  const el = document.getElementById("fwInfo");
+  if(!el) return;
+  if(feelSel < 0 || !FEEL_SEGS[feelSel]){
+    el.innerHTML = `<span class="fw-tap">${t("fw_tap")}</span>`;
+    return;
+  }
+  const s = FEEL_SEGS[feelSel];
+  const crumb = s.path.concat([s.en]).join(" › ");
+  const chips = (s.kids || []).map(j => `<button type="button" class="fw-chip" data-i="${j}" style="background:${feelColor(FEEL_SEGS[j].h, FEEL_SEGS[j].ring)}">${FEEL_SEGS[j].en}</button>`).join("");
+  el.innerHTML = `
+    <div class="fw-crumb"><span class="fw-dot" style="background:${feelColor(s.h, s.ring)}"></span>${crumb}</div>
+    <div class="fw-en">${s.en}</div>
+    <div class="fw-tr">${s.tr}</div>
+    ${chips ? `<div class="fw-chips">${chips}</div>` : ""}
+  `;
+}
+
+function renderFeelingsTab(){
+  document.getElementById("fwCount").textContent = t("total_words").replace("{n}", FEEL_WORDS.length);
+  if(!feelBuilt) buildFeelWheel(); else applyFeelZoom();
+  updateFeelInfo();
+}
+
+document.getElementById("fwWheel").addEventListener("click", ev=>{
+  const g = ev.target.closest(".fw-seg");
+  if(g) selectFeel(+g.dataset.i);
+});
+document.getElementById("fwInfo").addEventListener("click", ev=>{
+  const b = ev.target.closest(".fw-chip");
+  if(b) selectFeel(+b.dataset.i);
+});
+document.getElementById("fwZoomIn").addEventListener("click", ()=>{ feelZoom = Math.min(3, +(feelZoom + 0.5).toFixed(1)); applyFeelZoom(); });
+document.getElementById("fwZoomOut").addEventListener("click", ()=>{ feelZoom = Math.max(1, +(feelZoom - 0.5).toFixed(1)); applyFeelZoom(); });
+
+document.getElementById("fwDrillBtn").addEventListener("click", async ()=>{
+  reverseMode = false;
+  currentDistractorPool = ALL_FEEL_WORDS;
+  pool = [];
+  for(const w of FEEL_WORDS){
+    const stat = await loadFeelWord(w[0]);
+    pool.push({
+      e:w[0], p:"", t:w[1], l:"Feelings Wheel",
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      fw: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("feelings").classList.add("hidden");
   document.getElementById("tabbar").classList.add("hidden");
   document.getElementById("quiz").classList.remove("hidden");
   document.getElementById("statTotal").textContent = pool.length;
@@ -13231,11 +13508,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FEEL_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FEEL_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -13289,6 +13566,7 @@ window.onAuthChanged = async function(user){
     const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
     const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
     const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
+    const feelTabActive = !document.getElementById("feelings").classList.contains("hidden");
     const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
     const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
     const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -13303,6 +13581,7 @@ window.onAuthChanged = async function(user){
     if(reTabActive) renderRealEstateTab();
     if(asTabActive) renderASVABTab();
     if(inspectTabActive) renderInspectTab();
+    if(feelTabActive) renderFeelingsTab();
     if(flTabActive) renderFinlitTab();
     if(wealthTabActive) renderWealthTab();
     if(ircTabActive) renderIRCTab();
@@ -13716,6 +13995,7 @@ async function syncWithCloud(uid){
   const reTabActive = !document.getElementById("realestate").classList.contains("hidden");
   const asTabActive = !document.getElementById("asvab").classList.contains("hidden");
   const inspectTabActive = !document.getElementById("inspect").classList.contains("hidden");
+  const feelTabActive = !document.getElementById("feelings").classList.contains("hidden");
   const flTabActive = !document.getElementById("finlit").classList.contains("hidden");
   const wealthTabActive = !document.getElementById("wealth").classList.contains("hidden");
   const ircTabActive = !document.getElementById("irc").classList.contains("hidden");
@@ -13730,6 +14010,7 @@ async function syncWithCloud(uid){
   if(reTabActive) renderRealEstateTab();
   if(asTabActive) renderASVABTab();
   if(inspectTabActive) renderInspectTab();
+  if(feelTabActive) renderFeelingsTab();
   if(flTabActive) renderFinlitTab();
   if(wealthTabActive) renderWealthTab();
   if(ircTabActive) renderIRCTab();
