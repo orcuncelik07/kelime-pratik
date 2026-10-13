@@ -604,6 +604,7 @@ body{
       <option value="irc2021" data-i18n="tab_irc2021">IRC 2021 Code</option>
       <option value="cdl" data-i18n="tab_cdl">CDL</option>
       <option value="fidium" data-i18n="tab_fidium">Fidium Installation</option>
+      <option value="tax" data-i18n="tab_tax">Tax</option>
     </select>
   </div>
 
@@ -752,6 +753,17 @@ body{
     <div class="level-grid" id="fidiumLevelGrid" style="grid-template-columns:1fr 1fr;"></div>
     <button class="start-btn" id="fidiumDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
     <div id="fidiumList"></div>
+  </div>
+
+  <!-- TAX (US real estate investing: Fix and Flip, BRRRR, Rental) -->
+  <div id="tax" class="panel hidden">
+    <p class="section-label" data-i18n="tax_label">Tax (Vergi) Soruları</p>
+    <p class="tab-count" id="taxCount"></p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="tax_hint">ABD'de gayrimenkul yatırımının vergisi — Fix and Flip, BRRRR ve Kiralık Mülk (Rental) odaklı, rakamlı gerçek hayat senaryoları: kazanç hesabı, amortisman, 1031 exchange, pasif zarar, SE vergisi, formlar ve daha fazlası (~100 soru). Genel bilgi amaçlıdır, vergi danışmanlığı değildir.</p>
+    <p class="section-label" style="margin-top:0;" data-i18n="irc2021_topic_label">Konu Seç</p>
+    <div class="level-grid" id="taxLevelGrid" style="grid-template-columns:1fr 1fr;"></div>
+    <button class="start-btn" id="taxDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
+    <div id="taxList"></div>
   </div>
 
   <!-- FOOLED BY RANDOMNESS -->
@@ -11228,6 +11240,213 @@ const FIDIUM_QUESTIONS_EN = [
 ["In the legacy gateway list, which gateway is used for 5G and 8G speeds?","Zyxel 6510","Zyxel 5512","Adtran 8612","Adtran 854","CPE Guidelines 2026"],
 ["Which region is this CPE guide written for?","Northern New England","Southern California","Pacific Northwest","Mid-Atlantic","CPE Guidelines 2026"],
 ];
+
+/* ===== Tax (US real estate: Fix and Flip, BRRRR, Rental) ===== */
+const TAX_QUESTIONS = [
+["Michael bir evi $210,000'a aldı, $45,000 tadilat yaptı. Alış closing masrafı $4,500, elde tutma masrafları (faiz, vergi, sigorta, fatura) $12,000 oldu. Evi $330,000'a sattı; emlakçı komisyonu %5 ($16,500) ve satıcı closing masrafı $3,300 ödedi. Vergilendirilebilir net kazancı nedir?","$38,700","$50,700","$58,500","$43,200","Fix and Flip"],
+["Sarah geçen yıl 7 evi satın alıp tadilat yaparak sattı ve bunu düzenli bir iş olarak yürütüyor. Bu kazançlar nasıl vergilendirilir?","Dealer (tüccar) sayılır: kazanç olağan gelir vergisi + self-employment (SE) vergisine tabidir","Her ev uzun vadeli sayılır: tamamı %15 sermaye kazancı oranıyla vergilendirilir","Yalnızca emlak vergisi ödenir; gelir vergisi doğmaz","Kazanç sadece eyalet vergisine tabidir; federal vergi doğmaz","Fix and Flip"],
+["James, öğretmen maaşı dışında yatırım amacıyla tek bir ev aldı, tadilat yapıp 14 ay sonra sattı ve $60,000 kazandı. Dealer değil. Bu kazanç hangi kategoridedir?","Uzun vadeli sermaye kazancı (1 yıldan uzun elde tutuldu); SE vergisi yoktur","Kısa vadeli sermaye kazancı; olağan gelir oranıyla vergilenir","Olağan gelir + %15,3 SE vergisi","Vergiden muaftır çünkü 1 yılı geçmiştir","Fix and Flip"],
+["Emily, dealer olmayan bir yatırımcı olarak evi 9 ay elinde tutup $45,000 kâr etti. Federal vergi açısından doğru ifade hangisidir?","Kısa vadeli sermaye kazancı; olağan gelir dilimlerinde vergilenir, SE vergisi yok","Uzun vadeli sermaye kazancı; azami %20 oranında vergilenir, SE vergisi yok","Olağan gelir olarak vergilenir ve ayrıca %15,3 SE vergisi uygulanır","Kazanç yalnızca %3,8 NIIT'e tabidir, başka federal vergi doğmaz","Fix and Flip"],
+["David'in flip işinden Schedule C net kârı $80,000. SE vergisi yaklaşık ne kadardır? (net kazancın %92,35'i üzerinden %15,3)","$11,304","$12,240","$5,652","$6,120","Fix and Flip"],
+["David'in SE vergisi $11,304 ise, 1040'ta gelirden (AGI'den) düşebileceği kısım ne kadardır?","$5,652","$11,304","$0","$3,060","Fix and Flip"],
+["Takvim yılı vergi mükellefi olan bir flipper için tahmini vergi (Form 1040-ES) ikinci taksit son tarihi hangisidir?","15 Haziran","15 Temmuz","30 Haziran","15 Eylül","Fix and Flip"],
+["Ashley'nin geçen yılki toplam vergisi $20,000, AGI'si $180,000 idi. Bu yıl tahmini vergi cezasından kaçınmak (safe harbor) için en az ne kadar ödemelidir?","$22,000","$20,000","$18,000","$30,000","Fix and Flip"],
+["Daniel evi $285,000'a sattı ve alıcıya $6,000 satıcı kredisi (seller concession) verdi. Toplam maliyeti $240,000, diğer satış masrafı yok. Net kazancı nedir?","$39,000","$45,000","$51,000","$279,000","Fix and Flip"],
+["Jessica flip projesi için sert para (hard money) kredisine toplam $4,500 points ve $9,000 faiz ödedi. Dealer olarak bu ödemelerin vergi etkisi nedir?","Proje maliyetine girer veya gider yazılır; satış kazancını azaltır","Hiçbir koşulda indirilemez; sert para ödemeleri kişisel harcama sayılır","Yalnızca Schedule A'da kişisel faiz olarak ve sınırlı indirilir","27,5 yıla yayılarak amortize edilir, kazancı hemen azaltmaz","Fix and Flip"],
+["Robert, hiç sahip olmadığı bir evin alım sözleşmesini $12,000 atama (assignment) ücretiyle başka yatırımcıya devretti (wholesaling). Bu gelir nasıl vergilendirilir?","Olağan gelir olarak vergilenir ve SE vergisi uygulanır; sermaye kazancı değildir","Uzun vadeli sermaye kazancı olarak vergilenir; SE vergisi uygulanmaz","Vergiden muaf bir hediye sayılır; yalnızca beyan edilir","Yalnızca eyalet emlak transfer vergisine tabidir; federal vergi yok","Fix and Flip"],
+["Megan evde 26 ay oturdu (ana konut), tadilat yapıp sattı ve $180,000 kazandı. Tek başına beyan ediyor. Vergilendirilebilir kazancı nedir?","$0 — 2 yıl oturma/sahiplik şartı $250,000 muafiyeti sağlar","$180,000 — Section 121 flip evlerde uygulanmaz, tamamı vergilenir","$70,000 — muafiyet yalnızca farkı kapsar","$90,000 — kazancın yalnızca yarısı vergilenir","Fix and Flip"],
+["Chris ana konutunda yalnızca 14 ay oturdu ve iş değişikliği (50+ mil taşınma) nedeniyle sattı; kazancı $180,000. Tek beyan ediyor. Kısmi muafiyetle yaklaşık vergilendirilebilir kazancı nedir? ($250,000 × 14/24)","$34,167","$180,000","$0","$145,833","Fix and Flip"],
+["Brittany tek üyeli LLC (disregarded entity) üzerinden ev flip ediyor. LLC net kârı hangi formda raporlanır?","Form 1040 ile birlikte Schedule C","Form 1120 (kurumlar vergisi)","Form 1065","Schedule E Part I (kiralık mülk)","Fix and Flip"],
+["Kevin ve Amanda eşit ortaklı bir LLC ile flip yapıyor (vergi için ortaklık). LLC hangi beyannameyi verir ve ortaklara ne dağıtır?","Form 1065 verir; her ortağa Schedule K-1 düzenler","Form 1120-S verir; ortaklara W-2 düzenler","Beyanname vermez; ortaklar tahmini vergi öder","Form 1040 verir; ortaklara 1099-NEC düzenler","Fix and Flip"],
+["Tyler'ın S-corp flip şirketi $150,000 net kâr yaptı; Tyler kendine $60,000 maaş ve $90,000 dağıtım (distribution) verdi. Hangi kısım FICA/SE tipi payroll vergisine tabidir?","Yalnızca makul maaş olan $60,000","Tamamı $150,000","Yalnızca $90,000 dağıtım","Hiçbiri; S-corp'ta payroll vergisi yoktur","Fix and Flip"],
+["Rachel flip işini C-corporation olarak yürütüyor; şirketin vergilendirilebilir kârı $100,000. %21 federal kurumlar vergisi ne kadardır?","$21,000","$15,000","$37,000","$24,000","Fix and Flip"],
+["Brandon'ın flip LLC'si (Schedule C) bu yıl $30,000 net zarar yazdı. Bu zarar nasıl işlenir?","Dealer işi zararıdır; diğer gelirden düşülebilir (at-risk ve excess business loss sınırlarına tabi)","Sermaye zararı gibi yalnızca yılda $3,000 düşülür, kalanı ileri taşınır","Mükellef zarar yazdığı için hiçbir şekilde indirilemez, silinir","Yalnızca ileride aynı LLC'nin yapacağı flip kârlarına karşı kullanılır","Fix and Flip"],
+["Lauren yatırımcı olarak bir evi 14 ayda $12,000 zararla sattı (uzun vadeli sermaye zararı); başka sermaye kazancı yok. Bu yıl olağan gelirden ne kadar düşebilir ve ileri ne kadar taşınır?","$3,000 düşer / $9,000 ileri taşınır","$12,000 düşer / $0 ileri taşınır","$0 düşer / $12,000 ileri taşınır","$6,000 düşer / $6,000 ileri taşınır","Fix and Flip"],
+["Steve, flip evinde boya işi için tek kişilik bir boyacıya (sole proprietor) 2026 yılında toplam $4,500 ödedi. Steve'in yapması gereken nedir?","Boyacıya Form 1099-NEC düzenlemeli (2026 ödemelerinde eşik $2,000)","Hiçbir form gerekmez; 600 $ üzeri ödemeler yalnızca şirketlere raporlanır","W-2 düzenlemeli","Yalnızca boyacının W-9'unu saklamak yeterli, 1099 hiçbir zaman gerekmez","Fix and Flip"],
+["Olivia flip projesinde malzeme alırken $1,800 eyalet satış vergisi (sales tax) ödedi. Vergi açısından bu tutar nasıl işlenir?","Malzeme maliyetine eklenir; proje maliyetini artırır, kazancı düşürür","Schedule A'da ayrıca satış vergisi olarak indirilir, projeye eklenmez","Hiçbir şekilde indirilemez; eyalete ödenen vergi gider değildir","Arsa değerine eklenir ve 27,5 yılda amortize edilir","Fix and Flip"],
+["Derek flip evini 5 ay elinde tutarken elektrik, su ve gaz için $2,400 ödedi. Bu giderler nasıl yer alır?","Proje/elde tutma maliyeti olarak satış kazancından düşülür","Kişisel gider sayılır, indirilemez","Mülkün bazına eklenip 27,5 yıl amortize edilir","Yalnızca evi sattıktan 3 yıl sonra düşülebilir","Fix and Flip"],
+["Hannah (tek beyan, vergilendirilebilir geliri %15 uzun vadeli sermaye kazancı diliminde) uzun vadeli $60,000 flip kazancı elde etti. Federal sermaye kazancı vergisi nedir?","$9,000","$12,000","$14,400","$0","Fix and Flip"],
+["Greg (tek beyan) yatırımcı olarak $90,000 uzun vadeli flip kazancı ve $150,000 maaş aldı (MAGI $240,000). NIIT eşiği $200,000. Ödeyeceği %3,8 NIIT nedir?","$1,520","$3,420","$9,120","$0","Fix and Flip"],
+["Nicole'ün dealer flip işinden QBI (qualified business income) $100,000. Gelir sınırları engellemiyorsa Section 199A indirimi kaç $ olur?","$20,000","$10,000","$100,000","$5,000","Fix and Flip"],
+["Eric dealer olarak sattığı flip evinde alıcıya satıcı finansmanı (seller financing) verdi. Kazancı taksitle yaymak için installment method kullanabilir mi?","Hayır; dealer satışlarında installment method kullanılamaz, kazanç satış yılında vergilenir","Evet; satıcı finansmanı olan her satışta installment method serbesttir","Evet; ancak yalnızca vadesi 5 yılı aşan senetlerde kullanılabilir","Evet; ancak yalnızca toplam kâr $100,000'ın altındaysa kullanılabilir","Fix and Flip"],
+["Samantha flip için aldığı evi 5 ay elinde tuttu. Bu süre için evin amortismanını (depreciation) gider yazabilir mi?","Hayır; satış için tutulan mülk (envanter) amortismana tabi değildir","Evet; mülkün tutulduğu her ay için aylık amortisman yazılır","Evet; 27,5 yıllık oran tam uygulanıp yıl sonunda toplanır","Evet; ancak yalnızca arsa değeri için amortisman ayrılır","Fix and Flip"],
+["Matt flip evini sattıktan sonra alış ve satış masraflarını belgelemek için hangi evrak en önemlidir?","Alış ve satışın kapanış belgeleri (Closing Disclosure / ALTA settlement statement)","Yalnızca emlak vergisi faturası ve ilçe değerleme kaydı","Yalnızca banka hesap özeti; masraf kalemleri yeterince görünür","Hatırlanan tutarların kendi elle yazılmış bir özeti","Fix and Flip"],
+["Jennifer, flip yapmayı planladığı evi 8 ay sonra satamayınca kiraya verdi. Amortisman ne zaman başlar ve baz nasıl belirlenir?","Kiraya hazır olduğu tarihten başlar; baz, düzeltilmiş maliyet ile o günkü piyasa değerinden düşük olandır","Satın alma tarihinden geriye dönük başlar; baz her zaman düzeltilmiş maliyettir","Kiraya dönüştürülen mülk amortismana tabi olmaz; yalnızca satış anında düşülür","Kiraya hazır olduğu tarihten başlar; baz her zaman o günkü piyasa değeridir","Fix and Flip"],
+["Ryan flip evinde kendi emeğiyle $15,000 değerinde işçilik yaptı (sweat equity). Bu emeğin değeri vergi açısından nasıl işlenir?","Gider yazılamaz ve bazı artırmaz; yalnızca fiilen ödenen malzeme ve dış hizmet sayılır","$15,000 işçilik bedeli gider olarak düşülür, çünkü emek karşılığı hesaplanabilir","$15,000 mülkün bazına eklenir ve satışta kazancı azaltır","$15,000 sermaye kaybı sayılır ve yılda $3,000 düşülür","Fix and Flip"],
+["Kyle BRRRR ile evi $140,000'a aldı, $45,000 tadilat yaptı (toplam $185,000). Değer $250,000 çıktı; %75 LTV ile $187,500 refinansman kredisi çekti, eski kredisini ve masrafları kapatınca elinde $33,000 nakit kaldı. Bu $33,000 için bu yıl ödeyeceği gelir vergisi nedir?","$0 — kredi geliri borçtur, gelir sayılmaz","$33,000 üzerinden olağan gelir vergisi","$33,000 üzerinden %15 sermaye kazancı vergisi","$16,500 — yarısı vergilenir","BRRRR"],
+["Lisa'nın refinansmanda çektiği kredi tutarı ($200,000), mülkün toplam maliyet bazını ($170,000) aştı. Aradaki $30,000 fark vergilendirilir mi?","Hayır; kredi borçtur, gelir sayılmaz; vergi ancak satışta kazançtan doğar","Evet; kredinin maliyet bazını aşan kısmı olağan gelir sayılır","Evet; aradaki $30,000 kısa vadeli sermaye kazancı olarak vergilenir","Evet; aradaki $30,000 üzerinden ayrıca %3,8 NIIT ödenir","BRRRR"],
+["Aaron BRRRR refinansmanında $3,750 points ödedi (30 yıllık kredi). Kiralık mülk için her tam yıl indirebileceği tutar nedir?","$125","$3,750","$136","$250","BRRRR"],
+["Kim'in 30 yıllık refinansmanındaki $3,000 points 5 tam yıl boyunca amortize edildi (yılda 100 $). Kredi farklı bir bankadan yeni bir kredi ile kapatıldı. Kapatma yılında kalan indirilebilir tutar nedir?","$2,500","$0","$3,000","$100","BRRRR"],
+["Paul'un refinansman masrafları: ekspertiz 600 $, title $1,800, kredi başlangıç ücreti $2,200. Bu kredi masrafları vergide nasıl işlenir?","Kredi vadesi boyunca amortize edilir (finansman maliyeti); bina bazına eklenmez","Tamamı ilk yıl cari gider olarak yazılır, vadeye yayılmaz","Binanın amortisman bazına eklenir ve 27,5 yılda amortize edilir","Kredi masrafı olduğu için kiralık mülk için hiç indirilemez","BRRRR"],
+["Stephanie evi 5 Ocak'ta aldı, tadilatı 20 Nisan'da bitirdi, 25 Nisan'da kiraya ilan etti, kiracı 10 Mayıs'ta taşındı. Amortisman hangi tarihte başlar?","25 Nisan — mülk kiraya hazır ve müsait hâle geldiğinde","5 Ocak — satın alma tarihinde","10 Mayıs — kiracı taşındığında","1 Ocak — vergi yılı başında","BRRRR"],
+["Joshua evi $140,000'a aldı, alış closing masrafı $3,000, tadilat $45,000. İlçe kaydına göre arsa değeri satın alma bedelinin %20'si. Tam bir yıl için yıllık amortisman nedir? (27,5 yıl, tadilat bina bazına eklenir)","$5,796","$6,836","$4,160","$4,087","BRRRR"],
+["Aynı mülk (yıllık tam amortisman $5,796) Ekim ayında kiraya hazır hale geldi. Mid-month convention ile ilk yıl amortisman yaklaşık ne kadardır?","$1,208","$5,796","$1,449","$966","BRRRR"],
+["Heather BRRRR'da refinansman yaptı. Refinansman, amortisman takvimini veya elde tutma süresini sıfırlar mı?","Hayır; refinansman satış değildir, amortisman ve elde tutma süresi kesintisiz sürer","Evet; her refinansmanda 27,5 yıllık amortisman takvimi yeniden başlar","Evet; refinansman elde tutma süresini sıfırlar ve mülk yeniden 'yeni' sayılır","Evet; refinansman anında kazanç vergilenir ve baz yeniden belirlenir","BRRRR"],
+["Zachary'nin BRRRR kiralık mülkü: yıllık kira $26,400, ipotek faizi $9,800, emlak vergisi $3,600, sigorta $1,500, bakım $1,800, yönetim ücreti (%8) $2,112, amortisman $5,800. Schedule E net kâr/zarar nedir?","$1,788","$7,588","-$4,012","$9,700","BRRRR"],
+["Courtney'nin aylık ipotek ödemesi (anapara+faiz) $1,800; bunun $1,200'ı faiz, 600 $'ı anapara. Yıl boyunca kiralık mülk gideri olarak ne kadar indirebilir?","$14,400 — yalnızca faiz kısmı","$21,600 — tüm ödeme","$7,200 — yalnızca anapara","$10,800 — ödemenin %50'si","BRRRR"],
+["Justin'in kiralık mülkü nakit akışı pozitif (+$4,000) ama vergi beyannamesinde −$1,800 zarar gösteriyor. En olası neden nedir?","Nakit gideri olmayan amortisman vergi zararı yaratıyor","Kira geliri nakit akışında olduğu gibi vergiden muaf tutulduğu için zarar görünüyor","İpotek anaparası ödemesi de gider yazıldığı için zarar görünüyor","Emlak vergisi beyannamede iki kez gider olarak indirildiği için zarar görünüyor","BRRRR"],
+["Erin aktif katılım şartlarını sağlıyor, MAGI'si $110,000. Kiralık mülkünden $18,000 pasif zarar var. Bu yıl ne kadarını diğer gelirinden düşebilir?","$18,000 — tamamı (izin $20,000 olduğundan)","$25,000 — tam izin kullanılır (MAGI sınırı yok)","$9,000 — zararın yalnızca yarısı indirilir","$0 — MAGI $100,000'ı aştığı için hiç indirilemez","BRRRR"],
+["Carlos'un MAGI'si $130,000 (aktif katılım var); izin verilen pasif zarar 25.000 − %50×(130.000−100.000) = $10,000. Kiralık zararı $18,000 ise bu yıl ne kadarı indirilir ve ne kadarı ileri taşınır?","$10,000 indirilir / $8,000 ileri taşınır","$18,000 indirilir / $0 ileri","$0 indirilir / $18,000 ileri","$25,000 indirilir / $0 ileri","BRRRR"],
+["Vanessa'nın MAGI'si $155,000 ve kiralık mülkü $12,000 zarar etti (aktif katılımcı, REPS değil). Bu zarar ne olur?","Bu yıl diğer gelirden düşülemez; askıya alınır ve gelecek pasif gelire veya satışa karşı kullanılır","Tamamı bu yıl diğer gelirden düşülür, çünkü aktif katılım vardır","Yılda yalnızca $3,000 düşülür, kalanı ileri taşınır (sermaye zararı gibi)","MAGI sınırı aşıldığı için zarar tamamen silinir ve ileri taşınmaz","BRRRR"],
+["Pasif zarar nedeniyle askıda kalan $22,000, kiralık mülkün üçüncü bir tarafa tam vergilendirilebilir satışı yapıldığında ne olur?","Satış yılında diğer gelirden indirilebilir hâle gelir (serbest kalır)","Silinir; satış sonrası askıdaki pasif zarar kullanılamaz","Yalnızca yılda $3,000 olarak düşülür, kalanı ileri taşınır","Yalnızca aynı mülkten gelecek yılın kira gelirine karşı kullanılır","BRRRR"],
+["Real Estate Professional Status (REPS) için hangi iki şart gerekir?","Yılda 750+ saat emlakta çalışmak ve çalışma süresinin yarısından fazlasını emlakta geçirmek","Yılda 100 saat emlak çalışması ve en az 3 kiralık mülke sahip olmak","Yılda 2.000 saat çalışmak ve geçerli bir emlak lisansı taşımak","En az 5 yıl mülk sahipliği ve hiç W-2 geliri olmaması","BRRRR"],
+["Tom kiracıdan $2,200 güvenlik depozitosu aldı ve sözleşme sonunda iade edecek. Alındığı yıl bu tutar gelir midir?","Hayır; iade edilecek depozito gelir değildir, hasarla tutulan kısım gelir olur","Evet; alındığı yıl tamamı kira geliri olarak beyan edilir","Evet; yalnızca yarısı alındığı yıl gelir olur, kalanı iade edilir","Hayır; depozito hiçbir koşulda, hasar için tutulsa bile gelir olmaz","BRRRR"],
+["Monica Aralık'ta kiracıdan Ocak ayı kirası olan $1,800'ı peşin aldı (nakit esaslı). Bu kira hangi yılın geliridir?","Aralık'ta alındığı yılın geliridir","Ocak'taki yılın geliridir","İkiye bölünür","Kiracı taşınana kadar gelir değildir","BRRRR"],
+["Dylan $40,000'lık cash-out refinans tutarıyla bir tekne aldı. Bu $40,000'a ait faiz Schedule E'de kiralık gider olarak yazılabilir mi?","Hayır; faiz paranın kullanım amacına göre ayrılır, kişisel kullanım faizi kiralık gider değildir","Evet; kredi kiralık mülke bağlı olduğundan faizin tamamı Schedule E'de indirilir","Evet; ancak faizin yalnızca yarısı kiralık gider olarak indirilebilir","Evet; ancak yalnızca kredinin ilk yılında indirilir","BRRRR"],
+["Natalie cash-out refinans nakdini ikinci bir kiralık mülkün peşinatı olarak kullandı. Bu kısma ait faiz nereye yazılır?","İkinci kiralık mülkün Schedule E giderine, paranın kullanıldığı mülke yazılır","Birinci mülkün Schedule E'sine yazılır, çünkü kredi o mülk üzerindedir","Schedule A'da kişisel ipotek faizi olarak yazılır","Kredi aktarıldığı için hiçbir şekilde indirilemez","BRRRR"],
+["Patrick BRRRR mülkünü tek üyeli LLC üzerinden tutuyor (disregarded). Kira gelir-gideri hangi forma yazılır?","Form 1040 ile Schedule E Part I (kira geliri ve giderleri)","Form 1040 ile Schedule C (ticari kazanç ve SE vergisi)","Form 1120 (kurumlar vergisi beyannamesi)","Form 8825 (yalnızca ortaklık kiralıkları için)","BRRRR"],
+["Ben, 2025'te satın alıp devreye aldığı kiralık mülkte cost segregation ile $25,000 değerinde 5 yıllık varlık (appliance, zemin, aydınlatma) belirledi. Kanundaki %100 bonus amortisman (19 Ocak 2025 sonrası edinilen mülk) ile ilk yıl bu varlıklardan ne kadar amortisman düşebilir?","$25,000 — %100 bonus","$5,000 — 5 yıla bölünür","$909 — 27,5 yıla bölünür","$12,500 — %50 bonus","BRRRR"],
+["Hailey kiralık mülküne 4 adet $1,200'lık cihaz (buzdolabı, fırın vb.) aldı. De minimis safe harbor (fatura/kalem başı $2,500) seçildiyse bu $4,800 nasıl işlenir?","Her kalem $2,500'ın altında olduğundan aynı yıl tamamı gider yazılır","Toplam $4,800 tek varlık sayılır ve 5 yıla yayılarak amortize edilir","Cihazlar binaya bağlı sayılır ve 27,5 yılda amortize edilir","Cihazlar kiracıya ait sayıldığı için hiçbir şekilde indirilemez","BRRRR"],
+["Adam BRRRR evinde duvar ve zemin işlerini bizzat kendisi yaptı ve kendi emeği için $8,000 değer biçti. Bu $8,000 vergide nasıl yer alır?","Gider yazılamaz ve baz artmaz; yalnızca fiilen ödenen malzeme ve işçilik sayılır","$8,000 işçilik bedeli gider olarak düşülür, emek karşılığı sayılır","$8,000 amortismana tabi bazına eklenir ve 27,5 yılda amortize edilir","$8,000 sermaye kaybı sayılır ve yılda $3,000 düşülür","BRRRR"],
+["Rebecca'nın BRRRR kiralık mülkü yıllık $28,000 kira topluyor ve emlak yönetim şirketine %10 ücret ödüyor. Yıllık indirebileceği yönetim ücreti nedir?","$2,800","$28,000","$14,000","$0","BRRRR"],
+["Kevin kiralık evi için ilan ücretleri ve kiracı tarama (screening) giderlerine 450 $ ödedi. Bu giderler vergide nasıl yer alır?","Schedule E'de cari yıl gideri olarak indirilir (advertising / professional fees)","Mülkün bazına eklenir ve mülkle birlikte uzun vadede amortize edilir","27,5 yılda amortize edilen bir ön hazırlık maliyeti sayılır","Kiracı seçimi kişisel gider olduğundan hiç indirilemez","BRRRR"],
+["Sophie BRRRR mülkünü %100 sahibi olduğu tek üyeli LLC'ye devretti. Bu devir vergi açısından satış sayılır mı?","Hayır; disregarded entity'ye devir satış değildir, vergilendirilebilir olay yoktur","Evet; piyasa değeri üzerinden satış sayılır ve kazanç vergilenir","Evet; devirle birlikte amortisman geri alma vergisi hemen doğar","Evet; devirle yeni bir 27,5 yıllık amortisman dönemi başlar","BRRRR"],
+["Jacob'ın mülkünde arsa/bina ayrımı için en güvenilir yöntem hangisidir?","İlçe değerleme (assessor) oranını veya ekspertiz ayrımını kullanıp arsa ile binayı ayırmak","Tüm bedeli binaya yazıp amortismanı en yüksek seviyeye çıkarmak","Tüm bedeli arsaya yazıp amortisman tartışmasından kaçınmak","Her mülkte rastgele %50 arsa %50 bina şeklinde ayırmak","BRRRR"],
+["Mia'nın BRRRR evi tadilat sonrası kiraya hazır; ancak kiracı bulunamadığı için 3 ay boş kaldı. Bu 3 ayda gider ve amortisman yazabilir mi?","Evet; kiraya hazır ve müsait olduğu sürece giderler ve amortisman devam eder","Hayır; kiracı olmadan hiçbir gider veya amortisman yazılamaz","Yalnızca emlak vergisi ve sigorta yazılır, amortisman başlamaz","Amortisman durur, ancak diğer tüm giderler yazılmaya devam eder","BRRRR"],
+["Anthony'nin dubleksi aylık $2,400 kiraya veriliyor; yıl içinde 1 ay boş kaldı (11 ay kira toplandı = $26,400). Giderler: faiz $11,200, emlak vergisi $4,100, sigorta $1,700, onarım $2,300, yönetim (%9) $2,376, amortisman $7,100. Schedule E net kâr/zarar nedir?","-$2,376","$24","-$9,476","$4,724","Kiralık Mülk (Rental)"],
+["Katherine $275,000'a kiralık ev aldı; arsa değeri %18. Konut kiralık mülk için yıllık amortisman (27,5 yıl, tam yıl) kaç $'dır?","$8,200","$10,000","$5,782","$1,800","Kiralık Mülk (Rental)"],
+["Jordan kiralık evin arsa kısmı için de amortisman ayırabilir mi?","Hayır; arsa amortismana tabi değildir, yalnızca bina ve iyileştirmeler amortize edilir","Evet; arsa da bina ile birlikte 27,5 yılda amortize edilir","Evet; arsa uzun ömürlü olduğu için 39 yılda amortize edilir","Evet; arsa yalnızca mülkün ilk 5 yılında amortize edilebilir","Kiralık Mülk (Rental)"],
+["Austin kiralık evin çatısını tamamen yenilemek için $14,000 ödedi. IRS'ye göre bu harcama nasıl sınıflandırılır?","Sermaye iyileştirmesidir; aktifleştirilir ve 27,5 yılda amortize edilir","Cari yıl onarım gideridir; $14,000'ın tamamı bu yıl düşülür","Kişisel gider sayılır ve vergi beyannamesinde hiç yer almaz","Yalnızca Schedule A'da kalemli indirim olarak düşülebilir","Kiralık Mülk (Rental)"],
+["Kayla'nın kiralık evinde fırtına sonrası birkaç kiremit değiştirmek için 600 $ ödendi. Bu harcama nasıl işlenir?","Onarım (repair) olarak cari yıl gideri yazılır","Aktifleştirilip 27,5 yıl amortize edilir","Bazın bir parçası olarak saklanır, satışta düşülür","İndirilemez","Kiralık Mülk (Rental)"],
+["Small taxpayer safe harbor: Eric'in kiralık binasının düzeltilmemiş bazı $300,000. Bu yıl onarım/bakım için bu güvenli liman kapsamında en fazla ne kadar gider yazabilir? ($10,000 veya baz %2'si, hangisi düşükse)","$6,000","$10,000","$15,000","$12,000","Kiralık Mülk (Rental)"],
+["Nathan kiralık evine $3,200 tutarında yeni bir su ısıtıcı (tek fatura) taktırdı. De minimis safe harbor kalem başı $2,500 ise bu harcama nasıl işlenir?","Limiti aştığı için kapitalize edilip amortize edilir (başka bir safe harbor yoksa)","De minimis safe harbor ile tamamı bu yıl gider yazılır","Su ısıtıcısı bakım sayıldığı için hiçbir şekilde indirilemez","Yalnızca arsa değerine eklenir ve amortisman yazılmaz","Kiralık Mülk (Rental)"],
+["Brooke'un Airbnb evinde ortalama kiracı kalış süresi 5 gün. Vergi açısından bu durum ne anlama gelir?","Ortalama kalış 7 günden kısa olduğu için 'rental activity' sayılmaz; maddi katılımla pasif olmaz, hizmet fazlaysa SE vergisi doğabilir","Uzun dönem kiralıkla aynıdır; her zaman pasif sayılır, SE vergisi hiç doğmaz","Kısa süreli kiralama geliri tamamen federal vergiden muaftır","Her zaman Schedule C'de beyan edilir ve her durumda SE vergisine tabidir","Kiralık Mülk (Rental)"],
+["Patricia tatil evini yılda 100 gün kiraya verdi, 20 gün kendisi kullandı. Kişisel kullanım günleri 14 gün veya kiralama günlerinin %10'unun fazlasını aşarsa ne olur?","Ev konut sayılır; kira giderleri kira gelirini aşamaz, zarar yazılamaz","Tüm giderler zarar dahil tamamen indirilebilir kalır","Kira geliri tamamen vergiden muaf olur, gider yazılmaz","Yalnızca emlak vergisi ve ipotek faizi indirilebilir, diğerleri indirilemez","Kiralık Mülk (Rental)"],
+["Gregory evini yılda 12 gün kiraya verip $6,000 kazandı (14 günlük 'Augusta rule'). Bu gelir nasıl işlenir?","Kiralama yılda 14 günü aşmadığı için gelir beyan edilmez, kira giderleri de indirilemez","Gelirin tamamı beyan edilir ve ilgili giderler normal şekilde indirilir","Gelirin yalnızca %50'si vergilenir, giderlerin %50'si indirilir","Gelir yalnızca SE vergisine tabidir, gelir vergisi uygulanmaz","Kiralık Mülk (Rental)"],
+["Ethan 2 daireli binanın birinde oturuyor, diğerini kiraya veriyor (daireler eşit). Yıllık ortak giderler $18,000. Kiralık kısım için gider olarak ne kadar indirebilir?","$9,000","$18,000","$0","$13,500","Kiralık Mülk (Rental)"],
+["Sydney 90 mil uzaktaki kiralık evini denetlemek ve onarım yaptırmak için seyahat etti. Bu seyahat giderleri indirilebilir mi?","Evet; seyahatin ana amacı mülk yönetimiyse ulaşım, konaklama ve yemek (%50) indirilir","Hayır; kiralık mülk seyahat giderleri hiçbir koşulda indirilemez","Yalnızca uçak veya araç masrafı indirilir, konaklama ve yemek indirilmez","Giderler indirilemez; yalnızca satış sırasında kazançtan düşülebilir","Kiralık Mülk (Rental)"],
+["Caleb'in kiracısı 2 aydır kira ödemedi ($3,200). Nakit esaslı mükellef olarak Caleb bu ödenmeyen kirayı gider yazabilir mi?","Hayır; hiç gelir olarak beyan edilmediği için gider yazılamaz (tahsil edilmeyen kira gelir değildir)","Evet; $3,200 kötü alacak gideri olarak indirilir","Evet; ödenmeyen kiranın yarısı kötü alacak olarak indirilir","Evet; tutar mülkün bazından düşülür ve kazancı azaltır","Kiralık Mülk (Rental)"],
+["Danielle kiralık evinin yıllık $5,400 emlak vergisini Schedule E'de gider yazdı. Bu gider SALT (eyalet ve yerel vergi) sınırına tabi midir?","Hayır; kiralık emlak vergisi işletme giderdir ve Schedule A SALT sınırına tabi değildir","Evet; kiralık emlak vergisi de SALT sınırına tabidir ve orada sınırlanır","Evet; yalnızca %50'si Schedule E'de indirilir","Hayır; kiralık emlak vergisi hiçbir beyannamede indirilemez","Kiralık Mülk (Rental)"],
+["Marcus'un kiralık evleri için QBI (Section 199A) 'safe harbor' kapsamına girmek için hangi şart gerekir?","Yılda en az 250 saat kiralama hizmeti (kendisi, çalışan veya yönetici) ve ayrı kayıtlar","Yılda en az 50 saat çalışma ve en az 2 kiralık mülke sahip olmak","Yalnızca W-2 geliri olmaması ve evlerin tek üyeli LLC'de tutulması","En az 10 yıldır mülk sahibi olmak ve mülklerin borçsuz olması","Kiralık Mülk (Rental)"],
+["Tiffany'nin kiracısı sözleşmeyi erken bitirmek için $3,000 fesih ücreti (lease cancellation fee) ödedi. Bu para nasıl işlenir?","Alındığı yıl kira geliri olarak beyan edilir","Gelir değildir, depozito sayılır","Sermaye kazancıdır","Yalnızca bir sonraki kiracıya mahsup edilir","Kiralık Mülk (Rental)"],
+["Jeremy'nin kiracısı sözleşme gereği kiralık evin $4,000'lık emlak vergisini doğrudan belediyeye ödedi. Jeremy bunu nasıl işler?","Kira geliri olarak $4,000 ekler ve aynı tutarı emlak vergisi gideri olarak düşer","Hiçbir şey yazmaz; kiracı ödemesi ne gelir ne de gider sayılır","Yalnızca $4,000 emlak vergisi gideri yazar, gelir eklemez","Yalnızca $4,000 kira geliri ekler, gider yazmaz","Kiralık Mülk (Rental)"],
+["Lindsey, kiralık evinde 2026'da $2,500 ödediği tesisatçıya (şahıs işletmesi) Form 1099-NEC düzenlemeli midir? (kiralık faaliyeti ticari işletme sayılır)","Evet; 2026 ödemelerinde eşik $2,000 olduğu için 1099-NEC gerekir","Hayır; eşik $10,000'dır","Hayır; kiralık mülklerde 1099 hiç gerekmez","Evet, ancak yalnızca 600 $ üzerindeki kalem başına","Kiralık Mülk (Rental)"],
+["Frank kiralık evini $200,000'a sattı; düzeltilmiş bazı $230,000 idi (satış masrafı yok). $30,000 zarar nasıl işlenir?","Section 1231 zararıdır; 1 yıldan uzun tutulan kiralık zararı olağan zarar olur, $3,000 sınırı yoktur","Sermaye zararıdır; yılda yalnızca $3,000 düşülür, kalanı ileri taşınır","Kiralık mülk satış zararı hiçbir şekilde indirilemez, mülkün bazına eklenir","Yalnızca ileride elde edilecek sermaye kazançlarına karşı kullanılabilir","Kiralık Mülk (Rental)"],
+["Rosa kiralık evi $250,000'a aldı, $30,000 iyileştirme yaptı ve $40,000 amortisman düştü. Düzeltilmiş baz (adjusted basis) nedir?","$240,000","$320,000","$210,000","$280,000","Kiralık Mülk (Rental)"],
+["Rosa evi $400,000'a sattı, satış masrafı $24,000. Düzeltilmiş baz $240,000 ise toplam kazancı nedir?","$136,000","$160,000","$150,000","$96,000","Kiralık Mülk (Rental)"],
+["Aynı satışta toplam kazanç $136,000, geçmiş amortisman $40,000. 'Unrecaptured Section 1250 gain' kısmı ne kadardır?","$40,000","$136,000","$96,000","$0","Kiralık Mülk (Rental)"],
+["Unrecaptured Section 1250 gain (geçmiş amortisman kaynaklı kazanç) için federal azami oran nedir?","%25","%15","%20","%37","Kiralık Mülk (Rental)"],
+["HOA, kiralık dairenin çatısını yenilemek için $6,000'lık özel tahsilat (special assessment) istedi. Düzenli aidat ise aylık 250 $. Vergide nasıl işlenir?","Çatı tahsilatı sermaye iyileştirmesidir (amortize edilir); düzenli aidat cari gider olur","İkisi de aynı yıl tamamen gider yazılır, ayrım gerekmez","İkisi de aktifleştirilir ve 27,5 yılda birlikte amortize edilir","Çatı tahsilatı gider yazılır, düzenli aidatlar ise aktifleştirilir","Kiralık Mülk (Rental)"],
+["Ortak LLC (iki üye) kiralık ev işletiyor. Kira geliri hangi formlarla raporlanır?","Form 1065 (Form 8825 ile) ve her üyeye Schedule K-1","Form 1120 kurumlar vergisi beyannamesi ve ortaklara 1099-DIV","Her üye kendi Schedule C'sinde yarı yarıya beyan eder, ortaklık formu yok","Form 1099-MISC; kira geliri yalnızca kiracı tarafından raporlanır","Kiralık Mülk (Rental)"],
+["Pasif kira geliri (uzun dönem, önemli hizmet yok) self-employment (SE) vergisine tabi midir?","Hayır; Schedule E kira geliri normalde SE vergisine tabi değildir","Evet; kira gelirinin tamamı %15,3 SE vergisine tabidir","Evet; yalnızca %2,9 Medicare kısmı uygulanır, Social Security yoktur","Evet; ancak yalnızca ilk $50,000 kira geliri için uygulanır","Kiralık Mülk (Rental)"],
+["Linda kiralık evi için 3 yıl amortisman yazmayı unuttu. Doğru çözüm nedir?","Form 3115 ile yöntem değişikliği yapıp kaçırılan amortismanı bir seferde yakalamak (Section 481(a))","Hiçbir şey yapmamak; satışta amortisman geri alınmaz","Gelecek yıllarda iki katı amortisman yazarak farkı kapatmak","Mülkü satıp yeniden alarak amortisman takvimini sıfırlamak","Kiralık Mülk (Rental)"],
+["Heidi kiralık eve $5,200'lık mobilya ve beyaz eşya (furnished rental) aldı. Bu varlıklar nasıl amortize edilir?","Genellikle 5 yıllık MACRS mülkü olarak (bonus/de minimis uygunsa hemen gider yazılabilir)","27,5 yıllık bina ömrüyle birlikte tek kalemde amortize edilir","39 yıllık ticari bina ömrüyle amortize edilir","Mobilya ve beyaz eşya amortize edilmez, yalnızca satışta düşülür","Kiralık Mülk (Rental)"],
+["Walter kiracının hasarı nedeniyle 800 $ güvenlik depozitosunu iade etmeyip tuttu. Bu 800 $ nasıl işlenir?","Tutulduğu yıl kira geliri olur; onarım gideri ayrıca indirilebilir","Gelir olmaz; depozito her koşulda kiracıya ait kalır","Sermaye kazancı sayılır ve uzun vadeli oranda vergilenir","Gelir olur, ancak yalnızca bir sonraki vergi yılında beyan edilir","Kiralık Mülk (Rental)"],
+["Samuel Schedule E hazırlaması için CPA'ye 900 $ ödedi (yalnızca kiralık mülkü ile ilgili kısım). Bu ödeme nasıl işlenir?","Kiralık faaliyetle ilgili kısım Schedule E'de profesyonel hizmet gideri olarak indirilir","Hiçbir şekilde indirilemez; vergi hazırlama ücretleri kişiseldir","Mülkün bazına eklenir ve mülkle birlikte amortize edilir","Yalnızca Schedule A'da kalemli indirim olarak düşülebilir","Kiralık Mülk (Rental)"],
+["Madison kiralık evini sattı ve 1031 exchange yapmak istiyor. Yasal süreler nelerdir?","Satıştan sonra 45 gün içinde yeni mülk bildirilir, 180 gün içinde alım tamamlanır","30 gün içinde bildirim yapılır, 90 gün içinde alım tamamlanır","60 gün içinde bildirim yapılır, 365 gün içinde alım tamamlanır","90 gün içinde bildirim yapılır, 270 gün içinde alım tamamlanır","1031, Satış ve Geri Alma"],
+["Oliver kiralık mülkünü net $500,000'a satıp 1031 ile $450,000'lık yeni mülk aldı; aradaki fark nakit olarak ona ödendi. Realize ettiği kazanç $200,000. Bu yıl vergilendirilen kazanç (boot) nedir?","$50,000","$200,000","$0","$450,000","1031, Satış ve Geri Alma"],
+["Isabella 1031 exchange'de satış gelirini kendi hesabına aldı, sonra yeni mülk satın aldı. Sonuç ne olur?","Gelire fiilen ulaştığı için 1031 geçersiz olur ve kazanç vergilenir; para Qualified Intermediary'de tutulmalıydı","1031 geçerlidir; yeter ki alım 180 gün içinde tamamlansın","Yalnızca amortisman geri alma kısmı vergilenir, kalan kazanç ertelenir","Yalnızca %3,8 NIIT ödenir, işlem 1031 olarak kabul edilir","1031, Satış ve Geri Alma"],
+["Ethan flip için aldığı ve satış için elinde tuttuğu evi 1031 exchange ile değiştirmek istiyor. Mümkün müdür?","Hayır; satış için tutulan (envanter) mülk 1031 kapsamına girmez, yalnızca yatırım/iş amaçlı mülk uygundur","Evet; tüm flip evler yatırım sayıldığı için 1031'e uygundur","Evet; ancak yalnızca ev 2 yıldan uzun süre elde tutulduysa uygundur","Evet; yeter ki değiştirilen yeni mülk daha ucuz olsun","1031, Satış ve Geri Alma"],
+["1031 exchange'i IRS'ye bildirmek için hangi form kullanılır?","Form 8824","Form 4562","Form 8949","Form 1099-S","1031, Satış ve Geri Alma"],
+["Ava kiralık mülkü ($300,000 düzeltilmiş baz) $500,000'a sattı ve 1031 ile $550,000'lık yeni mülk aldı (boot yok). Yeni mülkün vergi bazı nedir?","$350,000","$550,000","$300,000","$500,000","1031, Satış ve Geri Alma"],
+["Noah kiralık evini daha sonra ana konut yapıp 2 yıl oturdu. Section 121 muafiyeti, kiralıkken yazılan amortisman kazancını da kapsar mı?","Hayır; 6 Mayıs 1997 sonrası amortisman kaynaklı kazanç muafiyet dışındadır, %25'e kadar vergilenir","Evet; Section 121 amortisman kazancı dahil tüm kazancı muaf tutar","Evet; ancak yalnızca ilk $100,000 amortisman kazancı muaf olur","Evet; amortisman geri alma 3 yıl ana konut olarak oturunca silinir","1031, Satış ve Geri Alma"],
+["Chloe kiralık mülkünü satıcı finansmanıyla (installment sale) sattı. Amortisman geri alma (recapture) kazancı ne zaman vergilenir?","Satış yılında, hiç ödeme alınmamış olsa bile (olağan recapture kısmı peşin vergilenir)","Her taksit ödemesiyle orantılı olarak taksit yıllarına yayılır","Yalnızca son taksit alındığında vergilenir","Hiçbir zaman vergilenmez; taksitli satışta recapture uygulanmaz","1031, Satış ve Geri Alma"],
+["Wyatt, annesinden kalan kiralık evi miras aldı (annenin bazı $200,000, ölüm günü piyasa değeri $450,000). Evi sonra $460,000'a sattı. Vergilendirilebilir kazancı nedir?","$10,000","$260,000","$0","$250,000","1031, Satış ve Geri Alma"],
+["Paige kiralık evi 10 ay elinde tuttuktan sonra $40,000 kârla sattı. Mülk daha önce amortisman almıştı. Bu kazancın vergisel niteliği nedir?","1 yıldan kısa sürede satıldığı için Section 1231 geçmez; kazanç olağan gelir oranlarında vergilenir","Uzun vadeli sermaye kazancıdır; azami %20 oranında vergilenir","Amortisman alınmış mülk satışı olduğu için kazancın tamamı vergiden muaftır","Kazanç yalnızca %25 sabit oranla vergilenir, başka vergi yoktur","1031, Satış ve Geri Alma"],
+];
+
+const TAX_QUESTIONS_EN = [
+["Michael bought a house for $210,000 and spent $45,000 on rehab. Buy-side closing costs were $4,500 and holding costs (interest, taxes, insurance, utilities) were $12,000. He sold it for $330,000, paying a 5% agent commission ($16,500) and $3,300 in seller closing costs. What is his taxable net gain?","$38,700","$50,700","$58,500","$43,200","Fix and Flip"],
+["Sarah bought, renovated and sold 7 houses last year and runs this as a regular business. How is her profit taxed?","She is a dealer: profit is ordinary income plus self-employment (SE) tax","Every house counts as long-term: all of it is taxed at the 15% capital gains rate","Only property tax is due; no income tax arises","The profit is subject to state tax only; no federal tax is due","Fix and Flip"],
+["James, a teacher, bought a single house as an investment, renovated it and sold it 14 months later for a $60,000 profit. He is not a dealer. What category is the gain?","Long-term capital gain (held over 1 year); no SE tax","Short-term capital gain taxed at ordinary rates","Ordinary income plus 15.3% SE tax","Tax-exempt because it passed one year","Fix and Flip"],
+["Emily, an investor who is not a dealer, held a house for 9 months and made a $45,000 profit. Which federal statement is correct?","Short-term capital gain taxed at ordinary brackets, with no SE tax","Long-term capital gain taxed at 20% at most, with no SE tax","Ordinary income taxed normally plus 15.3% SE tax on top","The gain is subject only to the 3.8% NIIT; no other federal tax","Fix and Flip"],
+["David's flipping business has a Schedule C net profit of $80,000. About how much is his SE tax? (15.3% on 92.35% of net earnings)","$11,304","$12,240","$5,652","$6,120","Fix and Flip"],
+["If David's SE tax is $11,304, how much of it can he deduct from income (above the line) on his 1040?","$5,652","$11,304","$0","$3,060","Fix and Flip"],
+["For a calendar-year taxpayer who flips houses, what is the due date of the second estimated tax payment (Form 1040-ES)?","June 15","July 15","June 30","September 15","Fix and Flip"],
+["Ashley's total tax last year was $20,000 and her AGI was $180,000. What is the minimum she must pay this year to avoid an underpayment penalty (safe harbor)?","$22,000","$20,000","$18,000","$30,000","Fix and Flip"],
+["Daniel sold a house for $285,000 and gave the buyer a $6,000 seller concession. His total cost was $240,000 with no other selling costs. What is his net gain?","$39,000","$45,000","$51,000","$279,000","Fix and Flip"],
+["Jessica paid $4,500 in points and $9,000 in interest on a hard-money loan for a flip. As a dealer, what is the tax effect?","They go into project cost or are expensed, reducing the sale gain","They are never deductible; hard-money payments count as personal spending","They are deductible only on Schedule A as limited personal interest","They are amortized over 27.5 years and don't reduce the gain right away","Fix and Flip"],
+["Robert assigned a purchase contract on a house he never owned to another investor for a $12,000 assignment fee (wholesaling). How is this income taxed?","Taxed as ordinary income plus SE tax; it is not a capital gain","Taxed as a long-term capital gain; no SE tax applies","Treated as a tax-exempt gift that only needs to be reported","Subject only to a state real estate transfer tax; no federal tax","Fix and Flip"],
+["Megan lived in a house as her main home for 26 months, renovated and sold it for a $180,000 gain. She files single. What is her taxable gain?","$0 — the 2-year ownership/use test gives a $250,000 exclusion","$180,000 — Section 121 doesn't apply to flips, so all of it is taxed","$70,000 — the exclusion only covers the difference","$90,000 — only half of the gain is taxed","Fix and Flip"],
+["Chris lived in his main home for only 14 months and sold it because of a job relocation (50+ miles); his gain is $180,000. He files single. About what is his taxable gain after the partial exclusion? ($250,000 × 14/24)","$34,167","$180,000","$0","$145,833","Fix and Flip"],
+["Brittany flips houses through a single-member LLC (disregarded entity). Where is the LLC's net profit reported?","Schedule C attached to Form 1040","Form 1120 (corporate return)","Form 1065","Schedule E Part I (rental)","Fix and Flip"],
+["Kevin and Amanda flip houses through an equally owned LLC (taxed as a partnership). Which return does the LLC file and what does it give the partners?","It files Form 1065 and issues each partner a Schedule K-1","It files Form 1120-S and issues W-2s to partners","It files no return; partners pay estimated tax","It files Form 1040 and issues 1099-NECs to partners","Fix and Flip"],
+["Tyler's S-corp flipping company made $150,000 net profit; Tyler paid himself a $60,000 salary and a $90,000 distribution. Which part is subject to FICA/payroll taxes?","Only the $60,000 reasonable salary","The entire $150,000","Only the $90,000 distribution","None; S corps have no payroll taxes","Fix and Flip"],
+["Rachel runs her flipping business as a C corporation with $100,000 of taxable profit. How much is the 21% federal corporate tax?","$21,000","$15,000","$37,000","$24,000","Fix and Flip"],
+["Brandon's flipping LLC (Schedule C) had a $30,000 net loss this year. How is it treated?","It is a dealer business loss that offsets other income (subject to at-risk and excess business loss limits)","Like a capital loss, only $3,000 per year is deductible and the rest carries forward","It cannot be deducted in any way and is simply lost","It can only be used against future flip profits of the same LLC","Fix and Flip"],
+["Lauren, an investor, sold a house after 14 months at a $12,000 long-term capital loss and has no other capital gains. How much can she deduct against ordinary income this year and how much carries forward?","$3,000 düşer / $9,000 ileri taşınır","$12,000 düşer / $0 ileri taşınır","$0 düşer / $12,000 ileri taşınır","$6,000 düşer / $6,000 ileri taşınır","Fix and Flip"],
+["In 2026, Steve paid a sole-proprietor painter a total of $4,500 for work on a flip house. What must Steve do?","Issue the painter a Form 1099-NEC (the threshold is $2,000 for 2026 payments)","Nothing; payments over $600 are only reported for companies","Issue a W-2","Just keep the painter's W-9; a 1099 is never required","Fix and Flip"],
+["Olivia paid $1,800 in state sales tax on materials for a flip. How is it treated?","It is added to materials cost, raising project cost and lowering the gain","It is deducted separately as sales tax on Schedule A, not added to the project","It is never deductible; tax paid to the state is not an expense","It is added to land value and depreciated over 27.5 years","Fix and Flip"],
+["Derek paid $2,400 for electricity, water and gas while holding a flip house for 5 months. How are these costs treated?","They are project/holding costs deducted from the sale gain","They are personal expenses and not deductible","They are added to basis and depreciated over 27.5 years","They can be deducted only 3 years after the sale","Fix and Flip"],
+["Hannah (single, taxable income in the 15% long-term capital gains bracket) earned a $60,000 long-term gain on a flip. What is the federal capital gains tax?","$9,000","$12,000","$14,400","$0","Fix and Flip"],
+["Greg (single), an investor, had a $90,000 long-term flip gain and $150,000 in wages (MAGI $240,000). The NIIT threshold is $200,000. How much 3.8% NIIT does he owe?","$1,520","$3,420","$9,120","$0","Fix and Flip"],
+["Nicole's dealer flipping business has $100,000 of qualified business income (QBI). If income limits don't restrict it, what is her Section 199A deduction?","$20,000","$10,000","$100,000","$5,000","Fix and Flip"],
+["Eric, a dealer, sold a flip house with seller financing. Can he use the installment method to spread the gain?","No; dealer sales can't use the installment method, so the gain is taxed in the year of sale","Yes; the installment method is freely available on any seller-financed sale","Yes; but only for notes that run longer than 5 years","Yes; but only if the total profit is under $100,000","Fix and Flip"],
+["Samantha held a house for 5 months to flip it. Can she deduct depreciation on it for that period?","No; property held for sale (inventory) is not depreciable","Yes; monthly depreciation is claimed for each month it is held","Yes; the full 27.5-year rate applies and is totaled at year end","Yes; but depreciation is claimed on the land value only","Fix and Flip"],
+["After selling a flip house, which document is most important for proving Matt's purchase and selling costs?","The closing documents for both transactions (Closing Disclosure / ALTA settlement statement)","Only the property tax bill and the county assessment record","Only the bank statement, since the cost items are visible enough","A handwritten summary of the amounts he remembers","Fix and Flip"],
+["Jennifer couldn't sell her flip house after 8 months and rented it out. When does depreciation start and how is basis set?","It starts when ready for rent; basis is the lower of adjusted cost or fair market value on that date","It starts retroactively from the purchase date; basis is always adjusted cost","A property converted to rental is not depreciable; it is deducted only at sale","It starts when ready for rent; basis is always the fair market value on that date","Fix and Flip"],
+["Ryan did $15,000 worth of labor himself on a flip house (sweat equity). How is the value of his own labor treated?","It isn't deductible and doesn't add to basis; only actual materials and outside services count","The $15,000 labor value is deducted as an expense, since the work is measurable","The $15,000 is added to the property's basis and lowers the gain at sale","The $15,000 counts as a capital loss deducted at $3,000 per year","Fix and Flip"],
+["Kyle bought a house for $140,000 using BRRRR and spent $45,000 on rehab ($185,000 total). It appraised at $250,000; he took a 75% LTV refinance of $187,500, paid off the old loan and costs, and kept $33,000 in cash. How much income tax does he owe this year on the $33,000?","$0 — loan proceeds are debt, not income","Ordinary income tax on the $33,000","15% capital gains tax on the $33,000","$16,500 — half is taxed","BRRRR"],
+["Lisa's refinance loan ($200,000) exceeded her property's total cost basis ($170,000). Is the $30,000 difference taxed?","No; a loan is debt, not income; tax arises only on a gain at sale","Yes; the part of the loan above cost basis counts as ordinary income","Yes; the $30,000 difference is taxed as a short-term capital gain","Yes; 3.8% NIIT is due on the $30,000 difference","BRRRR"],
+["Aaron paid $3,750 in points on his BRRRR refinance (30-year loan) on a rental property. How much can he deduct each full year?","$125","$3,750","$136","$250","BRRRR"],
+["Kim's $3,000 in points on a 30-year refinance was amortized for 5 full years ($100/year). The loan was then paid off with a new loan from a different lender. What remaining amount is deductible in the payoff year?","$2,500","$0","$3,000","$100","BRRRR"],
+["Paul's refinance costs: $600 appraisal, $1,800 title, $2,200 loan origination fee. How are these loan costs treated?","Amortized over the loan term (financing costs); not added to the building basis","Fully expensed in the first year, not spread over the term","Added to the building's depreciable basis and depreciated over 27.5 years","Not deductible at all for a rental, since they are loan costs","BRRRR"],
+["Stephanie bought the house January 5, finished rehab April 20, listed it for rent April 25, and a tenant moved in May 10. When does depreciation start?","April 25 — when the property is ready and available for rent","January 5 — the purchase date","May 10 — when the tenant moves in","January 1 — the start of the tax year","BRRRR"],
+["Joshua bought a house for $140,000, paid $3,000 in closing costs and spent $45,000 on rehab. County records put land at 20% of the purchase value. What is the annual depreciation for a full year? (27.5 years; rehab is added to the building basis)","$5,796","$6,836","$4,160","$4,087","BRRRR"],
+["The same property (full-year depreciation $5,796) became ready for rent in October. Using the mid-month convention, about how much depreciation is allowed in the first year?","$1,208","$5,796","$1,449","$966","BRRRR"],
+["Heather refinanced her BRRRR property. Does the refinance reset the depreciation schedule or the holding period?","No; a refinance isn't a sale, so depreciation and the holding period continue","Yes; a new 27.5-year depreciation schedule starts at each refinance","Yes; a refinance resets the holding period and the property counts as new","Yes; the gain is taxed at the time of refinance and basis is reset","BRRRR"],
+["Zachary's BRRRR rental: annual rent $26,400, mortgage interest $9,800, property tax $3,600, insurance $1,500, maintenance $1,800, management fee (8%) $2,112, depreciation $5,800. What is the Schedule E net income/loss?","$1,788","$7,588","-$4,012","$9,700","BRRRR"],
+["Courtney's monthly mortgage payment (principal + interest) is $1,800, of which $1,200 is interest and $600 is principal. How much can she deduct as a rental expense over the year?","$14,400 — interest only","$21,600 — the entire payment","$7,200 — principal only","$10,800 — 50% of the payment","BRRRR"],
+["Justin's rental has positive cash flow (+$4,000) but shows a $1,800 loss on his tax return. What's the most likely reason?","Depreciation, a non-cash expense, creates the tax loss","Rental income is tax-exempt, as in cash flow, so a loss shows up","Mortgage principal is also deducted as an expense, so a loss shows up","Property tax was deducted twice on the return, so a loss shows up","BRRRR"],
+["Erin meets the active participation test and her MAGI is $110,000. Her rental produced an $18,000 passive loss. How much can she deduct against other income this year?","$18,000 — all of it (since the allowance is $20,000)","$25,000 — the full allowance (no MAGI limit)","$9,000 — only half of the loss is deductible","$0 — none, since MAGI exceeds $100,000","BRRRR"],
+["Carlos's MAGI is $130,000 (active participation); the allowed passive loss is 25,000 − 50%×(130,000−100,000) = $10,000. If his rental loss is $18,000, how much is deducted this year and how much carries forward?","$10,000 indirilir / $8,000 ileri taşınır","$18,000 indirilir / $0 ileri","$0 indirilir / $18,000 ileri","$25,000 indirilir / $0 ileri","BRRRR"],
+["Vanessa's MAGI is $155,000 and her rental lost $12,000 (active participant, not a real estate professional). What happens to the loss?","It can't offset other income this year; it is suspended and used against future passive income or at sale","All of it is deducted against other income this year because of active participation","Only $3,000 per year is deducted and the rest carries forward (like a capital loss)","Because the MAGI limit is exceeded, the loss is wiped out and does not carry forward","BRRRR"],
+["A rental has $22,000 of suspended passive losses. What happens when the property is sold in a fully taxable sale to an unrelated party?","They are released and become deductible against other income in the year of sale","They are wiped out; suspended passive losses can't be used after a sale","They are deducted at only $3,000 per year with the rest carried forward","They can be used only against next year's rent from the same property","BRRRR"],
+["Which two tests must be met for Real Estate Professional Status (REPS)?","Work 750+ hours per year in real estate and spend more than half of working time in it","Work 100 hours per year in real estate and own at least 3 rentals","Work 2,000 hours per year and hold a valid real estate license","Own property for at least 5 years and have no W-2 income at all","BRRRR"],
+["Tom received a $2,200 security deposit that he will refund at lease end. Is it income in the year received?","No; a refundable deposit isn't income, but the part kept for damage becomes income","Yes; all of it is reported as rental income in the year received","Yes; only half becomes income in the year received, the rest is refunded","No; a deposit is never income, even if kept for damage","BRRRR"],
+["In December Monica received $1,800 from a tenant as January's rent (cash method). Which year is it income for?","The year it was received (December)","The following year (January)","It is split in two","It is not income until the tenant moves out","BRRRR"],
+["Dylan used $40,000 of cash-out refinance proceeds to buy a boat. Can the interest on that $40,000 be deducted as a rental expense on Schedule E?","No; interest follows the use of the money, and personal-use interest isn't a rental expense","Yes; since the loan is secured by the rental, all of the interest is deducted on Schedule E","Yes; but only half of the interest is deductible as a rental expense","Yes; but only in the first year of the loan","BRRRR"],
+["Natalie used cash-out refinance money as the down payment on a second rental. Where does the interest on that portion go?","It goes on the second rental's Schedule E, the property the money was used for","It goes on the first property's Schedule E, since the loan is on that property","It goes on Schedule A as personal mortgage interest","It is not deductible at all because the funds were transferred","BRRRR"],
+["Patrick holds his BRRRR property in a single-member LLC (disregarded). Where are rental income and expenses reported?","Form 1040 with Schedule E, Part I (rental income and expenses)","Form 1040 with Schedule C (business income and SE tax)","Form 1120 (corporate income tax return)","Form 8825 (only for partnership rentals)","BRRRR"],
+["Ben identified $25,000 of 5-year property (appliances, flooring, lighting) through a cost segregation study on a rental he bought and placed in service in 2025. With 100% bonus depreciation (property acquired after January 19, 2025), how much can he deduct on those assets in year one?","$25,000 — 100% bonus","$5,000 — spread over 5 years","$909 — spread over 27.5 years","$12,500 — 50% bonus","BRRRR"],
+["Hailey bought four $1,200 appliances for her rental. If she elects the de minimis safe harbor ($2,500 per item/invoice), how is the $4,800 treated?","Each item is under $2,500, so the full amount is expensed in the same year","The total $4,800 counts as one asset and is depreciated over 5 years","The appliances are part of the building and depreciated over 27.5 years","The appliances count as the tenant's, so nothing is deductible","BRRRR"],
+["Adam did the wall and flooring work on his BRRRR house himself and put an $8,000 value on his own labor. How is the $8,000 treated?","It can't be deducted and doesn't add to basis; only actual materials and labor paid count","The $8,000 labor value is deducted as an expense, counted as pay for his work","The $8,000 is added to the depreciable basis and depreciated over 27.5 years","The $8,000 counts as a capital loss deducted at $3,000 per year","BRRRR"],
+["Rebecca's BRRRR rental collects $28,000 in rent per year and she pays a property manager 10%. How much management fee can she deduct annually?","$2,800","$28,000","$14,000","$0","BRRRR"],
+["Kevin paid $450 for advertising and tenant screening for his rental. How are these costs treated?","Deducted as a current-year expense on Schedule E (advertising / professional fees)","Added to the property's basis and depreciated with it over the long term","Treated as a start-up cost and amortized over 27.5 years","Not deductible at all, since choosing tenants is a personal expense","BRRRR"],
+["Sophie transferred her BRRRR property to a single-member LLC she wholly owns. Is that a sale for tax purposes?","No; a transfer to a disregarded entity isn't a sale and creates no taxable event","Yes; it is treated as a sale at fair market value and the gain is taxed","Yes; depreciation recapture tax is triggered immediately by the transfer","Yes; the transfer starts a new 27.5-year depreciation period","BRRRR"],
+["What is the most reliable way for Jacob to split his purchase price between land and building?","Use the county assessor ratio or an appraisal allocation to split land from building","Put the entire price on the building to maximize depreciation","Put the entire price on the land to avoid any depreciation dispute","Split every property arbitrarily at 50% land and 50% building","BRRRR"],
+["Mia's BRRRR house was ready for rent after rehab but sat vacant for 3 months. Can she deduct expenses and depreciation for those months?","Yes; as long as it is ready and available for rent, expenses and depreciation continue","No; nothing, including depreciation, can be deducted without a tenant","Only property tax and insurance are deductible; depreciation doesn't start","Depreciation pauses, but all other expenses can still be deducted","BRRRR"],
+["Anthony rents a unit for $2,400/month and it was vacant for 1 month during the year (11 months collected = $26,400). Expenses: interest $11,200, property tax $4,100, insurance $1,700, repairs $2,300, management (9%) $2,376, depreciation $7,100. What is the Schedule E net income/loss?","-$2,376","$24","-$9,476","$4,724","Kiralık Mülk (Rental)"],
+["Katherine bought a rental house for $275,000; land is 18% of the value. What is the annual depreciation for a full year (27.5 years, residential rental)?","$8,200","$10,000","$5,782","$1,800","Kiralık Mülk (Rental)"],
+["Can Jordan depreciate the land portion of a rental house?","No; land isn't depreciable, only the building and improvements are","Yes; land is depreciated over 27.5 years together with the building","Yes; land is long-lived, so it is depreciated over 39 years","Yes; land can be depreciated only during the first 5 years","Kiralık Mülk (Rental)"],
+["Austin paid $14,000 to completely replace the roof on his rental house. How does the IRS classify this?","A capital improvement; capitalized and depreciated over 27.5 years","A current-year repair; the full $14,000 is deducted this year","A personal expense that doesn't appear on the tax return at all","Deductible only as an itemized deduction on Schedule A","Kiralık Mülk (Rental)"],
+["Kayla paid $600 to replace a few shingles on her rental after a storm. How is it treated?","As a repair, deducted as a current-year expense","Capitalized and depreciated over 27.5 years","Kept as part of basis and deducted at sale","Not deductible","Kiralık Mülk (Rental)"],
+["Small taxpayer safe harbor: Eric's rental building has an unadjusted basis of $300,000. What is the most he can expense for repairs/maintenance under this safe harbor this year? (the lesser of $10,000 or 2% of basis)","$6,000","$10,000","$15,000","$12,000","Kiralık Mülk (Rental)"],
+["Nathan had a new water heater installed in his rental for $3,200 (single invoice). If the de minimis safe harbor limit is $2,500 per item, how is it treated?","It exceeds the limit, so it is capitalized and depreciated (unless another safe harbor applies)","It is fully expensed this year under the de minimis safe harbor","A water heater counts as maintenance, so nothing is deductible","It is added to land value only and no depreciation is claimed","Kiralık Mülk (Rental)"],
+["Brooke's Airbnb house has an average guest stay of 5 days. What does this mean for taxes?","With an average stay under 7 days it isn't a 'rental activity'; material participation makes it non-passive and SE tax may apply with substantial services","It is the same as a long-term rental; always passive, and SE tax never applies","Short-term rental income is completely exempt from federal tax","It is always reported on Schedule C and is subject to SE tax in every case","Kiralık Mülk (Rental)"],
+["Patricia rented her vacation home for 100 days and used it personally for 20 days. What is the result when personal use exceeds the greater of 14 days or 10% of rental days?","The home is treated as a residence; rental deductions can't exceed rental income, so no loss","All expenses stay fully deductible, including any loss","Rental income becomes tax-exempt and no expenses are deducted","Only property tax and mortgage interest are deductible, nothing else","Kiralık Mülk (Rental)"],
+["Gregory rented his home for 12 days in the year and collected $6,000 (the 14-day 'Augusta rule'). How is this income treated?","Because rental doesn't exceed 14 days, the income isn't reported and rental expenses aren't deductible","All of the income is reported and related expenses are deducted normally","Only 50% of the income is taxed and 50% of expenses are deducted","The income is subject only to SE tax, not income tax","Kiralık Mülk (Rental)"],
+["Ethan lives in one unit of a duplex and rents the other (equal size). Shared annual expenses are $18,000. How much can he deduct as rental expense?","$9,000","$18,000","$0","$13,500","Kiralık Mülk (Rental)"],
+["Sydney traveled 90 miles to inspect her rental and arrange repairs. Are the travel costs deductible?","Yes; if the trip's main purpose is managing the rental, transport, lodging and meals (50%) are deductible","No; rental travel costs are never deductible under any condition","Only airfare or car costs are deductible; lodging and meals are not","They aren't deductible now; they can only be deducted from the gain at sale","Kiralık Mülk (Rental)"],
+["Caleb's tenant hasn't paid rent for 2 months ($3,200). As a cash-method taxpayer, can Caleb deduct the unpaid rent?","No; it was never reported as income, so it can't be deducted (uncollected rent isn't income)","Yes; the $3,200 is deducted as a bad debt expense","Yes; half of the unpaid rent is deducted as bad debt","Yes; the amount reduces the property's basis and lowers the gain","Kiralık Mülk (Rental)"],
+["Danielle deducted $5,400 of property tax on her rental on Schedule E. Is it subject to the SALT (state and local tax) cap?","No; rental property tax is a business expense and isn't subject to the Schedule A SALT cap","Yes; rental property tax is subject to the SALT cap and limited there","Yes; only 50% is deductible on Schedule E","No; rental property tax isn't deductible on any return","Kiralık Mülk (Rental)"],
+["What must Marcus meet to fall within the QBI (Section 199A) safe harbor for his rental houses?","At least 250 hours of rental services per year (by him, employees or managers) plus separate records","At least 50 hours of work per year and at least 2 rental properties","Having no W-2 income and holding the houses in a single-member LLC","Owning for at least 10 years and having no mortgage on the properties","Kiralık Mülk (Rental)"],
+["Tiffany's tenant paid a $3,000 lease cancellation fee to end the lease early. How is it treated?","It is reported as rental income in the year received","It is not income; it is a deposit","It is a capital gain","It is only credited against the next tenant","Kiralık Mülk (Rental)"],
+["Under the lease, Jeremy's tenant paid the rental's $4,000 property tax directly to the county. How does Jeremy report it?","Reports $4,000 as rental income and deducts the same amount as property tax expense","Reports nothing; the tenant's payment is neither income nor expense","Reports only a $4,000 property tax expense, with no added income","Reports only $4,000 of added rental income, with no expense","Kiralık Mülk (Rental)"],
+["In 2026 Lindsey paid a plumber (sole proprietor) $2,500 for her rental. Must she issue a Form 1099-NEC? (the rental counts as a trade or business)","Yes; the threshold for 2026 payments is $2,000, so a 1099-NEC is required","No; the threshold is $10,000","No; rentals never require a 1099","Yes, but only per item over $600","Kiralık Mülk (Rental)"],
+["Frank sold his rental for $200,000; his adjusted basis was $230,000 (no selling costs). How is the $30,000 loss treated?","A Section 1231 loss; a loss on a rental held over 1 year is ordinary with no $3,000 limit","A capital loss; only $3,000 is deductible per year and the rest carries forward","A loss on a rental sale is never deductible and is added to basis","It can only be used against future capital gains","Kiralık Mülk (Rental)"],
+["Rosa bought a rental for $250,000, added $30,000 in improvements and claimed $40,000 in depreciation. What is the adjusted basis?","$240,000","$320,000","$210,000","$280,000","Kiralık Mülk (Rental)"],
+["Rosa sold the house for $400,000 with $24,000 in selling costs. If the adjusted basis is $240,000, what is her total gain?","$136,000","$160,000","$150,000","$96,000","Kiralık Mülk (Rental)"],
+["In the same sale, the total gain is $136,000 and past depreciation is $40,000. How much is the 'unrecaptured Section 1250 gain'?","$40,000","$136,000","$96,000","$0","Kiralık Mülk (Rental)"],
+["What is the maximum federal rate on unrecaptured Section 1250 gain (gain attributable to past depreciation)?","25%","15%","20%","37%","Kiralık Mülk (Rental)"],
+["The HOA charged a $6,000 special assessment to replace the roof on Cameron's rental condo, plus regular dues of $250 per month. How are they treated?","The roof assessment is a capital improvement (depreciated); regular dues are a current expense","Both are fully expensed in the same year; no distinction is needed","Both are capitalized and depreciated together over 27.5 years","The roof assessment is expensed while regular dues are capitalized","Kiralık Mülk (Rental)"],
+["A two-member LLC owns a rental house. Which forms report the rental income?","Form 1065 (with Form 8825) and a Schedule K-1 to each member","Form 1120 corporate return and 1099-DIVs to the members","Each member reports half on their own Schedule C, with no partnership return","Form 1099-MISC; rental income is reported only by the tenant","Kiralık Mülk (Rental)"],
+["Is passive long-term rental income (no substantial services) subject to self-employment (SE) tax?","No; Schedule E rental income is normally not subject to SE tax","Yes; all rental income is subject to 15.3% SE tax","Yes; only the 2.9% Medicare portion applies, with no Social Security","Yes; but only on the first $50,000 of rental income","Kiralık Mülk (Rental)"],
+["Linda forgot to claim depreciation on her rental for 3 years. What is the right fix?","File Form 3115 (method change) to catch up the missed depreciation in one go (Section 481(a))","Do nothing; depreciation isn't recaptured at sale","Claim double depreciation in future years to make up the difference","Sell and re-buy the property to reset the depreciation schedule","Kiralık Mülk (Rental)"],
+["Heidi bought $5,200 of furniture and appliances for a furnished rental. How is this property depreciated?","Generally as 5-year MACRS property (it may be expensed immediately if bonus/de minimis applies)","Depreciated together with the building over its 27.5-year life","Depreciated over the 39-year commercial building life","Furniture and appliances aren't depreciated; they are deducted only at sale","Kiralık Mülk (Rental)"],
+["Walter kept $800 of a tenant's security deposit for damage. How is the $800 treated?","It becomes rental income in the year kept; the repair cost is deducted separately","It isn't income; a deposit always remains the tenant's property","It is a capital gain taxed at long-term rates","It is income, but only reported in the following tax year","Kiralık Mülk (Rental)"],
+["Samuel paid a CPA $900 for the part of his tax prep that covers his rental (Schedule E). How is it treated?","The rental-related portion is deducted on Schedule E as professional fees","It is never deductible; tax prep fees are personal","It is added to the property's basis and depreciated with it","It is deductible only as an itemized deduction on Schedule A","Kiralık Mülk (Rental)"],
+["Madison sold her rental and wants to do a 1031 exchange. What are the deadlines?","Identify replacement property within 45 days of sale and close within 180 days","Identify within 30 days and close within 90 days","Identify within 60 days and close within 365 days","Identify within 90 days and close within 270 days","1031, Satış ve Geri Alma"],
+["Oliver sold his rental for a net $500,000 and bought a $450,000 replacement property in a 1031 exchange; the difference was paid to him in cash. His realized gain is $200,000. What gain (boot) is taxed this year?","$50,000","$200,000","$0","$450,000","1031, Satış ve Geri Alma"],
+["Isabella took the sale proceeds into her own bank account in a 1031 exchange and then bought a new property. What is the result?","Because she actually received the funds, the 1031 fails and the gain is taxed; a Qualified Intermediary should have held the money","The 1031 is valid as long as the purchase closes within 180 days","Only the depreciation recapture portion is taxed and the rest is deferred","Only the 3.8% NIIT is due and the deal still counts as a 1031","1031, Satış ve Geri Alma"],
+["Ethan wants to use a 1031 exchange on a house he bought to flip and is holding for sale. Is that possible?","No; property held for sale (inventory) doesn't qualify, only investment/business property does","Yes; all flip houses count as investments, so they qualify for 1031","Yes; but only if the house was held for more than 2 years","Yes; as long as the replacement property is cheaper","1031, Satış ve Geri Alma"],
+["Which form reports a 1031 exchange to the IRS?","Form 8824","Form 4562","Form 8949","Form 1099-S","1031, Satış ve Geri Alma"],
+["Ava sold a rental ($300,000 adjusted basis) for $500,000 and bought a $550,000 replacement in a 1031 exchange (no boot). What is the replacement property's tax basis?","$350,000","$550,000","$300,000","$500,000","1031, Satış ve Geri Alma"],
+["Noah later made his rental house his main home and lived in it for 2 years. Does the Section 121 exclusion cover the gain from depreciation taken while it was a rental?","No; gain from depreciation taken after May 6, 1997 isn't excluded and is taxed up to 25%","Yes; Section 121 excludes all of the gain, including depreciation","Yes; but only the first $100,000 of depreciation gain is excluded","Yes; recapture disappears after living there 3 years as a main home","1031, Satış ve Geri Alma"],
+["Chloe sold her rental with seller financing (an installment sale). When is the depreciation recapture portion taxed?","In the year of sale, even if no payments were received (the ordinary recapture portion is taxed up front)","Proportionally with each installment payment over the payment years","Only when the final installment is received","It is never taxed; recapture doesn't apply to installment sales","1031, Satış ve Geri Alma"],
+["Wyatt inherited a rental house from his mother (her basis was $200,000, fair market value at death $450,000). He later sold it for $460,000. What is his taxable gain?","$10,000","$260,000","$0","$250,000","1031, Satış ve Geri Alma"],
+["Paige sold a rental after holding it for 10 months at a $40,000 profit; depreciation had been claimed. What is the tax nature of this gain?","Because it was held under a year, Section 1231 doesn't apply; the gain is taxed at ordinary rates","It is a long-term capital gain taxed at 20% at most","Since depreciation was claimed, the entire gain is tax-exempt","The gain is taxed at a flat 25% with no other tax","1031, Satış ve Geri Alma"],
+];
 </script>
 <script>
 /* ===== Language toggle (TR/EN) ===== */
@@ -11277,6 +11496,9 @@ const UI_STRINGS = {
     tab_cdl: "CDL",
     cdl_label: "CDL Soruları",
     tab_fidium: "Fidium Installation",
+    tab_tax: "Tax",
+    tax_label: "Tax (Vergi) Soruları",
+    tax_hint: "ABD'de gayrimenkul yatırımının vergisi — Fix and Flip, BRRRR ve Kiralık Mülk (Rental) odaklı, rakamlı gerçek hayat senaryoları: kazanç hesabı, amortisman, 1031 exchange, pasif zarar, SE vergisi, formlar ve daha fazlası (~100 soru). Genel bilgi amaçlıdır, vergi danışmanlığı değildir.",
     fidium_label: "Fidium Installation Soruları",
     fidium_hint: "Fiber internet kurulum teknisyenliği için temel bilgiler — fiber optik temelleri, drop kablo çekme, ek yapma (splicing), ONT/router kurulumu, sinyal test ve ölçüm, aktivasyon, müşteri hizmeti/güvenlik, ağ mimarisi ve kısaltmalar (NAC, IAC, MST, OLT, ONT), VLAN/Triple Play, GPON ve XGS-PON, Calix ONT modelleri (632/601/611), ağ/IP temelleri, saha sorun giderme ve saha teknisyeni pratik bilgileri ve CPE Guidelines 2026 (ONT/gateway seçim kriterleri) konularında ~353 soru.",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
@@ -11366,6 +11588,9 @@ const UI_STRINGS = {
     tab_cdl: "CDL",
     cdl_label: "CDL Questions",
     tab_fidium: "Fidium Installation",
+    tab_tax: "Tax",
+    tax_label: "Tax Questions",
+    tax_hint: "US tax on real estate investing — real-life, number-based scenarios focused on Fix and Flip, BRRRR and Rentals: gain math, depreciation, 1031 exchanges, passive losses, SE tax, forms and more (~100 questions). General information only, not tax advice.",
     fidium_label: "Fidium Installation Questions",
     fidium_hint: "Core knowledge for fiber internet installation technicians — fiber optics basics, drop cable pulling, splicing, ONT/router setup, signal testing, activation, safety/customer service, network architecture and acronyms (NAC, IAC, MST, OLT, ONT), VLAN/Triple Play, GPON and XGS-PON, Calix ONT models (632/601/611), networking/IP basics, field troubleshooting, and practical field-tech knowledge. and CPE Guidelines 2026 (ONT/gateway selection criteria). About 353 questions.",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
@@ -11434,6 +11659,10 @@ function refreshQuestionBankItemLanguage(item){
     idx = parseInt(item.id.replace("fidium_",""), 10);
     src = LANG === "en" ? FIDIUM_QUESTIONS_EN : FIDIUM_QUESTIONS;
     labelKey = "tab_fidium";
+  } else if(item.tax){
+    idx = parseInt(item.id.replace("tax_",""), 10);
+    src = LANG === "en" ? TAX_QUESTIONS_EN : TAX_QUESTIONS;
+    labelKey = "tab_tax";
   } else if(item.irc){
     idx = parseInt(item.id.replace("irc",""), 10);
     src = LANG === "en" ? IRC_QUESTIONS_EN : IRC_QUESTIONS;
@@ -11464,7 +11693,7 @@ function refreshCurrentQuestionLanguage(){
     for(const item of pool) refreshQuestionBankItemLanguage(item);
   }
 
-  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium)) return;
+  if(!current || !(current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium || current.tax)) return;
 
   currentOptions.forEach(opt=>{
     if(opt === current) return; // same object as current, already updated above
@@ -11488,7 +11717,7 @@ function refreshCurrentQuestionLanguage(){
   if(answered){
     const fb = document.getElementById("feedback");
     const wasRight = fb.classList.contains("right");
-    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
+    fb.textContent = wasRight ? t("feedback_correct") : ((current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium || current.tax) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${current.t}`);
     document.getElementById("nextHint").textContent = t("next_hint");
   }
 }
@@ -11535,6 +11764,7 @@ function applyLanguage(lang){
   document.getElementById("irc2021Count").textContent = t("total_questions").replace("{n}", IRC2021_QUESTIONS.length);
   document.getElementById("cdlCount").textContent = t("total_questions").replace("{n}", CDL_QUESTIONS.length);
   document.getElementById("fidiumCount").textContent = t("total_questions").replace("{n}", FIDIUM_QUESTIONS.length);
+  document.getElementById("taxCount").textContent = t("total_questions").replace("{n}", TAX_QUESTIONS.length);
   document.getElementById("fbrCount").textContent = t("total_words").replace("{n}", FBR_WORDS.length);
   document.getElementById("ox3kCount").textContent = t("total_words").replace("{n}", OXFORD3000_WORDS.length);
 
@@ -11560,6 +11790,7 @@ function applyLanguage(lang){
   const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
   const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
   const fidiumTabActive = !document.getElementById("fidium").classList.contains("hidden");
+  const taxTabActive = !document.getElementById("tax").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -11576,6 +11807,7 @@ function applyLanguage(lang){
   if(irc2021TabActive) renderIRC2021Tab();
   if(cdlTabActive) renderCDLTab();
   if(fidiumTabActive) renderFidiumTab();
+  if(taxTabActive) renderTaxTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -11891,7 +12123,7 @@ let reverseMode = false;
 function isReversibleType(w){
   if(!w) return false;
   if(w.custom || w.trw || w.re || w.asv || w.ox3k || w.insp || w.fbr || w.fw) return true;
-  if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium) return false;
+  if(w.finlit || w.wealth || w.irc || w.irc2021 || w.cdl || w.fidium || w.tax) return false;
   return true;
 }
 
@@ -11932,7 +12164,7 @@ function nextQuestion(){
   }
   answered = false;
   current = pickWord();
-  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? buildFinlitOptions(current) : buildOptions(current);
+  currentOptions = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium || current.tax) ? buildFinlitOptions(current) : buildOptions(current);
   renderQuestion();
 }
 
@@ -11968,7 +12200,7 @@ async function handleAnswer(chosenOpt, btnEl){
     current.weight = current.weight + 5;
     current.wrong += 1;
     sessionWrong += 1;
-    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${isReversed ? current.e : current.t}`;
+    fb.textContent = (current.finlit || current.wealth || current.irc || current.irc2021 || current.cdl || current.fidium || current.tax) ? t("feedback_wrong") : `${t("feedback_wrong_prefix")}${isReversed ? current.e : current.t}`;
     fb.className = "feedback wrong";
   }
   if(current.custom){
@@ -12015,6 +12247,8 @@ async function handleAnswer(chosenOpt, btnEl){
   } else if(current.cdl){
     await saveCDLQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushCDLStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+  } else if(current.tax){
+    await saveTaxQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.fidium){
     await saveFidiumQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushFidiumStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -12239,6 +12473,7 @@ function switchTab(tab){
   document.getElementById("irc2021").classList.toggle("hidden", tab!=="irc2021");
   document.getElementById("cdl").classList.toggle("hidden", tab!=="cdl");
   document.getElementById("fidium").classList.toggle("hidden", tab!=="fidium");
+  document.getElementById("tax").classList.toggle("hidden", tab!=="tax");
   document.getElementById("fbr").classList.toggle("hidden", tab!=="fbr");
   document.getElementById("ox3k").classList.toggle("hidden", tab!=="ox3k");
   document.getElementById("panel").classList.toggle("hidden", tab!=="panel");
@@ -12258,6 +12493,7 @@ function switchTab(tab){
   if(tab === "irc2021") renderIRC2021Tab();
   if(tab === "cdl") renderCDLTab();
   if(tab === "fidium") renderFidiumTab();
+  if(tab === "tax") renderTaxTab();
   if(tab === "fbr") renderFBRTab();
   if(tab === "ox3k") renderOX3KTab();
   if(tab === "panel") renderPanelTab();
@@ -14194,6 +14430,105 @@ document.getElementById("fidiumDrillBtn").addEventListener("click", async ()=>{
   nextQuestion();
 });
 
+/* ===== Tax (US real estate: Fix and Flip, BRRRR, Rental) ===== */
+const TAX_STORE_PREFIX = "tax5k:";
+
+function listTaxKeys(){
+  if(!storageWorks) return Object.keys(memoryStore).filter(k => k.startsWith(TAX_STORE_PREFIX));
+  try{
+    return Object.keys(localStorage).filter(k => k.startsWith(TAX_STORE_PREFIX));
+  }catch(e){ return Object.keys(memoryStore).filter(k => k.startsWith(TAX_STORE_PREFIX)); }
+}
+async function loadTaxQuestion(id){
+  const raw = await rawGet(TAX_STORE_PREFIX+id);
+  try{ return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function saveTaxQuestion(id, val){
+  await rawSet(TAX_STORE_PREFIX+id, JSON.stringify(val));
+}
+
+const TAX_TOPICS = [...new Set(TAX_QUESTIONS.map(r => r[5]))];
+let selectedTaxTopics = new Set([TAX_TOPICS[0]]);
+const taxLevelGrid = document.getElementById("taxLevelGrid");
+TAX_TOPICS.forEach((topic, idx)=>{
+  const count = TAX_QUESTIONS.filter(r => r[5] === topic).length;
+  const btn = document.createElement("button");
+  btn.className = "level-btn" + (idx===0 ? " active":"");
+  btn.dataset.key = topic;
+  btn.innerHTML = `<span class="lvl-name">${topic}</span><span class="lvl-count" data-tax-topic="${topic}">${count} soru</span>`;
+  btn.addEventListener("click", ()=>{
+    taxLevelGrid.querySelectorAll(".level-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedTaxTopics = new Set([topic]);
+    renderTaxTab();
+  });
+  taxLevelGrid.appendChild(btn);
+});
+refreshTaxTopicProgress();
+
+async function refreshTaxTopicProgress(){
+  for(const topic of TAX_TOPICS){
+    const badge = taxLevelGrid.querySelector(`.lvl-count[data-tax-topic="${CSS.escape(topic)}"]`);
+    if(!badge) continue;
+    let total = 0, mastered = 0;
+    for(let i=0; i<TAX_QUESTIONS.length; i++){
+      if(TAX_QUESTIONS[i][5] !== topic) continue;
+      total++;
+      const stat = await loadTaxQuestion("tax_"+i);
+      if(stat && stat.weight <= 1 && stat.correct > 0) mastered++;
+    }
+    badge.textContent = `${mastered}/${total} öğrenildi`;
+  }
+}
+
+async function renderTaxTab(){
+  const listEl = document.getElementById("taxList");
+  listEl.innerHTML = `<p class="mistake-loading">${t("loading")}</p>`;
+  const src = LANG === "en" ? TAX_QUESTIONS_EN : TAX_QUESTIONS;
+  const rows = [];
+  for(let i=0; i<TAX_QUESTIONS.length; i++){
+    if(!selectedTaxTopics.has(TAX_QUESTIONS[i][5])) continue;
+    const stat = await loadTaxQuestion("tax_"+i);
+    rows.push({q:src[i][0], wrong: stat ? (stat.wrong||0) : 0});
+  }
+  listEl.innerHTML = rows.map(r => `
+    <div class="mistake-row">
+      <div class="mistake-main">
+        <div class="mistake-tr">${r.q}</div>
+      </div>
+      ${r.wrong > 0 ? `<div class="mistake-badge">${r.wrong}${t("wrong_suffix")}</div>` : ''}
+    </div>
+  `).join("");
+  refreshTaxTopicProgress();
+}
+
+document.getElementById("taxDrillBtn").addEventListener("click", async ()=>{
+  const src = LANG === "en" ? TAX_QUESTIONS_EN : TAX_QUESTIONS;
+  pool = [];
+  for(let i=0; i<TAX_QUESTIONS.length; i++){
+    if(!selectedTaxTopics.has(TAX_QUESTIONS[i][5])) continue;
+    const [q, correct, w1, w2, w3] = src[i];
+    const id = "tax_"+i;
+    const stat = await loadTaxQuestion(id);
+    pool.push({
+      id, e:q, p:"", t:correct, l: t("tab_tax"),
+      wrongOpts:[w1,w2,w3],
+      weight: stat ? stat.weight : 3,
+      correct: stat ? stat.correct : 0,
+      wrong: stat ? stat.wrong : 0,
+      tax: true
+    });
+  }
+  sessionCorrect = 0; sessionWrong = 0;
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("tax").classList.add("hidden");
+  document.getElementById("tabbar").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+  document.getElementById("statTotal").textContent = pool.length;
+  updateStats();
+  nextQuestion();
+});
+
 /* Panel is the default active tab on page load — populate it now.
    (Must come after every category's STORE_PREFIX/load* helpers are defined above.) */
 renderPanelTab();
@@ -14227,11 +14562,11 @@ renderAuthUI(null); // initial state before Firebase reports in
 
 function clearLocalProgress(){
   try{
-    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FEEL_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
+    const keys = Object.keys(localStorage).filter(k => k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(TAX_STORE_PREFIX) || k.startsWith(FEEL_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY);
     keys.forEach(k => localStorage.removeItem(k));
   }catch(e){}
   Object.keys(memoryStore).forEach(k=>{
-    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(FEEL_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
+    if(k.startsWith(STORE_PREFIX) || k.startsWith(TRW_STORE_PREFIX) || k.startsWith(RE_STORE_PREFIX) || k.startsWith(AS_STORE_PREFIX) || k.startsWith(INSPECT_STORE_PREFIX) || k.startsWith(TAX_STORE_PREFIX) || k.startsWith(FEEL_STORE_PREFIX) || k.startsWith(FL_STORE_PREFIX) || k.startsWith(WF_STORE_PREFIX) || k.startsWith(IRC_STORE_PREFIX) || k.startsWith(IRC2021_STORE_PREFIX) || k.startsWith(CDL_STORE_PREFIX) || k.startsWith(FIDIUM_STORE_PREFIX) || k.startsWith(FBR_STORE_PREFIX) || k.startsWith(OX3K_STORE_PREFIX) || k === CUSTOM_LIST_KEY) delete memoryStore[k];
   });
   pool = [];
   mistakeRowsCache = [];
@@ -14293,6 +14628,7 @@ window.onAuthChanged = async function(user){
     const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
     const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
     const fidiumTabActive = !document.getElementById("fidium").classList.contains("hidden");
+    const taxTabActive = !document.getElementById("tax").classList.contains("hidden");
     const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
     const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
     if(mistakesTabActive) loadMistakes();
@@ -14309,6 +14645,7 @@ window.onAuthChanged = async function(user){
     if(irc2021TabActive) renderIRC2021Tab();
     if(cdlTabActive) renderCDLTab();
     if(fidiumTabActive) renderFidiumTab();
+    if(taxTabActive) renderTaxTab();
     if(fbrTabActive) renderFBRTab();
     if(ox3kTabActive) renderOX3KTab();
     const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
@@ -14724,6 +15061,7 @@ async function syncWithCloud(uid){
   const irc2021TabActive = !document.getElementById("irc2021").classList.contains("hidden");
   const cdlTabActive = !document.getElementById("cdl").classList.contains("hidden");
   const fidiumTabActive = !document.getElementById("fidium").classList.contains("hidden");
+  const taxTabActive = !document.getElementById("tax").classList.contains("hidden");
   const fbrTabActive = !document.getElementById("fbr").classList.contains("hidden");
   const ox3kTabActive = !document.getElementById("ox3k").classList.contains("hidden");
   if(mistakesTabActive) loadMistakes();
@@ -14740,6 +15078,7 @@ async function syncWithCloud(uid){
   if(irc2021TabActive) renderIRC2021Tab();
   if(cdlTabActive) renderCDLTab();
   if(fidiumTabActive) renderFidiumTab();
+  if(taxTabActive) renderTaxTab();
   if(fbrTabActive) renderFBRTab();
   if(ox3kTabActive) renderOX3KTab();
   const panelTabActive = !document.getElementById("panel").classList.contains("hidden");
