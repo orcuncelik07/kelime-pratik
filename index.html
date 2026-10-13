@@ -759,7 +759,7 @@ body{
   <div id="tax" class="panel hidden">
     <p class="section-label" data-i18n="tax_label">Tax (Vergi) Soruları</p>
     <p class="tab-count" id="taxCount"></p>
-    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="tax_hint">ABD'de gayrimenkul yatırımının vergisi — Fix and Flip, BRRRR ve Kiralık Mülk (Rental) odaklı, rakamlı gerçek hayat senaryoları: kazanç hesabı, amortisman, 1031 exchange, pasif zarar, SE vergisi, formlar ve daha fazlası (~100 soru). Genel bilgi amaçlıdır, vergi danışmanlığı değildir.</p>
+    <p class="hint" style="margin-top:0;margin-bottom:16px;" data-i18n="tax_hint">ABD'de gayrimenkul yatırımının vergisi — Fix and Flip, BRRRR ve Kiralık Mülk (Rental) odaklı, rakamlı gerçek hayat senaryoları: kazanç hesabı, amortisman, 1031 exchange, pasif zarar, SE vergisi, formlar ve daha fazlası (~150 soru). Genel bilgi amaçlıdır, vergi danışmanlığı değildir.</p>
     <p class="section-label" style="margin-top:0;" data-i18n="irc2021_topic_label">Konu Seç</p>
     <div class="level-grid" id="taxLevelGrid" style="grid-template-columns:1fr 1fr;"></div>
     <button class="start-btn" id="taxDrillBtn" style="margin-bottom:18px;" data-i18n="start_quiz">Teste Başla</button>
@@ -11343,6 +11343,56 @@ const TAX_QUESTIONS = [
 ["Chloe kiralık mülkünü satıcı finansmanıyla (installment sale) sattı. Amortisman geri alma (recapture) kazancı ne zaman vergilenir?","Satış yılında, hiç ödeme alınmamış olsa bile (olağan recapture kısmı peşin vergilenir)","Her taksit ödemesiyle orantılı olarak taksit yıllarına yayılır","Yalnızca son taksit alındığında vergilenir","Hiçbir zaman vergilenmez; taksitli satışta recapture uygulanmaz","1031, Satış ve Geri Alma"],
 ["Wyatt, annesinden kalan kiralık evi miras aldı (annenin bazı $200,000, ölüm günü piyasa değeri $450,000). Evi sonra $460,000'a sattı. Vergilendirilebilir kazancı nedir?","$10,000","$260,000","$0","$250,000","1031, Satış ve Geri Alma"],
 ["Paige kiralık evi 10 ay elinde tuttuktan sonra $40,000 kârla sattı. Mülk daha önce amortisman almıştı. Bu kazancın vergisel niteliği nedir?","1 yıldan kısa sürede satıldığı için Section 1231 geçmez; kazanç olağan gelir oranlarında vergilenir","Uzun vadeli sermaye kazancıdır; azami %20 oranında vergilenir","Amortisman alınmış mülk satışı olduğu için kazancın tamamı vergiden muaftır","Kazanç yalnızca %25 sabit oranla vergilenir, başka vergi yoktur","1031, Satış ve Geri Alma"],
+["Jason bir evi Fix and Flip stratejisiyle aldı ve 8 ay sonra tadilatı bitirip sattı. Satış fiyatı $300,000, alış maliyeti $180,000, tadilat $40,000, satış ve işlem masrafları $10,000. Vergilendirilebilir net kazancı nedir?","$70,000","$120,000","$80,000","$90,000","Fix and Flip"],
+["Melissa 5 yıl önce konut tipi bir kiralık mülk aldı (bina değeri $200,000, arsa hariç) ve her yıl $7,272 amortisman indirimi yazdı. 5 yılda yazdığı toplam amortisman, satışta recapture kapsamına girer. Bu tutar nedir?","$36,360","$7,272","$43,632","$45,455","1031, Satış ve Geri Alma"],
+["Travis kiralık mülkünü $400,000'a satıp $150,000 kazandı ve tüm geliri $450,000'lık benzer bir mülke aktardı (1031 exchange, süreler ve QI kuralları sağlandı, boot yok). Anında ödemesi gereken federal sermaye kazancı vergisi nedir? (%15 oranı varsayılsın)","$0","$22,500","$7,500","$37,500","1031, Satış ve Geri Alma"],
+["Allison'ın tam zamanlı işinden yıllık $120,000 geliri (MAGI) var; kiralık mülkü bu yıl $15,000 vergi zararı yazdı. Aktif katılım şartını sağlıyor. $25,000 izin, MAGI $100,000'ı aşan her $2 için $1 azalıyor. Bu zararın ne kadarını aynı yıl diğer gelirinden düşebilir?","$15,000","$0","$7,500","$25,000","Kiralık Mülk (Rental)"],
+["Brian düzenli olarak ev flip eden bir dealer. Bir evi 6 ayda $200,000'a sattı; toplam maliyeti (alış + tadilat + masraflar) $140,000. Bu $60,000 kazanç hangi rejimde vergilenir?","Olağan gelir vergisi + self-employment (SE) vergisi","Uzun vadeli sermaye kazancı oranları","Yalnızca emlak vergisi (property tax)","Vergiden muaf, yalnızca beyan edilir","Fix and Flip"],
+["Kelly BRRRR ile evi yeniledi; ekspertiz değeri $500,000 çıkan mülkten %75 LTV ile $375,000 refinansman çekti. Toplam maliyeti $300,000 idi; $75,000 nakit çekti (cash-out). Bu $75,000 hemen gelir vergisine tabi midir?","Hayır; borç olduğu için vergiye tabi değildir","Evet; tamamı olağan gelir olarak vergilenir","Evet; yalnızca yarısı vergilenir, kalanı muaftır","Evet; sermaye kazancı olarak %15 vergilenir","BRRRR"],
+["Bir kiralık mülk yatırımcısı yıllık $20,000 brüt kira geliri elde ediyor; faiz $8,000, emlak vergisi $3,000, sigorta $2,000 ve amortisman $4,000. Net vergi matrahı (kâr/zarar) nedir?","+$3,000 kâr","+$7,000 kâr (amortisman çıkarılmadan)","$0 (gelir ve gider eşit)","-$3,000 zarar (anapara dahil)","Kiralık Mülk (Rental)"],
+["Scott dealer değil; bir arsayı geliştirip 2 yıl elinde tuttuktan sonra sattı ve $100,000 kazandı. Bu kazanç hangi kategoridedir?","Uzun vadeli sermaye kazancı (1 yıldan uzun elde tutuldu)","Kısa vadeli sermaye kazancı (olağan gelir oranı)","Kurumlar vergisine tabi kazanç","Yalnızca amortisman geri alma vergisine tabi kazanç","Fix and Flip"],
+["Bir flip yatırımcısı $100,000'lık ticari fonlama kredisinin yıllık %12 faizini ($12,000) proje süresince ödedi. Bu faiz vergide nasıl işlenir?","Proje maliyetine eklenir veya gider yazılır; vergi matrahını düşürür","Hiçbir şekilde indirilemez; sert para faizi kişisel sayılır","Yalnızca Schedule A'da kişisel faiz olarak indirilir","27,5 yıla yayılarak amortize edilir","Fix and Flip"],
+["Laura kiralık mülkünün çatısını yenilemek için $15,000 harcadı. IRS bunu repair değil, mülkün ömrünü uzatan sermaye iyileştirmesi (capital improvement) olarak değerlendiriyor. Vergide nasıl işlenir?","Aktifleştirilir ve amortisman yoluyla zamana yayılarak düşülür","Tamamı o yıl cari gider olarak düşülür","Vergiye hiçbir etkisi olmaz, yalnızca bazı artırır ve satışta kullanılmaz","Doğrudan Schedule A'da kalemli indirim olarak düşülür","Kiralık Mülk (Rental)"],
+["Cody BRRRR ile evi $100,000'a aldı, $50,000 tadilat yaptı (toplam $150,000). Değer $200,000 çıktı; %80 LTV ile $160,000 kredi çekti, masrafları kapatınca $10,000 nakit kaldı. Bu nakit için ödemesi gereken gelir vergisi nedir?","$0 — kredi geliri borçtur","$10,000 üzerinden olağan gelir vergisi","$2,000 (nakdin %20'si)","$5,000 (nakdin %50'si)","BRRRR"],
+["Bir yatırımcı flip işlemlerini kendi adı yerine kurduğu tek üyeli bir LLC üzerinden yapıyor. LLC $100,000 net kâr etti ve 'disregarded entity' olarak vergilendiriliyor. Kâr hangi beyannamede vergilenir?","Yatırımcının Form 1040 beyannamesinde Schedule C üzerinden","LLC adına Form 1120 kurumlar vergisi beyannamesinde","Ayrı bir emlak vergisi beyannamesinde","Stopaj vergisi beyannamesinde, kaynaktan kesilerek","Fix and Flip"],
+["Diane 10 yıldır sahip olduğu kiralık mülkü sattı; $200,000 kazanç elde etti ve toplam $40,000 amortisman yazmıştı. Amortisman kaynaklı kısım (unrecaptured Section 1250 gain) için federal azami oran nedir?","%25","%10","%15","%37","1031, Satış ve Geri Alma"],
+["Bir flip yatırımcısı yıl içinde malzeme ve işçilik için toplam $30,000 harcadı ve faturalarını belgeledi. Bu tutar matrahtan hangi kalem altında düşülür?","Proje maliyeti: satılan malın maliyeti (COGS) veya işletme gideri","LLC'ye sermaye katkısı (vergiden düşülmez)","Schedule A'da kişisel kalemli indirim","Önümüzdeki yıla ertelenen peşin ödenmiş gider","Fix and Flip"],
+["Dennis BRRRR sonrası mülkü uzun dönem kiralığa çevirdi; yıllık kira $24,000, toplam gider ve amortisman $28,000 ($4,000 net zarar). Dennis gelir sınırlarından etkilenmeyen bir Real Estate Professional (REPS). Bu zarar nasıl işlenir?","Aktif gelirinin (W-2 veya işletme) tamamından mahsup edilerek vergisini düşürür","Hiçbir şekilde kullanılamaz; REPS olsa bile zarar silinir","Yalnızca gelecekteki kira gelirlerine karşı düşülebilir","Vergi dairesinden nakit iade olarak tahsil edilir","BRRRR"],
+["Bir flip yatırımcısı evi satarken alıcıya $5,000 satıcı kredisi (seller concession / closing cost credit) verdi. Bu tutar net kazancı nasıl etkiler?","Net kazancı (vergi matrahını) $5,000 azaltır","Net kazancı $5,000 artırır","Vergiye hiçbir etkisi olmaz","Doğrudan vergi borcundan düşülür","Fix and Flip"],
+["Wendy kiralık mülkü için ödediği yıllık $6,000 ipotek faizini vergi beyannamesinde hangi kategoride gider gösterir?","Kiralık gider: Schedule E (işletme gideri)","Schedule A'da kişisel ipotek faizi","Sermaye kazancından düşülen maliyet","Standart indirimin bir parçası","Kiralık Mülk (Rental)"],
+["Bir flip yatırımcısı evi elinde tuttuğu 5 ay boyunca elektrik, su ve doğalgaz için toplam $1,500 ödedi. Bu masraflar nasıl işlenir?","Proje/elde tutma gideri olarak matrahtan düşülür","Tamamen kişisel harcama sayılır, düşülemez","Yalnızca emlak vergisine eklenir","Amortismana tabi tutulur","Fix and Flip"],
+["Craig kiralık mülkünü satarken 1031 exchange yapmak istedi ama 45 günlük bildirim (identification) süresi içinde yeni mülk bildiremedi. Eski mülkten elde ettiği $80,000 kazanç ne olur?","Satışın yapıldığı vergi yılında sermaye kazancı olarak vergilenir","Vergisiz olarak bir sonraki vergi yılına devredilir ve orada beyan edilir","Süre dolduğu için kazanç silinir ve yeni mülk alımına yeniden bağlanır","Yalnızca %10'u vergilenir, kalan kısım 180 gün daha ertelenir","1031, Satış ve Geri Alma"],
+["Bir yatırımcı BRRRR'da mülkü satın alırken tapu/kayıt harçları, ekspertiz, noter ve yasal masraflar için toplam $4,000 ödedi. Bu başlangıç (acquisition) masrafları nasıl işlenir?","Mülkün maliyet bazına eklenir (bina payı amortize edilir)","İlk yılın kira gelirinden doğrudan düşülür","Hiçbir şekilde vergiden düşülemez","Schedule A'da kişisel gider olarak düşülür","BRRRR"],
+["Gina sattığı flip evi için emlakçıya $12,000 komisyon ödedi. Bu komisyon satış kazancı hesaplanırken nasıl hesaba katılır?","Satış fiyatından düşülerek net kazancı azaltır","Vergi matrahını artırır","Kişisel gider sayılır ve dikkate alınmaz","Yalnızca amortisman hesabında kullanılır","Fix and Flip"],
+["Konut tipi kiralık mülk için IRS'nin 27,5 yıllık kuralıyla bina maliyeti üzerinden yıllık amortisman oranı yaklaşık yüzde kaçtır?","%3.636 (1/27,5)","%2.564 (1/39)","%5.0 (1/20)","%10.0 (1/10)","Kiralık Mülk (Rental)"],
+["Oscar'ın BRRRR kiralık mülkü için yıllık $1,200 sigorta primi var. Bu prim nasıl işlenir?","Tamamen kiralık mülk işletme gideri olarak düşülür","Mülkün bazına eklenir ve 27,5 yıl amortize edilir","Yalnızca mülk satıldığında kazançtan düşülür","Kişisel gider sayılır ve düşülemez","Kiralık Mülk (Rental)"],
+["Bir flip projesinde tadilat sırasında kullanılan demirbaş ve ekipman için $20,000 harcandı; proje 4 ay sürdü ve ev satıldı. Bu harcama vergi açısından nasıl tanımlanır?","Satılan malın maliyeti / yenileme maliyeti (proje maliyeti)","Uzun vadeli yatırım harcaması (satışta düşülmez)","Pasif zarar kalemi","Temettü gelirinden düşülen gider","Fix and Flip"],
+["Beth'in kiralık mülkünden net kira geliri ve diğer pasif gelirleri var; yüksek gelirli kişilere uygulanan Net Investment Income Tax (NIIT) oranı yüzde kaçtır?","%3.8","%1.45","%15","%20","Kiralık Mülk (Rental)"],
+["Victor flip işini C-corporation olarak yürütüyor. Şirket net kârı üzerinden ödediği federal kurumlar vergisi oranı (flat) kaçtır?","%21","%15","%35","%37","Fix and Flip"],
+["BRRRR'da refinansman yaparken bankaya ödenen dosya masrafı ve kredi başlangıç ücretleri (loan origination fees / points) kiralık mülk için nasıl işlenir?","Tek seferde değil; kredi vadesi boyunca zamana yayılarak amortize edilir","Satış anında tek bir kalem olarak düşülür","Vergiyle ilişkisi yoktur; kişisel masraf sayılır","Arsa değerine eklenir ve hiçbir zaman amortize edilmez","BRRRR"],
+["Marissa kiralık mülkünü yönetmesi için emlak yönetim şirketine yıllık toplam $3,000 ödedi. Bu ödeme nasıl yer alır?","Kiralık mülk işletme gideri (management fees)","İndirilemez kişisel masraf","Sermaye kazancı matrahına eklenir","Amortisman kalemi olarak 27,5 yıla yayılır","Kiralık Mülk (Rental)"],
+["Bir flip yatırımcısı evi satın alırken ödediği devir/transfer vergilerini (transfer taxes) vergi hesabında nasıl kullanır?","Mülkün maliyet bazına ekler; satış kârını azaltır","O yılın gelir vergisinden doğrudan düşer","Hiçbir şekilde hesaba katamaz","Yalnızca sigorta primini etkiler","Fix and Flip"],
+["Keith BRRRR mülkü için belediyeye yıllık $2,500 emlak vergisi (property tax) ödüyor. Bu vergi kiralık beyanında nasıl işlenir?","Tamamen kiralık mülk gideri olarak yazılır","Gider yazılamaz; yalnızca kişisel vergiden düşülür","Yalnızca mülk satıldığında hesaba katılır","Amortisman oranını düşürür","Kiralık Mülk (Rental)"],
+["Bir flip yatırımcısı evi yenilerken mimarlık ve mühendislik hizmetleri için $5,000 ödedi. Bu hizmet bedeli matrahı nasıl etkiler?","Proje maliyetine eklenerek satış kârını düşürür","Tamamen reddedilir, indirilemez","Kişisel harcama sayılır","Mülkün amortisman takvimini sıfırlar","Fix and Flip"],
+["Shelly kiralık mülkünde kiracının tahliyesi ve hukuki danışmanlık için avukata $1,200 ödedi. Bu masraf nasıl yer alır?","Yasal ve profesyonel hizmet gideri olarak cari yıl düşülür","Mülkün sermaye kazancına eklenir ve satışta kullanılır","Tahliye masrafı olduğu için hiçbir şekilde indirilemez","Kiracının kredi borcundan düşülmek üzere kaydedilir","Kiralık Mülk (Rental)"],
+["Bir yatırımcı BRRRR rehab aşamasında malzeme alırken eyalet satış vergisi (sales tax) ödedi. Bunu nasıl muhasebeleştirir?","Malzeme maliyetine dahil edilir; toplam proje maliyet bazını yükseltir","Ayrı bir formla devlete bağış olarak ödenir ve indirilemez","Eyalet vergisi olduğu için federal vergiye hiçbir şekilde yansıtılamaz","Doğrudan kişisel gelir vergisinden mahsup edilir","BRRRR"],
+["Bradley flip evini elinde tuttuğu sürede peyzaj ve bahçe bakımı için $800 harcadı. Bu harcama matrahta nasıl değerlendirilir?","Proje/hazırlık gideri olarak düşülebilir","Asla düşülemez","Yalnızca kira gelirinden düşülebilir","Amortisman tabanına eklenir","Fix and Flip"],
+["Bir kiralık mülk sahibi odaları boyattı ve küçük sızıntıları giderdi (rutin bakım). Bu harcamalar beyannamede hangi kalemde yer alır?","Repairs and Maintenance (onarım ve bakım gideri)","Capital Improvements (sermaye iyileştirmeleri)","Depreciation Recapture (amortisman geri alma)","Capital Gains (sermaye kazancı)","Kiralık Mülk (Rental)"],
+["Dean BRRRR refinansmanında bankaya $500 ekspertiz (appraisal) ücreti ödedi. Bu ücret vergi açısından nasıl işlenir?","Kredi masrafıdır; kredi vadesine yayılarak amortize edilir","O ayın kira gelirinden tek seferde ve tamamen düşülür","Refinansman ekspertiz ücreti hiçbir şekilde vergiden düşülemez","Kişisel harcama sayılır ve Schedule A'da sınırlı indirilir","BRRRR"],
+["Bir flip yatırımcısı evi pazarlamak için ilan sitelerine ve profesyonel fotoğrafa $600 harcadı. Bu harcama matrahı nasıl etkiler?","Satış masrafı olarak kazançtan düşülür","Hiçbir vergi etkisi olmaz, pazarlama masrafı kişiseldir","Mülkle birlikte 27,5 yıl amortismana tabi tutulur","Pasif zarar olarak yazılıp ileriki yıllara taşınır","Fix and Flip"],
+["Harold'ın kiralık mülkünde kombi tamamen bozuldu ve $3,000'a yenisi takıldı. IRS bunu 'improvement' (iyileştirme/demirbaş) saydığında nasıl işlenir?","Amortisman tabanına eklenir ve yıllara bölünür","Tek seferde o yıl tamamen gider yazılır","Vergiye dahil edilemez","Doğrudan kişisel vergiden düşülür","Kiralık Mülk (Rental)"],
+["Bir yatırımcı BRRRR mülkünü alırken ödediği title insurance (tapu sigortası) bedelini vergi hesabında nasıl kullanır?","Mülkün maliyet bazına eklenir","O ayki gelirden doğrudan düşülür","Vergiden düşülemez","Devlete ödenen bir ceza sayılır","BRRRR"],
+["Tracy flip projesi için çektiği inşaat kredisinin (construction loan) ara dönem faizini proje süresince ödedi. Bu faiz nasıl raporlanır?","Proje maliyetine eklenir veya doğrudan gider yazılır","Kişisel borç olarak silinir","27,5 yıla yayılarak amortize edilir","Hiçbir vergi indirimi sağlamaz","Fix and Flip"],
+["Bir kiralık mülk yatırımcısı yıllık $400 haşere kontrolü (pest control) hizmetine ödedi. Bu harcama nasıl yer alır?","İşletme gideri olarak cari yıl düşülür","Sermaye kazancına eklenir ve satışta dikkate alınır","Amortismana tabi tutulur ve 27,5 yıla yayılır","Hizmet bedeli olduğu için hiçbir şekilde indirilemez","Kiralık Mülk (Rental)"],
+["Sean flip için aldığı evin tapu devir işlemlerinde avukata $1,000 ödedi. Bu avukatlık ücreti matrahı nasıl etkiler?","Alış maliyet bazına eklenir; satış kârını düşürür","O yılın vergi borcundan doğrudan mahsup edilir","Hiçbir vergi etkisi yoktur, avukatlık ücreti kişiseldir","Cezai işleme tabi tutulur ve indirilemez","Fix and Flip"],
+["Bir BRRRR yatırımcısı mülkün değerini artırmak için dış cephe kaplaması ve yalıtım yaptırdı ve $12,000 harcadı. Bu harcama nasıl sınıflandırılır?","Sermaye harcaması (capital improvement); aktifleştirilir","Rutin tamirat (routine repair); cari yıl gideri olur","Kişisel tüketim harcaması; vergide yer almaz","Pasif gelir kalemi; kira gelirine eklenir","BRRRR"],
+["Yvonne kiralık mülkü için $800'lık akıllı kilit ve güvenlik kamerası sistemi aldı. Bu ekipman nasıl işlenir?","Amortisman yoluyla (veya Section 179 / de minimis kurallarıyla) düşülür","Güvenlik ekipmanı olduğu için hiçbir şekilde gider yazılamaz","Satış anında vergiye eklenir, önceden düşülemez","Doğrudan aktif gelirinden düşülür, kayıt gerekmez","Kiralık Mülk (Rental)"],
+["Bir flip projesinde evin temizliği için profesyonel temizlik şirketine $500 ödendi. Bu hizmet bedeli matrahı nasıl etkiler?","Proje operasyonel gideri/maliyeti olarak düşülür","Kişisel harcamadır, düşülemez","Amortisman oranını artırır","Yalnızca temettü gelirinden düşülür","Fix and Flip"],
+["Eli kiralık mülkü için çöp toplama ve çevre temizliğine yıllık $600 ödüyor. Bu ödeme nasıl işlenir?","Kiralık mülk işletme gideri olarak tam indirilir","Hizmet bedeli olduğu için hiçbir şekilde indirilemez","Sermaye kazancına eklenir ve satışta dikkate alınır","Amortisman matrahını düşürür ve 27,5 yıla yayılır","Kiralık Mülk (Rental)"],
+["Bir flip yatırımcısı satışta alıcıya ait title insurance masrafını üstlendi ve $1,500 ödedi. Bu ödeme nasıl hesaba katılır?","Satış masrafı olarak kazançtan düşülür","Vergi matrahını artırır","Hiçbir etkisi olmaz","27,5 yıla bölünerek amortize edilir","Fix and Flip"],
+["Lila BRRRR portföyündeki mülk için aylık $150 (yıllık $1,800) HOA aidatı ödüyor. Bu aidat nasıl yer alır?","Kiralık mülk işletme gideri olarak tamamen düşülür","Yalnızca mülk satıldığında dikkate alınır","Kişisel gider sayılır, düşülemez","Amortisman oranını etkiler","Kiralık Mülk (Rental)"],
+["Bir flip projesinde evin güvenliği için şantiyeye kurulan geçici alarm ve kamera sistemine $700 ödendi. Bu harcama matrahı nasıl etkiler?","Proje gideri olarak düşülür","Hiçbir etkisi yoktur","Amortisman tabanına eklenir","Pasif zarar olarak yazılır","Fix and Flip"],
+["Kurt kiralık mülkü için yıllık HVAC bakımı ve filtre değişimi için $350 ödedi. Bu harcama hangi kategoriye girer?","Repairs and Maintenance (onarım ve bakım gideri)","Capital Improvements (sermaye iyileştirmesi)","Depreciation (amortisman)","Non-deductible Expense (indirilemeyen gider)","Kiralık Mülk (Rental)"],
 ];
 
 const TAX_QUESTIONS_EN = [
@@ -11446,6 +11496,56 @@ const TAX_QUESTIONS_EN = [
 ["Chloe sold her rental with seller financing (an installment sale). When is the depreciation recapture portion taxed?","In the year of sale, even if no payments were received (the ordinary recapture portion is taxed up front)","Proportionally with each installment payment over the payment years","Only when the final installment is received","It is never taxed; recapture doesn't apply to installment sales","1031, Satış ve Geri Alma"],
 ["Wyatt inherited a rental house from his mother (her basis was $200,000, fair market value at death $450,000). He later sold it for $460,000. What is his taxable gain?","$10,000","$260,000","$0","$250,000","1031, Satış ve Geri Alma"],
 ["Paige sold a rental after holding it for 10 months at a $40,000 profit; depreciation had been claimed. What is the tax nature of this gain?","Because it was held under a year, Section 1231 doesn't apply; the gain is taxed at ordinary rates","It is a long-term capital gain taxed at 20% at most","Since depreciation was claimed, the entire gain is tax-exempt","The gain is taxed at a flat 25% with no other tax","1031, Satış ve Geri Alma"],
+["Jason bought a house using a Fix and Flip strategy and sold it 8 months later after finishing the rehab. Sale price $300,000, purchase cost $180,000, rehab $40,000, selling and closing costs $10,000. What is his taxable net gain?","$70,000","$120,000","$80,000","$90,000","Fix and Flip"],
+["Melissa bought a residential rental 5 years ago (building value $200,000, land excluded) and claimed $7,272 of depreciation each year. The total depreciation over 5 years is subject to recapture at sale. What is that amount?","$36,360","$7,272","$43,632","$45,455","1031, Satış ve Geri Alma"],
+["Travis sold his rental for $400,000 with a $150,000 gain and rolled all proceeds into a $450,000 like-kind property (1031 exchange, deadlines and QI rules met, no boot). What federal capital gains tax is due immediately? (assume a 15% rate)","$0","$22,500","$7,500","$37,500","1031, Satış ve Geri Alma"],
+["Allison earns $120,000 a year (MAGI) from her full-time job and her rental lost $15,000 for tax purposes this year. She meets the active participation test. The $25,000 allowance drops $1 for every $2 of MAGI over $100,000. How much of the loss can she deduct against other income this year?","$15,000","$0","$7,500","$25,000","Kiralık Mülk (Rental)"],
+["Brian is a dealer who flips houses regularly. He sold a house in 6 months for $200,000 with a total cost (purchase + rehab + costs) of $140,000. Under which regime is the $60,000 gain taxed?","Ordinary income tax plus self-employment (SE) tax","Long-term capital gains rates","Property tax only","Exempt from tax, reported only","Fix and Flip"],
+["Kelly renovated a house with BRRRR and took a 75% LTV refinance of $375,000 on a $500,000 appraisal. Her total cost was $300,000 and she pulled out $75,000 in cash. Is the $75,000 immediately subject to income tax?","No; it is a loan, so it isn't taxable","Yes; all of it is taxed as ordinary income","Yes; only half is taxed and the rest is exempt","Yes; it is taxed as a capital gain at 15%","BRRRR"],
+["A rental investor collects $20,000 gross rent a year and pays $8,000 interest, $3,000 property tax, $2,000 insurance and $4,000 depreciation. What is the net taxable income (profit/loss)?","+$3,000 profit","+$7,000 profit (before depreciation)","$0 (income equals expenses)","-$3,000 loss (including principal)","Kiralık Mülk (Rental)"],
+["Scott is not a dealer; he developed a lot, held it for 2 years, sold it and made a $100,000 gain. Which category is the gain?","Long-term capital gain (held over 1 year)","Short-term capital gain (ordinary rate)","A gain subject to corporate tax","A gain subject only to depreciation recapture tax","Fix and Flip"],
+["A flip investor paid 12% annual interest ($12,000) on a $100,000 commercial funding loan during the project. How is the interest treated?","Added to project cost or expensed; it lowers taxable profit","It is never deductible; hard-money interest is personal","It is deductible only on Schedule A as personal interest","It is amortized over 27.5 years","Fix and Flip"],
+["Laura spent $15,000 to replace the roof on her rental. The IRS treats it as a capital improvement that extends the property's life, not a repair. How is it treated?","It is capitalized and deducted gradually through depreciation","All of it is deducted as a current expense this year","It has no tax effect and isn't used even at sale","It is deducted directly as an itemized deduction on Schedule A","Kiralık Mülk (Rental)"],
+["Cody bought a house for $100,000 with BRRRR and spent $50,000 on rehab ($150,000 total). It appraised at $200,000; he took a $160,000 loan at 80% LTV and had $10,000 in cash left after paying the costs. How much income tax is due on that cash?","$0 — loan proceeds are debt","Ordinary income tax on the $10,000","$2,000 (20% of the cash)","$5,000 (50% of the cash)","BRRRR"],
+["An investor does flips through a single-member LLC instead of in his own name. The LLC made $100,000 net profit and is taxed as a disregarded entity. On which return is the profit taxed?","On the investor's Form 1040 via Schedule C","On the LLC's Form 1120 corporate return","On a separate real estate tax return","On a withholding tax return, withheld at the source","Fix and Flip"],
+["Diane sold a rental she had owned for 10 years with a $200,000 gain and $40,000 of total depreciation claimed. What is the maximum federal rate on the depreciation portion (unrecaptured Section 1250 gain)?","25%","10%","15%","37%","1031, Satış ve Geri Alma"],
+["A flip investor spent $30,000 on materials and labor during the year and documented the invoices. Under what item is it deducted?","Project cost: cost of goods sold (COGS) or operating expense","A capital contribution to the LLC (not deductible)","A personal itemized deduction on Schedule A","A prepaid expense deferred to next year","Fix and Flip"],
+["Dennis turned his BRRRR property into a long-term rental; annual rent is $24,000 and total expenses plus depreciation are $28,000 (a $4,000 net loss). Dennis is a Real Estate Professional (REPS) not limited by income caps. How is the loss treated?","It offsets all of his active income (W-2 or business), lowering his tax","It can't be used; even with REPS the loss is wiped out","It can only be deducted against future rental income","It is collected as a cash refund from the IRS","BRRRR"],
+["A flip investor gave the buyer a $5,000 seller concession (closing cost credit) at sale. How does this affect net gain?","It reduces net gain (taxable profit) by $5,000","It increases net gain by $5,000","It has no tax effect","It is subtracted directly from the tax owed","Fix and Flip"],
+["On which line does Wendy report the $6,000 of mortgage interest she paid on her rental property?","Rental expense on Schedule E (business expense)","Personal mortgage interest on Schedule A","A cost deducted from capital gains","Part of the standard deduction","Kiralık Mülk (Rental)"],
+["A flip investor paid a total of $1,500 for electricity, water and gas during the 5 months he held the house. How are these costs treated?","Deducted as a project/holding expense from taxable profit","Treated as personal spending and not deductible","Added to the property tax only","Subject to depreciation","Fix and Flip"],
+["Craig tried to do a 1031 exchange when selling his rental but didn't identify a replacement within the 45-day identification period. What happens to the $80,000 gain from the old property?","It is taxed as a capital gain in the tax year of the sale","It carries over tax-free to the next tax year and is reported there","It is wiped out because the deadline passed and tied to a later purchase","Only 10% is taxed and the remainder is deferred another 180 days","1031, Satış ve Geri Alma"],
+["An investor paid a total of $4,000 for recording fees, appraisal, notary and legal costs when buying a BRRRR property. How are these acquisition costs treated?","Added to the property's cost basis (the building share is depreciated)","Deducted directly from the first year's rent","Not deductible in any way","Deducted as a personal expense on Schedule A","BRRRR"],
+["Gina paid her agent a $12,000 commission on the flip house she sold. How is it counted when computing the gain?","It is subtracted from the sale price, reducing net gain","It increases taxable profit","It is a personal expense and ignored","It is used only in the depreciation calculation","Fix and Flip"],
+["Using the IRS 27.5-year rule for a residential rental, what is the approximate annual depreciation rate on the building cost?","3.636% (1/27.5)","2.564% (1/39)","5.0% (1/20)","10.0% (1/10)","Kiralık Mülk (Rental)"],
+["Oscar pays $1,200 a year in insurance on his BRRRR rental. How is the premium treated?","Fully deducted as a rental operating expense","Added to basis and depreciated over 27.5 years","Deducted from the gain only when the property is sold","Treated as personal and not deductible","Kiralık Mülk (Rental)"],
+["On a flip project, $20,000 was spent on fixtures and equipment during the rehab; the project took 4 months and the house sold. How is this expense classified?","Cost of goods sold / renovation cost (project cost)","A long-term investment outlay (not deducted at sale)","A passive loss item","An expense deducted from dividend income","Fix and Flip"],
+["Beth has net rental income and other passive income; what is the rate of the Net Investment Income Tax (NIIT) that applies to high-income taxpayers?","3.8%","1.45%","15%","20%","Kiralık Mülk (Rental)"],
+["Victor runs his flipping business as a C corporation. What flat federal corporate tax rate does the company pay on its net profit?","21%","15%","35%","37%","Fix and Flip"],
+["On a BRRRR refinance, how are the bank's origination fees and points treated for a rental property?","Not in one lump; amortized over the loan term","Deducted as a single item at the time of sale","No tax relevance; they count as personal costs","Added to the land value and never depreciated","BRRRR"],
+["Marissa paid a property management company $3,000 a year to manage her rental. How is the payment treated?","A rental operating expense (management fees)","A non-deductible personal expense","Added to the capital gains base","A depreciation item spread over 27.5 years","Kiralık Mülk (Rental)"],
+["How does a flip investor use the transfer taxes paid when buying the house in the tax calculation?","Adds them to the property's cost basis, reducing the profit at sale","Subtracts them directly from that year's income tax","They can't be counted at all","They only affect the insurance premium","Fix and Flip"],
+["Keith pays the county $2,500 a year in property tax on his BRRRR property. How is it treated on his rental return?","Fully deducted as a rental expense","Not deductible; only credited against personal tax","Counted only when the property is sold","It lowers the depreciation rate","Kiralık Mülk (Rental)"],
+["A flip investor paid $5,000 for architectural and engineering services while renovating. How does this fee affect taxable profit?","It is added to project cost, lowering the profit at sale","It is fully disallowed and not deductible","It is a personal expense","It resets the property's depreciation schedule","Fix and Flip"],
+["Shelly paid an attorney $1,200 for a tenant eviction and legal advice on her rental. How is the expense treated?","Deducted in the current year as a legal and professional fee","Added to the property's capital gain and used at sale","Not deductible in any way because it is an eviction cost","Recorded to be deducted from the tenant's loan balance","Kiralık Mülk (Rental)"],
+["An investor paid state sales tax on materials during the BRRRR rehab. How does he account for it?","It is included in the materials cost, raising the total project cost basis","It is paid as a donation to the state on a separate form and is not deductible","Being a state tax, it can't be reflected in federal tax at all","It is credited directly against personal income tax","BRRRR"],
+["Bradley spent $800 on landscaping and yard care while holding his flip house. How is it treated for tax?","It can be deducted as a project/preparation expense","It can never be deducted","It can be deducted only against rental income","It is added to the depreciable basis","Fix and Flip"],
+["A rental owner had rooms painted and small leaks fixed (routine maintenance). On which line do these costs appear?","Repairs and Maintenance","Capital Improvements","Depreciation Recapture","Capital Gains","Kiralık Mülk (Rental)"],
+["Dean paid the bank a $500 appraisal fee on his BRRRR refinance. How is the fee treated for tax?","It is a loan cost, amortized over the loan term","It is fully deducted in one amount against that month's rent","A refinance appraisal fee can never be deducted for tax","It is treated as personal spending and limited on Schedule A","BRRRR"],
+["A flip investor spent $600 on listing sites and professional photos to market the house. How does it affect taxable profit?","It is deducted from the gain as a selling expense","It has no tax effect; marketing costs are personal","It is depreciated with the property over 27.5 years","It is recorded as a passive loss and carried to later years","Fix and Flip"],
+["The boiler in Harold's rental failed completely and a new one was installed for $3,000. If the IRS treats it as an improvement, how is it handled?","Added to the depreciable basis and spread over the years","Fully expensed in a single year","Can't be included for tax","Subtracted directly from personal tax","Kiralık Mülk (Rental)"],
+["How does an investor treat the title insurance premium paid when buying a BRRRR property?","It is added to the property's cost basis","It is deducted directly from that month's income","It isn't deductible","It is treated as a penalty paid to the state","BRRRR"],
+["Tracy paid interim interest on the construction loan for her flip project. How is that interest reported?","Added to project cost or deducted directly as an expense","Written off as personal debt","Amortized over 27.5 years","Provides no tax deduction at all","Fix and Flip"],
+["A rental investor paid $400 a year for pest control. How is the expense treated?","Deducted as an operating expense in the current year","Added to the capital gain and counted at sale","Depreciated and spread over 27.5 years","Not deductible at all because it is a service fee","Kiralık Mülk (Rental)"],
+["Sean paid an attorney $1,000 for the closing of the house he bought to flip. How does this fee affect taxable profit?","It is added to the purchase cost basis, lowering the profit at sale","It is credited directly against that year's tax bill","It has no tax effect; attorney fees are personal","It is subject to a penalty and can't be deducted","Fix and Flip"],
+["A BRRRR investor spent $12,000 on siding and insulation to raise the property's value. How is the expense classified?","A capital improvement; it is capitalized","A routine repair; it becomes a current-year expense","A personal consumption expense; not part of taxes","A passive income item; added to rental income","BRRRR"],
+["Yvonne bought an $800 smart lock and security camera system for her rental. How is the equipment treated?","Deducted through depreciation (or under Section 179 / de minimis rules)","It can never be expensed because it is security equipment","It is added to tax at sale and can't be deducted earlier","It is deducted directly from active income, with no record needed","Kiralık Mülk (Rental)"],
+["On a flip project, $500 was paid to a professional cleaning company. How does this affect taxable profit?","Deducted as a project operating expense or cost","A personal expense, not deductible","It increases the depreciation rate","It can be deducted only from dividend income","Fix and Flip"],
+["Eli pays $600 a year for trash collection and cleanup at his rental. How is the payment treated?","It is fully deducted as a rental operating expense","It is not deductible at all because it is a service fee","It is added to the capital gain and counted at sale","It lowers the depreciation base and is spread over 27.5 years","Kiralık Mülk (Rental)"],
+["At sale, a flip investor agreed to pay the buyer's title insurance cost and paid $1,500. How is the payment counted?","Deducted from the gain as a selling expense","It increases taxable profit","It has no effect","It is amortized over 27.5 years","Fix and Flip"],
+["Lila pays $150 a month ($1,800 a year) in HOA dues on a BRRRR rental. How are the dues treated?","Fully deducted as a rental operating expense","Considered only when the property is sold","Treated as personal and not deductible","They affect the depreciation rate","Kiralık Mülk (Rental)"],
+["On a flip project, $700 was paid for a temporary alarm and camera system to secure the site. How does it affect taxable profit?","It is deducted as a project expense","It has no effect","It is added to the depreciable basis","It is recorded as a passive loss","Fix and Flip"],
+["Kurt paid $350 for annual HVAC maintenance and a filter change on his rental. Which category does it fall into?","Repairs and Maintenance","Capital Improvements","Depreciation","Non-deductible Expense","Kiralık Mülk (Rental)"],
 ];
 </script>
 <script>
@@ -11498,7 +11598,7 @@ const UI_STRINGS = {
     tab_fidium: "Fidium Installation",
     tab_tax: "Tax",
     tax_label: "Tax (Vergi) Soruları",
-    tax_hint: "ABD'de gayrimenkul yatırımının vergisi — Fix and Flip, BRRRR ve Kiralık Mülk (Rental) odaklı, rakamlı gerçek hayat senaryoları: kazanç hesabı, amortisman, 1031 exchange, pasif zarar, SE vergisi, formlar ve daha fazlası (~100 soru). Genel bilgi amaçlıdır, vergi danışmanlığı değildir.",
+    tax_hint: "ABD'de gayrimenkul yatırımının vergisi — Fix and Flip, BRRRR ve Kiralık Mülk (Rental) odaklı, rakamlı gerçek hayat senaryoları: kazanç hesabı, amortisman, 1031 exchange, pasif zarar, SE vergisi, formlar ve daha fazlası (~150 soru). Genel bilgi amaçlıdır, vergi danışmanlığı değildir.",
     fidium_label: "Fidium Installation Soruları",
     fidium_hint: "Fiber internet kurulum teknisyenliği için temel bilgiler — fiber optik temelleri, drop kablo çekme, ek yapma (splicing), ONT/router kurulumu, sinyal test ve ölçüm, aktivasyon, müşteri hizmeti/güvenlik, ağ mimarisi ve kısaltmalar (NAC, IAC, MST, OLT, ONT), VLAN/Triple Play, GPON ve XGS-PON, Calix ONT modelleri (632/601/611), ağ/IP temelleri, saha sorun giderme ve saha teknisyeni pratik bilgileri ve CPE Guidelines 2026 (ONT/gateway seçim kriterleri) konularında ~353 soru.",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
@@ -11590,7 +11690,7 @@ const UI_STRINGS = {
     tab_fidium: "Fidium Installation",
     tab_tax: "Tax",
     tax_label: "Tax Questions",
-    tax_hint: "US tax on real estate investing — real-life, number-based scenarios focused on Fix and Flip, BRRRR and Rentals: gain math, depreciation, 1031 exchanges, passive losses, SE tax, forms and more (~100 questions). General information only, not tax advice.",
+    tax_hint: "US tax on real estate investing — real-life, number-based scenarios focused on Fix and Flip, BRRRR and Rentals: gain math, depreciation, 1031 exchanges, passive losses, SE tax, forms and more (~150 questions). General information only, not tax advice.",
     fidium_label: "Fidium Installation Questions",
     fidium_hint: "Core knowledge for fiber internet installation technicians — fiber optics basics, drop cable pulling, splicing, ONT/router setup, signal testing, activation, safety/customer service, network architecture and acronyms (NAC, IAC, MST, OLT, ONT), VLAN/Triple Play, GPON and XGS-PON, Calix ONT models (632/601/611), networking/IP basics, field troubleshooting, and practical field-tech knowledge. and CPE Guidelines 2026 (ONT/gateway selection criteria). About 353 questions.",
     tab_fbr: "Fooled by Randomness - Nassim Taleb",
@@ -12249,6 +12349,7 @@ async function handleAnswer(chosenOpt, btnEl){
     if(window.currentUser && window.FB) window.FB.pushCDLStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.tax){
     await saveTaxQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
+    if(window.currentUser && window.FB) window.FB.pushTaxStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
   } else if(current.fidium){
     await saveFidiumQuestion(current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
     if(window.currentUser && window.FB) window.FB.pushFidiumStat(window.currentUser.uid, current.id, {weight:current.weight, correct:current.correct, wrong:current.wrong});
@@ -12294,6 +12395,7 @@ function getPanelCategories(){
     {key:"irc2021", col:"irc2021", nameTr:"IRC 2021 Code", nameEn:"IRC 2021 Code", total: IRC2021_QUESTIONS.length, keys: listIRC2021Keys, load: loadIRC2021Question, prefix: IRC2021_STORE_PREFIX},
     {key:"cdl", col:"cdl", nameTr:"CDL", nameEn:"CDL", total: CDL_QUESTIONS.length, keys: listCDLKeys, load: loadCDLQuestion, prefix: CDL_STORE_PREFIX},
     {key:"fidium", col:"fidium", nameTr:"Fidium Installation", nameEn:"Fidium Installation", total: FIDIUM_QUESTIONS.length, keys: listFidiumKeys, load: loadFidiumQuestion, prefix: FIDIUM_STORE_PREFIX},
+    {key:"tax", col:"tax", nameTr:"Tax", nameEn:"Tax", total: TAX_QUESTIONS.length, keys: listTaxKeys, load: loadTaxQuestion, prefix: TAX_STORE_PREFIX},
     {key:"fbr", col:"fbr", nameTr:"Fooled by Randomness", nameEn:"Fooled by Randomness", total: FBR_WORDS.length, keys: listFBRKeys, load: loadFBRWord, prefix: FBR_STORE_PREFIX},
   ];
 }
@@ -14991,6 +15093,34 @@ async function syncWithCloud(uid){
     window.FB.pushFidiumStat(uid, id, merged);
   }
 
+  // --- Tax question stats, merged the same way ---
+  const cloudTax = await window.FB.fetchAllCloudTax(uid);
+  const localTaxKeys = listTaxKeys();
+  const localTaxMap = {};
+  for(const k of localTaxKeys){
+    const id = k.slice(TAX_STORE_PREFIX.length);
+    try{
+      const raw = storageWorks ? localStorage.getItem(k) : JSON.stringify(memoryStore[k]);
+      if(raw) localTaxMap[id] = JSON.parse(raw);
+    }catch(e){}
+  }
+  const allTaxId = new Set([...Object.keys(localTaxMap), ...Object.keys(cloudTax)]);
+  for(const id of allTaxId){
+    const l = localTaxMap[id], c = cloudTax[id];
+    let merged;
+    if(l && c){
+      merged = {
+        weight: Math.min(l.weight ?? 3, c.weight ?? 3),
+        correct: Math.max(l.correct||0, c.correct||0),
+        wrong: Math.max(l.wrong||0, c.wrong||0)
+      };
+    } else {
+      merged = l || c;
+    }
+    await saveTaxQuestion(id, merged);
+    window.FB.pushTaxStat(uid, id, merged);
+  }
+
   // --- Fooled by Randomness word stats, merged the same way as Oxford/RE/ASVAB words ---
   const cloudFBR = await window.FB.fetchAllCloudFBR(uid);
   const localFBRKeys = listFBRKeys();
@@ -15214,6 +15344,12 @@ async function fetchAllCloudFidium(uid){
   snap.forEach(d => out[d.id] = d.data());
   return out;
 }
+async function fetchAllCloudTax(uid){
+  const out = {};
+  const snap = await getDocs(collection(db, "users", uid, "tax"));
+  snap.forEach(d => out[d.id] = d.data());
+  return out;
+}
 async function fetchAllCloudFBR(uid){
   const out = {};
   const snap = await getDocs(collection(db, "users", uid, "fbr"));
@@ -15270,6 +15406,10 @@ async function pushFidiumStat(uid, id, data){
   try{ await setDoc(doc(db, "users", uid, "fidium", id), data); }
   catch(e){ console.error("Fidium Installation sorusu buluta yazılamadı:", e); }
 }
+async function pushTaxStat(uid, id, data){
+  try{ await setDoc(doc(db, "users", uid, "tax", id), data); }
+  catch(e){ console.error("Tax sorusu buluta yazılamadı:", e); }
+}
 async function pushFBRStat(uid, en, data){
   try{ await setDoc(doc(db, "users", uid, "fbr", en), data); }
   catch(e){ console.error("Fooled by Randomness kelimesi buluta yazılamadı:", e); }
@@ -15289,7 +15429,7 @@ async function deleteCustomWordCloud(uid, id){
 
 /* ===== Admin dashboard: aggregate stats across all users (owner-only, enforced by Firestore rules) ===== */
 const ADMIN_EMAIL = "orcuncagataycelik@gmail.com";
-const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","inspect","finlit","wealth","irc","irc2021","cdl","fidium","fbr","custom"];
+const ADMIN_COLLECTIONS = ["oxford","ox3k","trwords","realestate","asvab","inspect","finlit","wealth","irc","irc2021","cdl","fidium","tax","fbr","custom"];
 
 async function pushUserProfile(uid, email, displayName){
   try{ await setDoc(doc(db, "users", uid), {email: email || null, displayName: displayName || null, lastSeen: Date.now()}, {merge:true}); }
@@ -15315,7 +15455,14 @@ async function fetchAdminStats(){
   const wordWrong = {};
   const perUser = {}; // uid -> { colName -> {mastered, correct, wrong, total} }
   for(const colName of ADMIN_COLLECTIONS){
-    const snap = await getDocs(collectionGroup(db, colName));
+    let snap;
+    try{
+      snap = await getDocs(collectionGroup(db, colName));
+    }catch(e){
+      // A collection that Firestore rules don't (yet) expose must not take down the whole dashboard.
+      console.error("Admin istatistiği okunamadı (" + colName + "):", e);
+      continue;
+    }
     snap.forEach(d => {
       const data = d.data();
       const parentUser = d.ref.parent.parent;
@@ -15355,8 +15502,8 @@ async function fetchAdminStats(){
 
 window.FB = {
   signIn, signOutUser,
-  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudInspect, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFidium, fetchAllCloudFBR, fetchAllCloudOX3K,
-  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushInspectStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFidiumStat, pushFBRStat, pushOX3KStat,
+  fetchAllCloudWords, fetchAllCloudCustom, fetchAllCloudTRW, fetchAllCloudRealEstate, fetchAllCloudASVAB, fetchAllCloudInspect, fetchAllCloudFinlit, fetchAllCloudWealth, fetchAllCloudIRC, fetchAllCloudIRC2021, fetchAllCloudCDL, fetchAllCloudFidium, fetchAllCloudTax, fetchAllCloudFBR, fetchAllCloudOX3K,
+  pushWordStat, pushCustomWord, deleteCustomWordCloud, pushTRWStat, pushRealEstateStat, pushASVABStat, pushInspectStat, pushFinlitStat, pushWealthStat, pushIRCStat, pushIRC2021Stat, pushCDLStat, pushFidiumStat, pushTaxStat, pushFBRStat, pushOX3KStat,
   pushUserProfile, fetchAdminStats
 };
 
